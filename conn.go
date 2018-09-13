@@ -147,18 +147,19 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		return errorResponse(errors.New("Malformed request; missing parameters"))
 	}
 
-	p := proto.ID(*req.StreamHandler.Proto)
-
 	d.mx.Lock()
 	defer d.mx.Unlock()
 
-	log.Debugf("set stream handler: %s -> %s", p, *req.StreamHandler.Path)
-
-	_, ok := d.handlers[p]
-	if !ok {
-		d.host.SetStreamHandler(p, d.handleStream)
+	path := *req.StreamHandler.Path
+	for sp := range req.StreamHandler.Proto {
+		p := proto.ID(sp)
+		_, ok := d.handlers[p]
+		if !ok {
+			d.host.SetStreamHandler(p, d.handleStream)
+		}
+		log.Debugf("set stream handler: %s -> %s", p, path)
+		d.handlers[p] = path
 	}
-	d.handlers[p] = *req.StreamHandler.Path
 
 	return okResponse()
 }

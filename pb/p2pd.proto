@@ -35,8 +35,8 @@ message StreamOpenRequest {
 }
 
 message StreamHandlerRequest {
-  required string proto = 1;
-  required string path = 2;
+  required string path = 1;
+  repeated string proto = 2;
 }
 
 message ErrorResponse {
