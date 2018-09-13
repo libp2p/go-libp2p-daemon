@@ -139,7 +139,9 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
 		return errorResponse(err), nil
 	}
 
-	return okResponse(), s
+	res := okResponse()
+	res.StreamInfo = makeStreamInfo(s)
+	return res, s
 }
 
 func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
@@ -175,5 +177,14 @@ func errorResponse(err error) *pb.Response {
 	return &pb.Response{
 		Type:  pb.Response_ERROR.Enum(),
 		Error: &pb.ErrorResponse{Msg: &errstr},
+	}
+}
+
+func makeStreamInfo(s inet.Stream) *pb.StreamInfo {
+	proto := string(s.Protocol())
+	return &pb.StreamInfo{
+		Peer:  []byte(s.Conn().RemotePeer()),
+		Addr:  s.Conn().RemoteMultiaddr().Bytes(),
+		Proto: &proto,
 	}
 }

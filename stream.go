@@ -5,8 +5,6 @@ import (
 	"net"
 	"sync"
 
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
-
 	ggio "github.com/gogo/protobuf/io"
 	inet "github.com/libp2p/go-libp2p-net"
 )
@@ -51,11 +49,8 @@ func (d *Daemon) handleStream(s inet.Stream) {
 	defer c.Close()
 
 	w := ggio.NewDelimitedWriter(c)
-	msg := pb.StreamAccept{
-		Peer: []byte(s.Conn().RemotePeer()),
-		Addr: s.Conn().RemoteMultiaddr().Bytes(),
-	}
-	err = w.WriteMsg(&msg)
+	msg := makeStreamInfo(s)
+	err = w.WriteMsg(msg)
 	if err != nil {
 		log.Debugf("error accepting stream: %s", err.Error())
 		return
