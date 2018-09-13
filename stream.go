@@ -17,6 +17,7 @@ func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
 		_, err := io.Copy(dst, src)
 		if err != nil && err != io.EOF {
 			log.Debugf("stream error: %s", err.Error())
+			s.Reset()
 		}
 		wg.Done()
 	}
@@ -29,7 +30,6 @@ func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
 }
 
 func (d *Daemon) handleStream(s inet.Stream) {
-	defer s.Close()
 	p := s.Protocol()
 
 	d.mx.Lock()
@@ -38,12 +38,14 @@ func (d *Daemon) handleStream(s inet.Stream) {
 
 	if !ok {
 		log.Debugf("unexpected stream: %s", p)
+		s.Reset()
 		return
 	}
 
 	c, err := net.Dial("unix", path)
 	if err != nil {
 		log.Debugf("error dialing handler at %s: %s", path, err.Error())
+		s.Reset()
 		return
 	}
 	defer c.Close()
@@ -53,9 +55,9 @@ func (d *Daemon) handleStream(s inet.Stream) {
 	err = w.WriteMsg(msg)
 	if err != nil {
 		log.Debugf("error accepting stream: %s", err.Error())
+		s.Reset()
 		return
 	}
 
 	d.doStreamPipe(c, s)
-
 }
