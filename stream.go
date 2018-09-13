@@ -13,12 +13,13 @@ func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
-	pipe := func(dst io.Writer, src io.Reader) {
+	pipe := func(dst io.WriteCloser, src io.Reader) {
 		_, err := io.Copy(dst, src)
 		if err != nil && err != io.EOF {
 			log.Debugf("stream error: %s", err.Error())
 			s.Reset()
 		}
+		dst.Close()
 		wg.Done()
 	}
 
@@ -26,7 +27,6 @@ func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
 	go pipe(s, c)
 
 	wg.Wait()
-	s.Close()
 }
 
 func (d *Daemon) handleStream(s inet.Stream) {
