@@ -85,8 +85,8 @@ func (d *Daemon) handleConn(c net.Conn) {
 }
 
 func (d *Daemon) doIdentify(req *pb.Request) *pb.Response {
-	id := []byte(d.host.ID())
-	addrs := d.host.Addrs()
+	id := []byte(d.ID())
+	addrs := d.Addrs()
 	baddrs := make([][]byte, len(addrs))
 	for x, addr := range addrs {
 		baddrs[x] = addr.Bytes()
