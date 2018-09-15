@@ -23,8 +23,8 @@ message Response {
 
   required Type type = 1;
   optional ErrorResponse error = 2;
-  optional IdentifyResponse identify = 3;
-  optional StreamInfo streamInfo = 4;
+  optional StreamInfo streamInfo = 3;
+  optional IdentifyResponse identify = 4;
 }
 
 message IdentifyResponse {

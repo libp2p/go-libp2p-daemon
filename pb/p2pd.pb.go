@@ -61,7 +61,7 @@ func (x *Request_Type) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (Request_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{0, 0}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{0, 0}
 }
 
 type Response_Type int32
@@ -97,7 +97,7 @@ func (x *Response_Type) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (Response_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{1, 0}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{1, 0}
 }
 
 type Request struct {
@@ -114,7 +114,7 @@ func (m *Request) Reset()         { *m = Request{} }
 func (m *Request) String() string { return proto.CompactTextString(m) }
 func (*Request) ProtoMessage()    {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{0}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{0}
 }
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -174,8 +174,8 @@ func (m *Request) GetStreamHandler() *StreamHandlerRequest {
 type Response struct {
 	Type                 *Response_Type    `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Response_Type" json:"type,omitempty"`
 	Error                *ErrorResponse    `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
-	Identify             *IdentifyResponse `protobuf:"bytes,3,opt,name=identify" json:"identify,omitempty"`
-	StreamInfo           *StreamInfo       `protobuf:"bytes,4,opt,name=streamInfo" json:"streamInfo,omitempty"`
+	StreamInfo           *StreamInfo       `protobuf:"bytes,3,opt,name=streamInfo" json:"streamInfo,omitempty"`
+	Identify             *IdentifyResponse `protobuf:"bytes,4,opt,name=identify" json:"identify,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -185,7 +185,7 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{1}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{1}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -228,16 +228,16 @@ func (m *Response) GetError() *ErrorResponse {
 	return nil
 }
 
-func (m *Response) GetIdentify() *IdentifyResponse {
+func (m *Response) GetStreamInfo() *StreamInfo {
 	if m != nil {
-		return m.Identify
+		return m.StreamInfo
 	}
 	return nil
 }
 
-func (m *Response) GetStreamInfo() *StreamInfo {
+func (m *Response) GetIdentify() *IdentifyResponse {
 	if m != nil {
-		return m.StreamInfo
+		return m.Identify
 	}
 	return nil
 }
@@ -254,7 +254,7 @@ func (m *IdentifyResponse) Reset()         { *m = IdentifyResponse{} }
 func (m *IdentifyResponse) String() string { return proto.CompactTextString(m) }
 func (*IdentifyResponse) ProtoMessage()    {}
 func (*IdentifyResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{2}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{2}
 }
 func (m *IdentifyResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -309,7 +309,7 @@ func (m *ConnectRequest) Reset()         { *m = ConnectRequest{} }
 func (m *ConnectRequest) String() string { return proto.CompactTextString(m) }
 func (*ConnectRequest) ProtoMessage()    {}
 func (*ConnectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{3}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{3}
 }
 func (m *ConnectRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -364,7 +364,7 @@ func (m *StreamOpenRequest) Reset()         { *m = StreamOpenRequest{} }
 func (m *StreamOpenRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamOpenRequest) ProtoMessage()    {}
 func (*StreamOpenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{4}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{4}
 }
 func (m *StreamOpenRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -419,7 +419,7 @@ func (m *StreamHandlerRequest) Reset()         { *m = StreamHandlerRequest{} }
 func (m *StreamHandlerRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamHandlerRequest) ProtoMessage()    {}
 func (*StreamHandlerRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{5}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{5}
 }
 func (m *StreamHandlerRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -473,7 +473,7 @@ func (m *ErrorResponse) Reset()         { *m = ErrorResponse{} }
 func (m *ErrorResponse) String() string { return proto.CompactTextString(m) }
 func (*ErrorResponse) ProtoMessage()    {}
 func (*ErrorResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{6}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{6}
 }
 func (m *ErrorResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -522,7 +522,7 @@ func (m *StreamInfo) Reset()         { *m = StreamInfo{} }
 func (m *StreamInfo) String() string { return proto.CompactTextString(m) }
 func (*StreamInfo) ProtoMessage()    {}
 func (*StreamInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_023e3dd3926b76a9, []int{7}
+	return fileDescriptor_p2pd_19a9838458a78939, []int{7}
 }
 func (m *StreamInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -674,21 +674,21 @@ func (m *Response) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n4
 	}
-	if m.Identify != nil {
+	if m.StreamInfo != nil {
 		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
-		n5, err := m.Identify.MarshalTo(dAtA[i:])
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
+		n5, err := m.StreamInfo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n5
 	}
-	if m.StreamInfo != nil {
+	if m.Identify != nil {
 		dAtA[i] = 0x22
 		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
-		n6, err := m.StreamInfo.MarshalTo(dAtA[i:])
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
+		n6, err := m.Identify.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
@@ -979,12 +979,12 @@ func (m *Response) Size() (n int) {
 		l = m.Error.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
-	if m.Identify != nil {
-		l = m.Identify.Size()
-		n += 1 + l + sovP2Pd(uint64(l))
-	}
 	if m.StreamInfo != nil {
 		l = m.StreamInfo.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Identify != nil {
+		l = m.Identify.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -1377,39 +1377,6 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 3:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Identify", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowP2Pd
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= (int(b) & 0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			postIndex := iNdEx + msglen
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.Identify == nil {
-				m.Identify = &IdentifyResponse{}
-			}
-			if err := m.Identify.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field StreamInfo", wireType)
 			}
 			var msglen int
@@ -1438,6 +1405,39 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				m.StreamInfo = &StreamInfo{}
 			}
 			if err := m.StreamInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Identify", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Identify == nil {
+				m.Identify = &IdentifyResponse{}
+			}
+			if err := m.Identify.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2276,16 +2276,16 @@ var (
 	ErrIntOverflowP2Pd   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_p2pd_023e3dd3926b76a9) }
+func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_p2pd_19a9838458a78939) }
 
-var fileDescriptor_p2pd_023e3dd3926b76a9 = []byte{
-	// 467 bytes of a gzipped FileDescriptorProto
+var fileDescriptor_p2pd_19a9838458a78939 = []byte{
+	// 468 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x92, 0xcd, 0x6e, 0xd3, 0x40,
 	0x10, 0xc7, 0xeb, 0xb5, 0x43, 0x92, 0x49, 0x1a, 0x96, 0xa1, 0x80, 0x8b, 0x44, 0x14, 0xf6, 0x14,
 	0x10, 0x8a, 0x44, 0x10, 0x12, 0xaa, 0x84, 0x44, 0x49, 0x5d, 0x35, 0x7c, 0xd8, 0x68, 0x9b, 0x0b,
 	0x27, 0x14, 0xea, 0x2d, 0x44, 0xa2, 0xf6, 0xb2, 0x36, 0x87, 0xbc, 0x15, 0x8f, 0xc1, 0x91, 0x47,
-	0x40, 0xb9, 0xf2, 0x12, 0xc8, 0xbb, 0x6b, 0x27, 0x0e, 0xcd, 0x6d, 0x3e, 0xfe, 0xbf, 0x59, 0xcf,
-	0xdf, 0x03, 0x20, 0xc7, 0x32, 0x1e, 0x49, 0x95, 0xe6, 0x29, 0x36, 0x4d, 0xfc, 0x99, 0xfd, 0x24,
+	0x40, 0xb9, 0xf2, 0x12, 0xc8, 0xbb, 0x6b, 0x27, 0x0e, 0xcd, 0x6d, 0x3e, 0xfe, 0xbf, 0xb1, 0xe7,
+	0xbf, 0x03, 0x20, 0xc7, 0x32, 0x1e, 0x49, 0x95, 0xe6, 0x29, 0x36, 0x4d, 0xfc, 0x99, 0xfd, 0x24,
 	0xd0, 0xe4, 0xe2, 0xfb, 0x0f, 0x91, 0xe5, 0xf8, 0x08, 0xbc, 0x7c, 0x29, 0x85, 0xef, 0x0c, 0xc8,
 	0xb0, 0x37, 0xbe, 0x33, 0xb2, 0x9a, 0x91, 0xed, 0x8f, 0x66, 0x4b, 0x29, 0xb8, 0x96, 0xe0, 0x53,
 	0x68, 0x5e, 0xa4, 0x49, 0x22, 0x2e, 0x72, 0x9f, 0x0c, 0x9c, 0x61, 0x67, 0x7c, 0xaf, 0x52, 0x4f,
@@ -2297,17 +2297,17 @@ var fileDescriptor_p2pd_023e3dd3926b76a9 = []byte{
 	0xe3, 0xf7, 0x9f, 0xa2, 0x0f, 0x41, 0x48, 0x09, 0x22, 0xf4, 0x6c, 0xe1, 0xec, 0x38, 0x3c, 0x79,
 	0x17, 0x70, 0xea, 0xb2, 0xbf, 0x0e, 0xb4, 0xb8, 0xc8, 0x64, 0x9a, 0x64, 0x02, 0x1f, 0xd7, 0x3c,
 	0xbb, 0xbb, 0xe1, 0x99, 0x11, 0x6c, 0x9a, 0xf6, 0x04, 0x1a, 0x42, 0xa9, 0x54, 0x59, 0xcb, 0xd6,
-	0xe2, 0xa0, 0xa8, 0x96, 0x04, 0x37, 0x22, 0x7c, 0x0e, 0xad, 0x45, 0x2c, 0x92, 0x7c, 0x71, 0xb9,
-	0xb4, 0x6e, 0x1d, 0x56, 0xc0, 0xd4, 0x36, 0x2a, 0xa6, 0x92, 0xe2, 0xb3, 0xd2, 0xe6, 0x69, 0x72,
-	0x99, 0x5a, 0x9f, 0x6e, 0x6f, 0xf9, 0x54, 0xb4, 0xf8, 0x86, 0x8c, 0x1d, 0x5a, 0x6b, 0x6e, 0x00,
-	0x89, 0xde, 0xd2, 0x3d, 0x6c, 0x43, 0x23, 0xe0, 0x3c, 0xe2, 0xd4, 0x61, 0x2f, 0x80, 0x6e, 0xbf,
-	0x86, 0x3d, 0x20, 0x8b, 0x58, 0xaf, 0xdc, 0xe5, 0x64, 0x11, 0xe3, 0x01, 0x34, 0xe6, 0x71, 0xac,
-	0x32, 0x9f, 0x0c, 0xdc, 0x61, 0x97, 0x9b, 0x84, 0x1d, 0x41, 0xaf, 0x7e, 0x0b, 0x88, 0xe0, 0x49,
-	0x21, 0x94, 0x25, 0x75, 0xbc, 0x83, 0x7d, 0x09, 0xb7, 0xfe, 0xbb, 0x88, 0x5d, 0xb8, 0xbe, 0x68,
-	0x8d, 0xb7, 0xb9, 0x49, 0xd8, 0x2b, 0x38, 0xb8, 0xee, 0x22, 0xf4, 0x84, 0x79, 0xfe, 0x55, 0x4f,
-	0x68, 0x73, 0x1d, 0xef, 0x98, 0xf0, 0x10, 0xf6, 0x6b, 0x7f, 0x05, 0x29, 0xb8, 0x57, 0xd9, 0x17,
-	0x4b, 0x16, 0x21, 0x7b, 0x03, 0xb0, 0xb6, 0xf3, 0xda, 0x8f, 0x43, 0xf0, 0x8a, 0x75, 0x7c, 0x62,
-	0x6a, 0x45, 0xbc, 0x7e, 0xce, 0xd5, 0x93, 0x4c, 0xf2, 0xba, 0xfb, 0x6b, 0xd5, 0x77, 0x7e, 0xaf,
-	0xfa, 0xce, 0x9f, 0x55, 0xdf, 0xf9, 0x17, 0x00, 0x00, 0xff, 0xff, 0xf2, 0x70, 0x78, 0xa7, 0xaa,
-	0x03, 0x00, 0x00,
+	0xe2, 0xa0, 0xa8, 0x96, 0x04, 0x37, 0x22, 0x7c, 0x56, 0xfa, 0x35, 0x4d, 0x2e, 0x53, 0xeb, 0xd7,
+	0xed, 0xad, 0x85, 0x8b, 0x16, 0xdf, 0x90, 0xe1, 0x73, 0x68, 0x2d, 0x62, 0x91, 0xe4, 0x8b, 0xcb,
+	0xa5, 0xf5, 0xe8, 0xb0, 0x42, 0xa6, 0xb6, 0x51, 0x7d, 0xa8, 0x92, 0xb2, 0x43, 0x6b, 0xcd, 0x0d,
+	0x20, 0xd1, 0x5b, 0xba, 0x87, 0x6d, 0x68, 0x04, 0x9c, 0x47, 0x9c, 0x3a, 0xec, 0x05, 0xd0, 0x6d,
+	0x10, 0x7b, 0x40, 0x16, 0xb1, 0x5e, 0xb9, 0xcb, 0xc9, 0x22, 0xc6, 0x03, 0x68, 0xcc, 0xe3, 0x58,
+	0x65, 0x3e, 0x19, 0xb8, 0xc3, 0x2e, 0x37, 0x09, 0x3b, 0x82, 0x5e, 0xfd, 0x16, 0x10, 0xc1, 0x93,
+	0x42, 0x28, 0x4b, 0xea, 0x78, 0x07, 0xfb, 0x12, 0x6e, 0xfd, 0x77, 0x11, 0xbb, 0x70, 0x7d, 0xd1,
+	0x1a, 0x6f, 0x73, 0x93, 0xb0, 0x57, 0x70, 0x70, 0xdd, 0x45, 0xe8, 0x09, 0xf3, 0xfc, 0xab, 0x9e,
+	0xd0, 0xe6, 0x3a, 0xde, 0x31, 0xe1, 0x21, 0xec, 0xd7, 0x5e, 0x05, 0x29, 0xb8, 0x57, 0xd9, 0x17,
+	0x4b, 0x16, 0x21, 0x7b, 0x03, 0xb0, 0x7e, 0x85, 0x6b, 0x7f, 0x0e, 0xc1, 0x2b, 0xd6, 0xf1, 0x89,
+	0xa9, 0x15, 0xf1, 0xfa, 0x73, 0xae, 0x9e, 0x64, 0x92, 0xd7, 0xdd, 0x5f, 0xab, 0xbe, 0xf3, 0x7b,
+	0xd5, 0x77, 0xfe, 0xac, 0xfa, 0xce, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd8, 0xcf, 0x8f, 0x86,
+	0xaa, 0x03, 0x00, 0x00,
 }
