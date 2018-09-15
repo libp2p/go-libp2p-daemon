@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 
@@ -9,13 +10,15 @@ import (
 )
 
 func main() {
-	sock := "/tmp/p2pd.sock"
-	d, err := p2pd.NewDaemon(context.Background(), sock)
+	sock := flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path")
+	flag.Parse()
+
+	d, err := p2pd.NewDaemon(context.Background(), *sock)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	fmt.Printf("Control socket: %s\n", sock)
+	fmt.Printf("Control socket: %s\n", *sock)
 	fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
 	fmt.Printf("Peer Addrs:\n")
 	for _, addr := range d.Addrs() {
