@@ -37,6 +37,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 		}
 
 		switch *req.Type {
+		case pb.Request_IDENTIFY:
+			res := d.doIdentify(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				return
+			}
+
 		case pb.Request_CONNECT:
 			res := d.doConnect(&req)
 			err := w.WriteMsg(res)
@@ -74,6 +82,19 @@ func (d *Daemon) handleConn(c net.Conn) {
 			return
 		}
 	}
+}
+
+func (d *Daemon) doIdentify(req *pb.Request) *pb.Response {
+	id := []byte(d.ID())
+	addrs := d.Addrs()
+	baddrs := make([][]byte, len(addrs))
+	for x, addr := range addrs {
+		baddrs[x] = addr.Bytes()
+	}
+
+	res := okResponse()
+	res.Identify = &pb.IdentifyResponse{Id: id, Addrs: baddrs}
+	return res
 }
 
 func (d *Daemon) doConnect(req *pb.Request) *pb.Response {

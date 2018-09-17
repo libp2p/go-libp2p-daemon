@@ -8,7 +8,9 @@ import (
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
 	host "github.com/libp2p/go-libp2p-host"
+	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
+	ma "github.com/multiformats/go-multiaddr"
 )
 
 var log = logging.Logger("p2pd")
@@ -45,6 +47,14 @@ func NewDaemon(ctx context.Context, path string, opts ...libp2p.Option) (*Daemon
 	go d.listen()
 
 	return d, nil
+}
+
+func (d *Daemon) ID() peer.ID {
+	return d.host.ID()
+}
+
+func (d *Daemon) Addrs() []ma.Multiaddr {
+	return d.host.Addrs()
 }
 
 func (d *Daemon) listen() {
