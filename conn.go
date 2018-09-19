@@ -36,6 +36,8 @@ func (d *Daemon) handleConn(c net.Conn) {
 			return
 		}
 
+		log.Debugf("request: %d [%s]", *req.Type, req.Type.String())
+
 		switch *req.Type {
 		case pb.Request_IDENTIFY:
 			res := d.doIdentify(&req)
@@ -174,13 +176,13 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	defer d.mx.Unlock()
 
 	path := *req.StreamHandler.Path
-	for sp := range req.StreamHandler.Proto {
+	for _, sp := range req.StreamHandler.Proto {
 		p := proto.ID(sp)
 		_, ok := d.handlers[p]
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
 		}
-		log.Debugf("set stream handler: %s -> %s", p, path)
+		log.Debugf("set stream handler: %s -> %s", sp, path)
 		d.handlers[p] = path
 	}
 
