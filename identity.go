@@ -21,5 +21,5 @@ func WriteIdentity(k crypto.PrivKey, path string) error {
 		return err
 	}
 
-	return ioutil.WriteFile(path, bytes, 0500)
+	return ioutil.WriteFile(path, bytes, 0400)
 }
