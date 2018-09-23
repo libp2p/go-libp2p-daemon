@@ -57,6 +57,12 @@
       "hash": "Qmda4cPRvSRyox3SqgJN6DfSZGU5TtHufPTp9uXjFj71X6",
       "name": "go-libp2p-peerstore",
       "version": "2.0.0"
+    },
+    {
+      "author": "whyrusleeping",
+      "hash": "QmPvyPwuCgJ7pDmrKDxRtsScJgBaM5h4EpRL2qQJsmXf4n",
+      "name": "go-libp2p-crypto",
+      "version": "2.0.1"
     }
   ],
   "gxVersion": "0.12.1",
