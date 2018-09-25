@@ -47,13 +47,13 @@ These are the short-term priorities for us. If you feel something is missing,
 please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 
 - ✅ Protobuf control API exposed over a Unix domain socket.
-- ✅ Connection lifecycle: connecting and disconnecting with peers.
+- ✅ Connection lifecycle: connecting and disconnecting to/from peers.
 - ✅ Stream lifecycle: opening and closing streams.
 - ✅ Stream <> unix socket 1:1 mapping.
 - ✅ Daemon identity: auto-generated, and persisted.
-- 🚧 DHT operations.
-- 🚧 Pubsub interactions.
-- Circuit relay support.
+- 🚧 Subsystem: DHT interactions.
+- 🚧 Subsystem: Pubsub interactions.
+- Subsystem: Circuit relay support.
 - Enabling interoperability testing between libp2p implementations.
 - Go binding.
 - Python binding.
@@ -63,13 +63,13 @@ please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 These are the medium-term priorities for us. If you feel something is missing,
 please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 
-- Multi-tenancy, one application = one identity = one peer ID. 
+- Multi-tenancy, one application = one identity = one peer ID.
 - app <> daemon isolation; trust-less scenario; programs should not be able to 
-  interfere or spy on streams owned by others. 
+  interfere or spy on streams owned by others.
 - Shared-memory local transport between apps and the daemon: more efficient 
   than unix sockets.
-- Extracting local transports as go-libp2p transports. 
+- Extracting local transports as go-libp2p transports.
 - Allowing "blessed" applications to act on behalf of the daemon.
-- Global services implemented in the user space. 
+- Global services implemented in the user space.
 - Plugins: services providing features back to the daemon, for use by other 
-  tenants. 
+  tenants.
