@@ -55,8 +55,7 @@ please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 - Pubsub interactions.
 - Shared-memory local transport between apps and the daemon: more efficient 
   than unix sockets.
-- Enabling interoperability testing.
-- between libp2p implementations.
+- Enabling interoperability testing between libp2p implementations.
 - Go binding.
 - Python binding.
 
