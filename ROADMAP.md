@@ -45,7 +45,7 @@ and a Go binding is in the works.
 These are the short-term priorities for us. If you feel something is missing,
 please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 
-- gRPC control API exposed over a Unix domain socket.
+- Protobuf control API exposed over a Unix domain socket.
 - Connection lifecycle: connecting and disconnecting with peers.
 - Stream lifecycle: opening and closing streams.
 - Stream <> unix socket 1:1 mapping.
