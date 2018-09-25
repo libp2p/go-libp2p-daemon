@@ -1,6 +1,7 @@
 # libp2p daemon roadmap
 
 Revision: r1; 2018-09-25
+
 Authors (a-z):
   - @bigs
   - @raulk
