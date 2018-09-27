@@ -2,6 +2,7 @@ package p2pclient
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"sync"
 
@@ -34,6 +35,25 @@ func NewClient(addr multiaddr.Multiaddr) (*Client, error) {
 	}
 	cli := &Client{control: conn}
 	return cli, nil
+}
+
+// Close shuts down the control connection and all active handlers. Users are
+// responsible for closing the streams they've opened with the daemon.
+func (c *Client) Close() error {
+	c.mhandlers.Lock()
+	defer c.mhandlers.Unlock()
+
+	if err := c.control.Close(); err != nil {
+		return err
+	}
+
+	for proto, listener := range c.handlers {
+		if err := listener.Close(); err != nil {
+			return fmt.Errorf("closing listener for %s: %s", proto, err)
+		}
+	}
+
+	return nil
 }
 
 // Identify queries the daemon for its peer ID and listen addresses.
