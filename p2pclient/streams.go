@@ -2,7 +2,6 @@ package p2pclient
 
 import (
 	"errors"
-	"fmt"
 	"io"
 	"net"
 
@@ -12,9 +11,13 @@ import (
 
 // NewStream initializes a new stream on one of the protocols in protos with
 // the specified peer.
-func (c *Client) NewStream(peer []byte, protos []string) (*pb.StreamInfo, error) {
-	r := ggio.NewDelimitedReader(c.control, MessageSizeMax)
-	w := ggio.NewDelimitedWriter(c.control)
+func (c *Client) NewStream(peer []byte, protos []string) (*pb.StreamInfo, io.ReadWriteCloser, error) {
+	control, err := c.newControlConn()
+	if err != nil {
+		return nil, nil, err
+	}
+	r := ggio.NewDelimitedReader(control, MessageSizeMax)
+	w := ggio.NewDelimitedWriter(control)
 
 	req := &pb.Request{
 		Type: pb.Request_STREAM_OPEN.Enum(),
@@ -25,19 +28,67 @@ func (c *Client) NewStream(peer []byte, protos []string) (*pb.StreamInfo, error)
 	}
 
 	if err := w.WriteMsg(req); err != nil {
-		return nil, err
+		control.Close()
+		return nil, nil, err
 	}
 
 	res := &pb.Response{}
 	if err := r.ReadMsg(res); err != nil {
-		return nil, err
+		control.Close()
+		return nil, nil, err
 	}
 
 	if err := res.GetError(); err != nil {
-		return nil, errors.New(err.GetMsg())
+		control.Close()
+		return nil, nil, errors.New(err.GetMsg())
 	}
 
-	return res.GetStreamInfo(), nil
+	return res.GetStreamInfo(), control, nil
+}
+
+func (c *Client) closeListener() {
+	if c.listener != nil {
+		c.listener.Close()
+	}
+}
+
+func (c *Client) listen(listenPath string) error {
+	l, err := net.Listen("unix", listenPath)
+	if err != nil {
+		return err
+	}
+	c.listener = l
+
+	go func(c *Client) {
+		defer c.closeListener()
+		for {
+			conn, err := c.listener.Accept()
+			if err != nil {
+				log.Errorf("accepting incoming connection: %s", err)
+				return
+			}
+
+			r := ggio.NewDelimitedReader(conn, MessageSizeMax)
+			streamInfo := &pb.StreamInfo{}
+			if err := r.ReadMsg(streamInfo); err != nil {
+				log.Errorf("reading stream info: %s", err)
+				conn.Close()
+				continue
+			}
+
+			c.mhandlers.Lock()
+			defer c.mhandlers.Unlock()
+			handler, ok := c.handlers[streamInfo.GetProto()]
+			if !ok {
+				conn.Close()
+				continue
+			}
+
+			go handler(streamInfo, conn)
+		}
+	}(c)
+
+	return nil
 }
 
 // StreamHandlerFunc is the type of callbacks executed upon receiving a new stream
@@ -47,44 +98,11 @@ type StreamHandlerFunc func(*pb.StreamInfo, io.ReadWriteCloser)
 // NewStreamHandler establishes an inbound unix socket and starts a listener.
 // All inbound connections to the listener are delegated to the provided
 // handler.
-func (c *Client) NewStreamHandler(proto string, path string, handler StreamHandlerFunc) (io.Closer, error) {
-	var listener net.Listener
-	var err error
+func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) {
+	c.mhandlers.Lock()
+	defer c.mhandlers.Unlock()
 
-	{
-		c.mhandlers.Lock()
-		defer c.mhandlers.Unlock()
-
-		if _, ok := c.handlers[proto]; ok {
-			return nil, fmt.Errorf("handler for protocol %s already registered", proto)
-		}
-
-		listener, err = net.Listen("unix", path)
-		if err != nil {
-			return nil, err
-		}
-
-		c.handlers[proto] = listener
+	for _, proto := range protos {
+		c.handlers[proto] = handler
 	}
-
-	go func() {
-		for {
-			conn, err := listener.Accept()
-			if err != nil {
-				log.Errorf("error accepting on listener %s: %s", listener.Addr().String(), err)
-				return
-			}
-
-			r := ggio.NewDelimitedReader(conn, MessageSizeMax)
-			info := &pb.StreamInfo{}
-			if err := r.ReadMsg(info); err != nil {
-				log.Errorf("error parsing stream info: %s", err)
-				conn.Close()
-			}
-
-			go handler(info, conn)
-		}
-	}()
-
-	return listener, nil
 }

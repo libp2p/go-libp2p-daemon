@@ -2,15 +2,13 @@ package p2pclient
 
 import (
 	"errors"
-	"fmt"
-	"io"
+	"net"
 	"sync"
 
 	ggio "github.com/gogo/protobuf/io"
 	logging "github.com/ipfs/go-log"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	multiaddr "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 var log = logging.Logger("p2pclient")
@@ -20,46 +18,40 @@ const MessageSizeMax = 1 << 22 // 4 MB
 
 // Client is the struct that manages a connection to a libp2p daemon.
 type Client struct {
-	control manet.Conn
+	controlPath string
+	listener    net.Listener
 
 	mhandlers sync.Mutex
-	handlers  map[string]io.Closer
+	handlers  map[string]StreamHandlerFunc
 }
 
 // NewClient creates a new libp2p daemon client, connecting to a daemon
 // listening at the provided multiaddr.Multiaddr
-func NewClient(addr multiaddr.Multiaddr) (*Client, error) {
-	conn, err := manet.Dial(addr)
-	if err != nil {
+func NewClient(controlPath, listenPath string) (*Client, error) {
+	client := &Client{
+		controlPath: controlPath,
+	}
+
+	if err := client.listen(listenPath); err != nil {
 		return nil, err
 	}
-	cli := &Client{control: conn}
-	return cli, nil
+
+	return client, nil
 }
 
-// Close shuts down the control connection and all active handlers. Users are
-// responsible for closing the streams they've opened with the daemon.
-func (c *Client) Close() error {
-	c.mhandlers.Lock()
-	defer c.mhandlers.Unlock()
-
-	if err := c.control.Close(); err != nil {
-		return err
-	}
-
-	for proto, listener := range c.handlers {
-		if err := listener.Close(); err != nil {
-			return fmt.Errorf("closing listener for %s: %s", proto, err)
-		}
-	}
-
-	return nil
+func (c *Client) newControlConn() (net.Conn, error) {
+	return net.Dial("unix", c.controlPath)
 }
 
 // Identify queries the daemon for its peer ID and listen addresses.
 func (c *Client) Identify() ([]byte, []multiaddr.Multiaddr, error) {
-	r := ggio.NewDelimitedReader(c.control, MessageSizeMax)
-	w := ggio.NewDelimitedWriter(c.control)
+	control, err := c.newControlConn()
+	if err != nil {
+		return nil, nil, err
+	}
+	defer control.Close()
+	r := ggio.NewDelimitedReader(control, MessageSizeMax)
+	w := ggio.NewDelimitedWriter(control)
 
 	req := &pb.Request{Type: pb.Request_IDENTIFY.Enum()}
 	if err := w.WriteMsg(req); err != nil {
@@ -92,8 +84,13 @@ func (c *Client) Identify() ([]byte, []multiaddr.Multiaddr, error) {
 // Connect establishes a connection to a peer after populating the Peerstore
 // entry for said peer with a list of addresses.
 func (c *Client) Connect(p []byte, addrs []multiaddr.Multiaddr) error {
-	r := ggio.NewDelimitedReader(c.control, MessageSizeMax)
-	w := ggio.NewDelimitedWriter(c.control)
+	control, err := c.newControlConn()
+	if err != nil {
+		return err
+	}
+	defer control.Close()
+	r := ggio.NewDelimitedReader(control, MessageSizeMax)
+	w := ggio.NewDelimitedWriter(control)
 
 	addrbytes := make([][]byte, len(addrs))
 	for i, addr := range addrs {
