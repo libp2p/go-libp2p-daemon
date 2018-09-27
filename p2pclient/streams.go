@@ -46,10 +46,12 @@ func (c *Client) NewStream(peer []byte, protos []string) (*pb.StreamInfo, io.Rea
 	return res.GetStreamInfo(), control, nil
 }
 
-func (c *Client) closeListener() {
+// Close stops the listener socket.
+func (c *Client) Close() error {
 	if c.listener != nil {
-		c.listener.Close()
+		return c.listener.Close()
 	}
+	return nil
 }
 
 func (c *Client) listen(listenPath string) error {
@@ -60,7 +62,6 @@ func (c *Client) listen(listenPath string) error {
 	c.listener = l
 
 	go func(c *Client) {
-		defer c.closeListener()
 		for {
 			conn, err := c.listener.Accept()
 			if err != nil {
