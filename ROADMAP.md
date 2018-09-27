@@ -17,10 +17,10 @@ leverage the vast ecosystem of go-libp2p modules.
 
 By running a *single instance* of the daemon per machine, co-local applications
 can leverage the libp2p stack to communicate with peers, interact with the DHT,
-multiplex protocols, etc. no matter the language they are developed in, nor
-whether a native libp2p implementation exists in that language. Running
-*multiple instances* of the daemon is also possible, and specially useful for
-testing purposes.
+handle protocols, participate in pubsub, etc. no matter the language they are
+developed in, nor whether a native libp2p implementation exists in that
+language. Running *multiple instances* of the daemon is also possible, and
+specially useful for testing purposes.
 
 When establishing connections, the daemon handles transport selection, security
 negotiation, and protocol and stream multiplexing. Streams are mapped 1:1 to
