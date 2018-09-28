@@ -33,6 +33,7 @@ func NewClient(controlPath, listenPath string) (*Client, error) {
 	client := &Client{
 		controlPath: controlPath,
 		listenPath:  listenPath,
+		handlers:    make(map[string]StreamHandlerFunc),
 	}
 
 	if err := client.listen(); err != nil {
