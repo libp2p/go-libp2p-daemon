@@ -54,40 +54,42 @@ func (c *Client) Close() error {
 	return nil
 }
 
+func (c *Client) streamDispatcher() {
+	for {
+		conn, err := c.listener.Accept()
+		if err != nil {
+			log.Errorf("accepting incoming connection: %s", err)
+			return
+		}
+
+		r := ggio.NewDelimitedReader(conn, MessageSizeMax)
+		streamInfo := &pb.StreamInfo{}
+		if err := r.ReadMsg(streamInfo); err != nil {
+			log.Errorf("reading stream info: %s", err)
+			conn.Close()
+			continue
+		}
+
+		c.mhandlers.Lock()
+		defer c.mhandlers.Unlock()
+		handler, ok := c.handlers[streamInfo.GetProto()]
+		if !ok {
+			conn.Close()
+			continue
+		}
+
+		go handler(streamInfo, conn)
+	}
+}
+
 func (c *Client) listen() error {
 	l, err := net.Listen("unix", c.listenPath)
 	if err != nil {
 		return err
 	}
+
 	c.listener = l
-
-	go func(c *Client) {
-		for {
-			conn, err := c.listener.Accept()
-			if err != nil {
-				log.Errorf("accepting incoming connection: %s", err)
-				return
-			}
-
-			r := ggio.NewDelimitedReader(conn, MessageSizeMax)
-			streamInfo := &pb.StreamInfo{}
-			if err := r.ReadMsg(streamInfo); err != nil {
-				log.Errorf("reading stream info: %s", err)
-				conn.Close()
-				continue
-			}
-
-			c.mhandlers.Lock()
-			defer c.mhandlers.Unlock()
-			handler, ok := c.handlers[streamInfo.GetProto()]
-			if !ok {
-				conn.Close()
-				continue
-			}
-
-			go handler(streamInfo, conn)
-		}
-	}(c)
+	go c.streamDispatcher()
 
 	return nil
 }
