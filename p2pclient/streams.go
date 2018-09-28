@@ -54,8 +54,8 @@ func (c *Client) Close() error {
 	return nil
 }
 
-func (c *Client) listen(listenPath string) error {
-	l, err := net.Listen("unix", listenPath)
+func (c *Client) listen() error {
+	l, err := net.Listen("unix", c.listenPath)
 	if err != nil {
 		return err
 	}
@@ -99,11 +99,30 @@ type StreamHandlerFunc func(*pb.StreamInfo, io.ReadWriteCloser)
 // NewStreamHandler establishes an inbound unix socket and starts a listener.
 // All inbound connections to the listener are delegated to the provided
 // handler.
-func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) {
+func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) error {
+	control, err := c.newControlConn()
+	if err != nil {
+		return err
+	}
+
 	c.mhandlers.Lock()
 	defer c.mhandlers.Unlock()
+
+	w := ggio.NewDelimitedWriter(control)
+	req := &pb.Request{
+		Type: pb.Request_STREAM_HANDLER.Enum(),
+		StreamHandler: &pb.StreamHandlerRequest{
+			Path:  &c.listenPath,
+			Proto: protos,
+		},
+	}
+	if err := w.WriteMsg(req); err != nil {
+		return err
+	}
 
 	for _, proto := range protos {
 		c.handlers[proto] = handler
 	}
+
+	return nil
 }

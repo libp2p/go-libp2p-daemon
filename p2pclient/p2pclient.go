@@ -19,6 +19,7 @@ const MessageSizeMax = 1 << 22 // 4 MB
 // Client is the struct that manages a connection to a libp2p daemon.
 type Client struct {
 	controlPath string
+	listenPath  string
 	listener    net.Listener
 
 	mhandlers sync.Mutex
@@ -26,13 +27,15 @@ type Client struct {
 }
 
 // NewClient creates a new libp2p daemon client, connecting to a daemon
-// listening at the provided multiaddr.Multiaddr
+// listening on a unix socket at controlPath, and establishing an inbound socket
+// at listenPath.
 func NewClient(controlPath, listenPath string) (*Client, error) {
 	client := &Client{
 		controlPath: controlPath,
+		listenPath:  listenPath,
 	}
 
-	if err := client.listen(listenPath); err != nil {
+	if err := client.listen(); err != nil {
 		return nil, err
 	}
 
