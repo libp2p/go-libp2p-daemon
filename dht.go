@@ -7,6 +7,7 @@ import (
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
 	cid "github.com/ipfs/go-cid"
+	crypto "github.com/libp2p/go-libp2p-crypto"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	peer "github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
@@ -176,7 +177,28 @@ func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan 
 }
 
 func (d *Daemon) doDHTGetPublicKey(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Peer == nil {
+		return errorResponseString("Malformed request; missing peer parameter"), nil, nil
+	}
+
+	p, err := peer.IDFromBytes(req.Peer)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+	defer cancel()
+
+	key, err := d.dht.GetPublicKey(ctx, p)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	res, err := dhtResponsePublicKey(key)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+	return dhtOkResponse(res), nil, nil
 }
 
 func (d *Daemon) doDHTGetValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -228,6 +250,17 @@ func dhtResponsePeerID(p peer.ID) *pb.DHTResponse {
 		Type:  pb.DHTResponse_VALUE.Enum(),
 		Value: []byte(p),
 	}
+}
+
+func dhtResponsePublicKey(key crypto.PubKey) (*pb.DHTResponse, error) {
+	bytes, err := crypto.MarshalPublicKey(key)
+	if err != nil {
+		return nil, err
+	}
+	return &pb.DHTResponse{
+		Type:  pb.DHTResponse_VALUE.Enum(),
+		Value: bytes,
+	}, nil
 }
 
 func dhtOkResponse(r *pb.DHTResponse) *pb.Response {
