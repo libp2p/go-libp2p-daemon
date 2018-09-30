@@ -79,8 +79,30 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_DHT:
+			res, ch, cancel := d.doDHT(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				if ch != nil {
+					cancel()
+				}
+				return
+			}
+
+			if ch != nil {
+				for res := range ch {
+					err = w.WriteMsg(res)
+					if err != nil {
+						log.Debugf("Error writing response: %s", err.Error())
+						cancel()
+						return
+					}
+				}
+			}
+
 		default:
-			log.Debugf("Unexpected request type: %s", req.Type)
+			log.Debugf("Unexpected request type: %d", *req.Type)
 			return
 		}
 	}

@@ -8,6 +8,7 @@ import (
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
 	host "github.com/libp2p/go-libp2p-host"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ma "github.com/multiformats/go-multiaddr"
@@ -19,6 +20,8 @@ type Daemon struct {
 	ctx      context.Context
 	host     host.Host
 	listener net.Listener
+
+	dht *dht.IpfsDHT
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to unix socket path
