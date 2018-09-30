@@ -266,7 +266,24 @@ func (d *Daemon) doDHTPutValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 }
 
 func (d *Daemon) doDHTProvide(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Cid == nil {
+		return errorResponseString("Malformed request; missing cid parameter"), nil, nil
+	}
+
+	cid, err := cid.Cast(req.Cid)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+	defer cancel()
+
+	err = d.dht.Provide(ctx, cid, true)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	return okResponse(), nil, nil
 }
 
 func (d *Daemon) dhtRequestContext(req *pb.DHTRequest) (context.Context, func()) {
