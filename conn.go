@@ -99,7 +99,11 @@ func (d *Daemon) handleConn(c net.Conn) {
 					}
 				}
 
-				cancel()
+				err = w.WriteMsg(dhtResponseEnd())
+				if err != nil {
+					log.Debugf("Error writing response: %s", err.Error())
+					return
+				}
 			}
 
 		default:

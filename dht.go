@@ -75,7 +75,37 @@ func (d *Daemon) doDHTFindPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 }
 
 func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Peer == nil {
+		return errorResponseString("Malformed request; missing peer parameter"), nil, nil
+	}
+
+	p, err := peer.IDFromBytes(req.Peer)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+
+	ch, err := d.dht.FindPeersConnectedToPeer(ctx, p)
+	if err != nil {
+		cancel()
+		return errorResponse(err), nil, nil
+	}
+
+	rch := make(chan *pb.DHTResponse)
+	go func() {
+		defer cancel()
+		defer close(rch)
+		for pi := range ch {
+			select {
+			case rch <- dhtResponsePeer(*pi):
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	return dhtOkResponse(dhtResponseBegin()), rch, cancel
 }
 
 func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -113,6 +143,18 @@ func (d *Daemon) dhtRequestContext(req *pb.DHTRequest) (context.Context, func())
 	}
 
 	return context.WithTimeout(d.ctx, timeout)
+}
+
+func dhtResponseBegin() *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type: pb.DHTResponse_BEGIN.Enum(),
+	}
+}
+
+func dhtResponseEnd() *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type: pb.DHTResponse_END.Enum(),
+	}
 }
 
 func dhtResponsePeer(pi pstore.PeerInfo) *pb.DHTResponse {
