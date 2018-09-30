@@ -98,6 +98,8 @@ func (d *Daemon) handleConn(c net.Conn) {
 						return
 					}
 				}
+
+				cancel()
 			}
 
 		default:

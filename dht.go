@@ -1,7 +1,13 @@
 package p2pd
 
 import (
+	"context"
+	"time"
+
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
+
+	peer "github.com/libp2p/go-libp2p-peer"
+	pstore "github.com/libp2p/go-libp2p-peerstore"
 )
 
 func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -48,7 +54,24 @@ func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, f
 }
 
 func (d *Daemon) doDHTFindPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Peer == nil {
+		return errorResponseString("Malformed request; missing peer parameter"), nil, nil
+	}
+
+	p, err := peer.IDFromBytes(req.Peer)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+	defer cancel()
+
+	pi, err := d.dht.FindPeer(ctx, p)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	return dhtOkResponse(dhtResponsePeer(pi)), nil, nil
 }
 
 func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -81,4 +104,38 @@ func (d *Daemon) doDHTPutValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 
 func (d *Daemon) doDHTProvide(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
 	return errorResponseString("XXX Implement me!"), nil, nil
+}
+
+func (d *Daemon) dhtRequestContext(req *pb.DHTRequest) (context.Context, func()) {
+	timeout := 60 * time.Second
+	if req.GetTimeout() > 0 {
+		timeout = time.Duration(*req.Timeout)
+	}
+
+	return context.WithTimeout(d.ctx, timeout)
+}
+
+func dhtResponsePeer(pi pstore.PeerInfo) *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type: pb.DHTResponse_VALUE.Enum(),
+		Peer: peerInfo2pb(pi),
+	}
+}
+
+func dhtOkResponse(r *pb.DHTResponse) *pb.Response {
+	res := okResponse()
+	res.Dht = r
+	return res
+}
+
+func peerInfo2pb(pi pstore.PeerInfo) *pb.PeerInfo {
+	addrs := make([][]byte, len(pi.Addrs))
+	for x, addr := range pi.Addrs {
+		addrs[x] = addr.Bytes()
+	}
+
+	return &pb.PeerInfo{
+		Id:    []byte(pi.ID),
+		Addrs: addrs,
+	}
 }
