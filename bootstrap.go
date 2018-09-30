@@ -64,17 +64,34 @@ func (d *Daemon) Bootstrap() error {
 		d.host.Peerstore().AddAddrs(pi.ID, pi.Addrs, pstore.PermanentAddrTTL)
 	}
 
+	count := d.connectBootstrapPeers(pis, BootstrapConnections)
+	if count == 0 {
+		return errors.New("Failed to connect to bootstrap peers")
+	}
+
+	go d.keepBootstrapConnections(pis)
+
+	if d.dht != nil {
+		return d.dht.Bootstrap(d.ctx)
+	}
+
+	return nil
+}
+
+func (d *Daemon) connectBootstrapPeers(pis []*pstore.PeerInfo, toconnect int) int {
+	count := 0
+
 	shufflePeerInfos(pis)
 
-	toconnect := BootstrapConnections
 	ctx, cancel := context.WithTimeout(d.ctx, 60*time.Second)
 	defer cancel()
 
 	for _, pi := range pis {
-		err = d.host.Connect(ctx, *pi)
+		err := d.host.Connect(ctx, *pi)
 		if err != nil {
 			log.Debugf("Error connecting to bootstrap peer %s: %s", pi.ID, err.Error())
 		} else {
+			count++
 			toconnect--
 		}
 		if toconnect == 0 {
@@ -82,13 +99,21 @@ func (d *Daemon) Bootstrap() error {
 		}
 	}
 
-	if toconnect == BootstrapConnections {
-		return errors.New("Failed to connect to bootstrap peers")
-	}
+	return count
 
-	if d.dht != nil {
-		return d.dht.Bootstrap(d.ctx)
-	}
+}
 
-	return nil
+func (d *Daemon) keepBootstrapConnections(pis []*pstore.PeerInfo) {
+	ticker := time.NewTicker(15 * time.Minute)
+	for {
+		<-ticker.C
+
+		conns := d.host.Network().Conns()
+		if len(conns) >= BootstrapConnections {
+			continue
+		}
+
+		toconnect := BootstrapConnections - len(conns)
+		d.connectBootstrapPeers(pis, toconnect)
+	}
 }
