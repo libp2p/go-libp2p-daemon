@@ -9,8 +9,10 @@ import (
 	libp2p "github.com/libp2p/go-libp2p"
 	host "github.com/libp2p/go-libp2p-host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
+	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
+	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -50,6 +52,24 @@ func NewDaemon(ctx context.Context, path string, opts ...libp2p.Option) (*Daemon
 	go d.listen()
 
 	return d, nil
+}
+
+func (d *Daemon) EnableDHT(client bool) error {
+	var opts []dhtopts.Option
+
+	if client {
+		opts = append(opts, dhtopts.Client(true))
+	}
+
+	dht, err := dht.New(d.ctx, d.host, opts...)
+	if err != nil {
+		return err
+	}
+
+	d.dht = dht
+	d.host = rhost.Wrap(d.host, d.dht)
+
+	return nil
 }
 
 func (d *Daemon) ID() peer.ID {
