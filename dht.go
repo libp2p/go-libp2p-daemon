@@ -1,18 +1,16 @@
 package p2pd
 
 import (
-	"errors"
-
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
 func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, func()) {
 	if d.dht == nil {
-		return errorResponse(errors.New("DHT not enabled")), nil, nil
+		return errorResponseString("DHT not enabled"), nil, nil
 	}
 
 	if req.Dht == nil {
-		return errorResponse(errors.New("Malformed request; missing parameters")), nil, nil
+		return errorResponseString("Malformed request; missing parameters"), nil, nil
 	}
 
 	switch *req.Dht.Type {
@@ -45,42 +43,42 @@ func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, f
 
 	default:
 		log.Debugf("Unexpected DHT request type: %d", *req.Dht.Type)
-		return errorResponse(errors.New("Unexpected request")), nil, nil
+		return errorResponseString("Unexpected request"), nil, nil
 	}
 }
 
 func (d *Daemon) doDHTFindPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTGetPublicKey(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTGetValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTSearchValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTPutValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }
 
 func (d *Daemon) doDHTProvide(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponse(errors.New("XXX Implement me!")), nil, nil
+	return errorResponseString("XXX Implement me!"), nil, nil
 }

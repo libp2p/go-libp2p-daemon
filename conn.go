@@ -2,7 +2,6 @@ package p2pd
 
 import (
 	"context"
-	"errors"
 	"io"
 	"net"
 	"time"
@@ -126,7 +125,7 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 	defer cancel()
 
 	if req.Connect == nil {
-		return errorResponse(errors.New("Malformed request; missing parameters"))
+		return errorResponseString("Malformed request; missing parameters")
 	}
 
 	pid, err := peer.IDFromBytes(req.Connect.Peer)
@@ -163,7 +162,7 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
 	defer cancel()
 
 	if req.StreamOpen == nil {
-		return errorResponse(errors.New("Malformed request; missing parameters")), nil
+		return errorResponseString("Malformed request; missing parameters"), nil
 	}
 
 	pid, err := peer.IDFromBytes(req.StreamOpen.Peer)
@@ -191,7 +190,7 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
 
 func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	if req.StreamHandler == nil {
-		return errorResponse(errors.New("Malformed request; missing parameters"))
+		return errorResponseString("Malformed request; missing parameters")
 	}
 
 	d.mx.Lock()
@@ -222,6 +221,13 @@ func errorResponse(err error) *pb.Response {
 	return &pb.Response{
 		Type:  pb.Response_ERROR.Enum(),
 		Error: &pb.ErrorResponse{Msg: &errstr},
+	}
+}
+
+func errorResponseString(err string) *pb.Response {
+	return &pb.Response{
+		Type:  pb.Response_ERROR.Enum(),
+		Error: &pb.ErrorResponse{Msg: &err},
 	}
 }
 
