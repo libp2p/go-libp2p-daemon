@@ -73,7 +73,7 @@ func (d *Daemon) doDHTFindPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 		return errorResponse(err), nil, nil
 	}
 
-	return dhtOkResponse(dhtResponsePeer(pi)), nil, nil
+	return dhtOkResponse(dhtResponsePeerInfo(pi)), nil, nil
 }
 
 func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -100,7 +100,7 @@ func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response
 		defer close(rch)
 		for pi := range ch {
 			select {
-			case rch <- dhtResponsePeer(*pi):
+			case rch <- dhtResponsePeerInfo(*pi):
 			case <-ctx.Done():
 				return
 			}
@@ -135,7 +135,7 @@ func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *p
 		defer close(rch)
 		for pi := range ch {
 			select {
-			case rch <- dhtResponsePeer(pi):
+			case rch <- dhtResponsePeerInfo(pi):
 			case <-ctx.Done():
 				return
 			}
@@ -146,7 +146,33 @@ func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *p
 }
 
 func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Key == nil {
+		return errorResponseString("Malformed request; missing key parameter"), nil, nil
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+
+	ch, err := d.dht.GetClosestPeers(ctx, *req.Key)
+	if err != nil {
+		cancel()
+		return errorResponse(err), nil, nil
+	}
+
+	rch := make(chan *pb.DHTResponse)
+	go func() {
+		defer cancel()
+		defer close(rch)
+		for p := range ch {
+			select {
+			case rch <- dhtResponsePeerID(p):
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	return dhtOkResponse(dhtResponseBegin()), rch, cancel
+
 }
 
 func (d *Daemon) doDHTGetPublicKey(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -190,10 +216,17 @@ func dhtResponseEnd() *pb.DHTResponse {
 	}
 }
 
-func dhtResponsePeer(pi pstore.PeerInfo) *pb.DHTResponse {
+func dhtResponsePeerInfo(pi pstore.PeerInfo) *pb.DHTResponse {
 	return &pb.DHTResponse{
 		Type: pb.DHTResponse_VALUE.Enum(),
 		Peer: peerInfo2pb(pi),
+	}
+}
+
+func dhtResponsePeerID(p peer.ID) *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type:  pb.DHTResponse_VALUE.Enum(),
+		Value: []byte(p),
 	}
 }
 
