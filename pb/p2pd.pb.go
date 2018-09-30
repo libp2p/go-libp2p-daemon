@@ -29,6 +29,7 @@ const (
 	Request_CONNECT        Request_Type = 1
 	Request_STREAM_OPEN    Request_Type = 2
 	Request_STREAM_HANDLER Request_Type = 3
+	Request_DHT            Request_Type = 4
 )
 
 var Request_Type_name = map[int32]string{
@@ -36,12 +37,14 @@ var Request_Type_name = map[int32]string{
 	1: "CONNECT",
 	2: "STREAM_OPEN",
 	3: "STREAM_HANDLER",
+	4: "DHT",
 }
 var Request_Type_value = map[string]int32{
 	"IDENTIFY":       0,
 	"CONNECT":        1,
 	"STREAM_OPEN":    2,
 	"STREAM_HANDLER": 3,
+	"DHT":            4,
 }
 
 func (x Request_Type) Enum() *Request_Type {
@@ -61,7 +64,7 @@ func (x *Request_Type) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (Request_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{0, 0}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{0, 0}
 }
 
 type Response_Type int32
@@ -97,7 +100,103 @@ func (x *Response_Type) UnmarshalJSON(data []byte) error {
 	return nil
 }
 func (Response_Type) EnumDescriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{1, 0}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{1, 0}
+}
+
+type DHTRequest_Type int32
+
+const (
+	DHTRequest_FIND_PEER                    DHTRequest_Type = 0
+	DHTRequest_FIND_PEERS_CONNECTED_TO_PEER DHTRequest_Type = 1
+	DHTRequest_FIND_PROVIDERS               DHTRequest_Type = 2
+	DHTRequest_GET_CLOSEST_PEERS            DHTRequest_Type = 3
+	DHTRequest_GET_PUBLIC_KEY               DHTRequest_Type = 4
+	DHTRequest_GET_VALUE                    DHTRequest_Type = 5
+	DHTRequest_SEARCH_VALUE                 DHTRequest_Type = 6
+	DHTRequest_PUT_VALUE                    DHTRequest_Type = 7
+	DHTRequest_PROVIDE                      DHTRequest_Type = 8
+)
+
+var DHTRequest_Type_name = map[int32]string{
+	0: "FIND_PEER",
+	1: "FIND_PEERS_CONNECTED_TO_PEER",
+	2: "FIND_PROVIDERS",
+	3: "GET_CLOSEST_PEERS",
+	4: "GET_PUBLIC_KEY",
+	5: "GET_VALUE",
+	6: "SEARCH_VALUE",
+	7: "PUT_VALUE",
+	8: "PROVIDE",
+}
+var DHTRequest_Type_value = map[string]int32{
+	"FIND_PEER":                    0,
+	"FIND_PEERS_CONNECTED_TO_PEER": 1,
+	"FIND_PROVIDERS":               2,
+	"GET_CLOSEST_PEERS":            3,
+	"GET_PUBLIC_KEY":               4,
+	"GET_VALUE":                    5,
+	"SEARCH_VALUE":                 6,
+	"PUT_VALUE":                    7,
+	"PROVIDE":                      8,
+}
+
+func (x DHTRequest_Type) Enum() *DHTRequest_Type {
+	p := new(DHTRequest_Type)
+	*p = x
+	return p
+}
+func (x DHTRequest_Type) String() string {
+	return proto.EnumName(DHTRequest_Type_name, int32(x))
+}
+func (x *DHTRequest_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(DHTRequest_Type_value, data, "DHTRequest_Type")
+	if err != nil {
+		return err
+	}
+	*x = DHTRequest_Type(value)
+	return nil
+}
+func (DHTRequest_Type) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{8, 0}
+}
+
+type DHTResponse_Type int32
+
+const (
+	DHTResponse_BEGIN DHTResponse_Type = 0
+	DHTResponse_VALUE DHTResponse_Type = 1
+	DHTResponse_END   DHTResponse_Type = 2
+)
+
+var DHTResponse_Type_name = map[int32]string{
+	0: "BEGIN",
+	1: "VALUE",
+	2: "END",
+}
+var DHTResponse_Type_value = map[string]int32{
+	"BEGIN": 0,
+	"VALUE": 1,
+	"END":   2,
+}
+
+func (x DHTResponse_Type) Enum() *DHTResponse_Type {
+	p := new(DHTResponse_Type)
+	*p = x
+	return p
+}
+func (x DHTResponse_Type) String() string {
+	return proto.EnumName(DHTResponse_Type_name, int32(x))
+}
+func (x *DHTResponse_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(DHTResponse_Type_value, data, "DHTResponse_Type")
+	if err != nil {
+		return err
+	}
+	*x = DHTResponse_Type(value)
+	return nil
+}
+func (DHTResponse_Type) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{9, 0}
 }
 
 type Request struct {
@@ -105,6 +204,7 @@ type Request struct {
 	Connect              *ConnectRequest       `protobuf:"bytes,2,opt,name=connect" json:"connect,omitempty"`
 	StreamOpen           *StreamOpenRequest    `protobuf:"bytes,3,opt,name=streamOpen" json:"streamOpen,omitempty"`
 	StreamHandler        *StreamHandlerRequest `protobuf:"bytes,4,opt,name=streamHandler" json:"streamHandler,omitempty"`
+	Dht                  *DHTRequest           `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
 	XXX_unrecognized     []byte                `json:"-"`
 	XXX_sizecache        int32                 `json:"-"`
@@ -114,7 +214,7 @@ func (m *Request) Reset()         { *m = Request{} }
 func (m *Request) String() string { return proto.CompactTextString(m) }
 func (*Request) ProtoMessage()    {}
 func (*Request) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{0}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{0}
 }
 func (m *Request) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -171,11 +271,19 @@ func (m *Request) GetStreamHandler() *StreamHandlerRequest {
 	return nil
 }
 
+func (m *Request) GetDht() *DHTRequest {
+	if m != nil {
+		return m.Dht
+	}
+	return nil
+}
+
 type Response struct {
 	Type                 *Response_Type    `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Response_Type" json:"type,omitempty"`
 	Error                *ErrorResponse    `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
 	StreamInfo           *StreamInfo       `protobuf:"bytes,3,opt,name=streamInfo" json:"streamInfo,omitempty"`
 	Identify             *IdentifyResponse `protobuf:"bytes,4,opt,name=identify" json:"identify,omitempty"`
+	Dht                  *DHTResponse      `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
 	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
 	XXX_unrecognized     []byte            `json:"-"`
 	XXX_sizecache        int32             `json:"-"`
@@ -185,7 +293,7 @@ func (m *Response) Reset()         { *m = Response{} }
 func (m *Response) String() string { return proto.CompactTextString(m) }
 func (*Response) ProtoMessage()    {}
 func (*Response) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{1}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{1}
 }
 func (m *Response) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -242,6 +350,13 @@ func (m *Response) GetIdentify() *IdentifyResponse {
 	return nil
 }
 
+func (m *Response) GetDht() *DHTResponse {
+	if m != nil {
+		return m.Dht
+	}
+	return nil
+}
+
 type IdentifyResponse struct {
 	Id                   []byte   `protobuf:"bytes,1,req,name=id" json:"id,omitempty"`
 	Addrs                [][]byte `protobuf:"bytes,2,rep,name=addrs" json:"addrs,omitempty"`
@@ -254,7 +369,7 @@ func (m *IdentifyResponse) Reset()         { *m = IdentifyResponse{} }
 func (m *IdentifyResponse) String() string { return proto.CompactTextString(m) }
 func (*IdentifyResponse) ProtoMessage()    {}
 func (*IdentifyResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{2}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{2}
 }
 func (m *IdentifyResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -309,7 +424,7 @@ func (m *ConnectRequest) Reset()         { *m = ConnectRequest{} }
 func (m *ConnectRequest) String() string { return proto.CompactTextString(m) }
 func (*ConnectRequest) ProtoMessage()    {}
 func (*ConnectRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{3}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{3}
 }
 func (m *ConnectRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -364,7 +479,7 @@ func (m *StreamOpenRequest) Reset()         { *m = StreamOpenRequest{} }
 func (m *StreamOpenRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamOpenRequest) ProtoMessage()    {}
 func (*StreamOpenRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{4}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{4}
 }
 func (m *StreamOpenRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -419,7 +534,7 @@ func (m *StreamHandlerRequest) Reset()         { *m = StreamHandlerRequest{} }
 func (m *StreamHandlerRequest) String() string { return proto.CompactTextString(m) }
 func (*StreamHandlerRequest) ProtoMessage()    {}
 func (*StreamHandlerRequest) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{5}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{5}
 }
 func (m *StreamHandlerRequest) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -473,7 +588,7 @@ func (m *ErrorResponse) Reset()         { *m = ErrorResponse{} }
 func (m *ErrorResponse) String() string { return proto.CompactTextString(m) }
 func (*ErrorResponse) ProtoMessage()    {}
 func (*ErrorResponse) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{6}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{6}
 }
 func (m *ErrorResponse) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -522,7 +637,7 @@ func (m *StreamInfo) Reset()         { *m = StreamInfo{} }
 func (m *StreamInfo) String() string { return proto.CompactTextString(m) }
 func (*StreamInfo) ProtoMessage()    {}
 func (*StreamInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_p2pd_19a9838458a78939, []int{7}
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{7}
 }
 func (m *StreamInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -572,6 +687,219 @@ func (m *StreamInfo) GetProto() string {
 	return ""
 }
 
+type DHTRequest struct {
+	Type                 *DHTRequest_Type `protobuf:"varint,1,req,name=type,enum=p2pd.pb.DHTRequest_Type" json:"type,omitempty"`
+	Peer                 []byte           `protobuf:"bytes,2,opt,name=peer" json:"peer,omitempty"`
+	Cid                  []byte           `protobuf:"bytes,3,opt,name=cid" json:"cid,omitempty"`
+	Key                  *string          `protobuf:"bytes,4,opt,name=key" json:"key,omitempty"`
+	Value                []byte           `protobuf:"bytes,5,opt,name=value" json:"value,omitempty"`
+	Count                *int32           `protobuf:"varint,6,opt,name=count" json:"count,omitempty"`
+	Timeout              *int64           `protobuf:"varint,7,opt,name=timeout" json:"timeout,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}         `json:"-"`
+	XXX_unrecognized     []byte           `json:"-"`
+	XXX_sizecache        int32            `json:"-"`
+}
+
+func (m *DHTRequest) Reset()         { *m = DHTRequest{} }
+func (m *DHTRequest) String() string { return proto.CompactTextString(m) }
+func (*DHTRequest) ProtoMessage()    {}
+func (*DHTRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{8}
+}
+func (m *DHTRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DHTRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DHTRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *DHTRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DHTRequest.Merge(dst, src)
+}
+func (m *DHTRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *DHTRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_DHTRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DHTRequest proto.InternalMessageInfo
+
+func (m *DHTRequest) GetType() DHTRequest_Type {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return DHTRequest_FIND_PEER
+}
+
+func (m *DHTRequest) GetPeer() []byte {
+	if m != nil {
+		return m.Peer
+	}
+	return nil
+}
+
+func (m *DHTRequest) GetCid() []byte {
+	if m != nil {
+		return m.Cid
+	}
+	return nil
+}
+
+func (m *DHTRequest) GetKey() string {
+	if m != nil && m.Key != nil {
+		return *m.Key
+	}
+	return ""
+}
+
+func (m *DHTRequest) GetValue() []byte {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+func (m *DHTRequest) GetCount() int32 {
+	if m != nil && m.Count != nil {
+		return *m.Count
+	}
+	return 0
+}
+
+func (m *DHTRequest) GetTimeout() int64 {
+	if m != nil && m.Timeout != nil {
+		return *m.Timeout
+	}
+	return 0
+}
+
+type DHTResponse struct {
+	Type                 *DHTResponse_Type `protobuf:"varint,1,req,name=type,enum=p2pd.pb.DHTResponse_Type" json:"type,omitempty"`
+	Peer                 *PeerInfo         `protobuf:"bytes,2,opt,name=peer" json:"peer,omitempty"`
+	Value                []byte            `protobuf:"bytes,3,opt,name=value" json:"value,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
+	XXX_unrecognized     []byte            `json:"-"`
+	XXX_sizecache        int32             `json:"-"`
+}
+
+func (m *DHTResponse) Reset()         { *m = DHTResponse{} }
+func (m *DHTResponse) String() string { return proto.CompactTextString(m) }
+func (*DHTResponse) ProtoMessage()    {}
+func (*DHTResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{9}
+}
+func (m *DHTResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *DHTResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_DHTResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *DHTResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_DHTResponse.Merge(dst, src)
+}
+func (m *DHTResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *DHTResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_DHTResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_DHTResponse proto.InternalMessageInfo
+
+func (m *DHTResponse) GetType() DHTResponse_Type {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return DHTResponse_BEGIN
+}
+
+func (m *DHTResponse) GetPeer() *PeerInfo {
+	if m != nil {
+		return m.Peer
+	}
+	return nil
+}
+
+func (m *DHTResponse) GetValue() []byte {
+	if m != nil {
+		return m.Value
+	}
+	return nil
+}
+
+type PeerInfo struct {
+	Id                   []byte   `protobuf:"bytes,1,req,name=id" json:"id,omitempty"`
+	Addrs                [][]byte `protobuf:"bytes,2,rep,name=addrs" json:"addrs,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PeerInfo) Reset()         { *m = PeerInfo{} }
+func (m *PeerInfo) String() string { return proto.CompactTextString(m) }
+func (*PeerInfo) ProtoMessage()    {}
+func (*PeerInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_p2pd_da0de569b408cb7e, []int{10}
+}
+func (m *PeerInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PeerInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PeerInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalTo(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (dst *PeerInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PeerInfo.Merge(dst, src)
+}
+func (m *PeerInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *PeerInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_PeerInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PeerInfo proto.InternalMessageInfo
+
+func (m *PeerInfo) GetId() []byte {
+	if m != nil {
+		return m.Id
+	}
+	return nil
+}
+
+func (m *PeerInfo) GetAddrs() [][]byte {
+	if m != nil {
+		return m.Addrs
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*Request)(nil), "p2pd.pb.Request")
 	proto.RegisterType((*Response)(nil), "p2pd.pb.Response")
@@ -581,8 +909,13 @@ func init() {
 	proto.RegisterType((*StreamHandlerRequest)(nil), "p2pd.pb.StreamHandlerRequest")
 	proto.RegisterType((*ErrorResponse)(nil), "p2pd.pb.ErrorResponse")
 	proto.RegisterType((*StreamInfo)(nil), "p2pd.pb.StreamInfo")
+	proto.RegisterType((*DHTRequest)(nil), "p2pd.pb.DHTRequest")
+	proto.RegisterType((*DHTResponse)(nil), "p2pd.pb.DHTResponse")
+	proto.RegisterType((*PeerInfo)(nil), "p2pd.pb.PeerInfo")
 	proto.RegisterEnum("p2pd.pb.Request_Type", Request_Type_name, Request_Type_value)
 	proto.RegisterEnum("p2pd.pb.Response_Type", Response_Type_name, Response_Type_value)
+	proto.RegisterEnum("p2pd.pb.DHTRequest_Type", DHTRequest_Type_name, DHTRequest_Type_value)
+	proto.RegisterEnum("p2pd.pb.DHTResponse_Type", DHTResponse_Type_name, DHTResponse_Type_value)
 }
 func (m *Request) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
@@ -636,6 +969,16 @@ func (m *Request) MarshalTo(dAtA []byte) (int, error) {
 		}
 		i += n3
 	}
+	if m.Dht != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
+		n4, err := m.Dht.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n4
+	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
 	}
@@ -668,31 +1011,41 @@ func (m *Response) MarshalTo(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(m.Error.Size()))
-		n4, err := m.Error.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n4
-	}
-	if m.StreamInfo != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
-		n5, err := m.StreamInfo.MarshalTo(dAtA[i:])
+		n5, err := m.Error.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n5
 	}
-	if m.Identify != nil {
-		dAtA[i] = 0x22
+	if m.StreamInfo != nil {
+		dAtA[i] = 0x1a
 		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
-		n6, err := m.Identify.MarshalTo(dAtA[i:])
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
+		n6, err := m.StreamInfo.MarshalTo(dAtA[i:])
 		if err != nil {
 			return 0, err
 		}
 		i += n6
+	}
+	if m.Identify != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
+		n7, err := m.Identify.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n7
+	}
+	if m.Dht != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
+		n8, err := m.Dht.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n8
 	}
 	if m.XXX_unrecognized != nil {
 		i += copy(dAtA[i:], m.XXX_unrecognized)
@@ -936,6 +1289,149 @@ func (m *StreamInfo) MarshalTo(dAtA []byte) (int, error) {
 	return i, nil
 }
 
+func (m *DHTRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DHTRequest) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Type == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+	} else {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+	}
+	if m.Peer != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i += copy(dAtA[i:], m.Peer)
+	}
+	if m.Cid != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Cid)))
+		i += copy(dAtA[i:], m.Cid)
+	}
+	if m.Key != nil {
+		dAtA[i] = 0x22
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Key)))
+		i += copy(dAtA[i:], *m.Key)
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x2a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.Count != nil {
+		dAtA[i] = 0x30
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Count))
+	}
+	if m.Timeout != nil {
+		dAtA[i] = 0x38
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *DHTResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *DHTResponse) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Type == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+	} else {
+		dAtA[i] = 0x8
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+	}
+	if m.Peer != nil {
+		dAtA[i] = 0x12
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(m.Peer.Size()))
+		n9, err := m.Peer.MarshalTo(dAtA[i:])
+		if err != nil {
+			return 0, err
+		}
+		i += n9
+	}
+	if m.Value != nil {
+		dAtA[i] = 0x1a
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i += copy(dAtA[i:], m.Value)
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
+func (m *PeerInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalTo(dAtA)
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PeerInfo) MarshalTo(dAtA []byte) (int, error) {
+	var i int
+	_ = i
+	var l int
+	_ = l
+	if m.Id == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+	} else {
+		dAtA[i] = 0xa
+		i++
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
+		i += copy(dAtA[i:], m.Id)
+	}
+	if len(m.Addrs) > 0 {
+		for _, b := range m.Addrs {
+			dAtA[i] = 0x12
+			i++
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
+			i += copy(dAtA[i:], b)
+		}
+	}
+	if m.XXX_unrecognized != nil {
+		i += copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	return i, nil
+}
+
 func encodeVarintP2Pd(dAtA []byte, offset int, v uint64) int {
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
@@ -963,6 +1459,10 @@ func (m *Request) Size() (n int) {
 		l = m.StreamHandler.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
+	if m.Dht != nil {
+		l = m.Dht.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -985,6 +1485,10 @@ func (m *Response) Size() (n int) {
 	}
 	if m.Identify != nil {
 		l = m.Identify.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Dht != nil {
+		l = m.Dht.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -1096,6 +1600,79 @@ func (m *StreamInfo) Size() (n int) {
 	if m.Proto != nil {
 		l = len(*m.Proto)
 		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DHTRequest) Size() (n int) {
+	var l int
+	_ = l
+	if m.Type != nil {
+		n += 1 + sovP2Pd(uint64(*m.Type))
+	}
+	if m.Peer != nil {
+		l = len(m.Peer)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Cid != nil {
+		l = len(m.Cid)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Key != nil {
+		l = len(*m.Key)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(m.Value)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Count != nil {
+		n += 1 + sovP2Pd(uint64(*m.Count))
+	}
+	if m.Timeout != nil {
+		n += 1 + sovP2Pd(uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *DHTResponse) Size() (n int) {
+	var l int
+	_ = l
+	if m.Type != nil {
+		n += 1 + sovP2Pd(uint64(*m.Type))
+	}
+	if m.Peer != nil {
+		l = m.Peer.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Value != nil {
+		l = len(m.Value)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *PeerInfo) Size() (n int) {
+	var l int
+	_ = l
+	if m.Id != nil {
+		l = len(m.Id)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if len(m.Addrs) > 0 {
+		for _, b := range m.Addrs {
+			l = len(b)
+			n += 1 + l + sovP2Pd(uint64(l))
+		}
 	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
@@ -1263,6 +1840,39 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				m.StreamHandler = &StreamHandlerRequest{}
 			}
 			if err := m.StreamHandler.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dht", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Dht == nil {
+				m.Dht = &DHTRequest{}
+			}
+			if err := m.Dht.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1438,6 +2048,39 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				m.Identify = &IdentifyResponse{}
 			}
 			if err := m.Identify.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Dht", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Dht == nil {
+				m.Dht = &DHTResponse{}
+			}
+			if err := m.Dht.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2171,6 +2814,501 @@ func (m *StreamInfo) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *DHTRequest) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DHTRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DHTRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var v DHTRequest_Type
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (DHTRequest_Type(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Type = &v
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Peer = append(m.Peer[:0], dAtA[iNdEx:postIndex]...)
+			if m.Peer == nil {
+				m.Peer = []byte{}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Cid", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Cid = append(m.Cid[:0], dAtA[iNdEx:postIndex]...)
+			if m.Cid == nil {
+				m.Cid = []byte{}
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Key", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= (uint64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Key = &s
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Value = append(m.Value[:0], dAtA[iNdEx:postIndex]...)
+			if m.Value == nil {
+				m.Value = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Count", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int32(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Count = &v
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timeout", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (int64(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Timeout = &v
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *DHTResponse) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: DHTResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: DHTResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			var v DHTResponse_Type
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= (DHTResponse_Type(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Type = &v
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Peer == nil {
+				m.Peer = &PeerInfo{}
+			}
+			if err := m.Peer.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Value", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Value = append(m.Value[:0], dAtA[iNdEx:postIndex]...)
+			if m.Value == nil {
+				m.Value = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PeerInfo) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= (uint64(b) & 0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PeerInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PeerInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Id", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Id = append(m.Id[:0], dAtA[iNdEx:postIndex]...)
+			if m.Id == nil {
+				m.Id = []byte{}
+			}
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Addrs", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= (int(b) & 0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Addrs = append(m.Addrs, make([]byte, postIndex-iNdEx))
+			copy(m.Addrs[len(m.Addrs)-1], dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func skipP2Pd(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
@@ -2276,38 +3414,56 @@ var (
 	ErrIntOverflowP2Pd   = fmt.Errorf("proto: integer overflow")
 )
 
-func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_p2pd_19a9838458a78939) }
+func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_p2pd_da0de569b408cb7e) }
 
-var fileDescriptor_p2pd_19a9838458a78939 = []byte{
-	// 468 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x92, 0xcd, 0x6e, 0xd3, 0x40,
-	0x10, 0xc7, 0xeb, 0xb5, 0x43, 0x92, 0x49, 0x1a, 0x96, 0xa1, 0x80, 0x8b, 0x44, 0x14, 0xf6, 0x14,
-	0x10, 0x8a, 0x44, 0x10, 0x12, 0xaa, 0x84, 0x44, 0x49, 0x5d, 0x35, 0x7c, 0xd8, 0x68, 0x9b, 0x0b,
-	0x27, 0x14, 0xea, 0x2d, 0x44, 0xa2, 0xf6, 0xb2, 0x36, 0x87, 0xbc, 0x15, 0x8f, 0xc1, 0x91, 0x47,
-	0x40, 0xb9, 0xf2, 0x12, 0xc8, 0xbb, 0x6b, 0x27, 0x0e, 0xcd, 0x6d, 0x3e, 0xfe, 0xbf, 0xb1, 0xe7,
-	0xbf, 0x03, 0x20, 0xc7, 0x32, 0x1e, 0x49, 0x95, 0xe6, 0x29, 0x36, 0x4d, 0xfc, 0x99, 0xfd, 0x24,
-	0xd0, 0xe4, 0xe2, 0xfb, 0x0f, 0x91, 0xe5, 0xf8, 0x08, 0xbc, 0x7c, 0x29, 0x85, 0xef, 0x0c, 0xc8,
-	0xb0, 0x37, 0xbe, 0x33, 0xb2, 0x9a, 0x91, 0xed, 0x8f, 0x66, 0x4b, 0x29, 0xb8, 0x96, 0xe0, 0x53,
-	0x68, 0x5e, 0xa4, 0x49, 0x22, 0x2e, 0x72, 0x9f, 0x0c, 0x9c, 0x61, 0x67, 0x7c, 0xaf, 0x52, 0x4f,
-	0x4c, 0xdd, 0x42, 0xbc, 0xd4, 0xe1, 0x11, 0x40, 0x96, 0x2b, 0x31, 0xbf, 0x8a, 0xa4, 0x48, 0x7c,
-	0x57, 0x53, 0xf7, 0x2b, 0xea, 0xbc, 0x6a, 0x95, 0xe0, 0x86, 0x1a, 0x27, 0xb0, 0x6f, 0xb2, 0xb3,
-	0x79, 0x12, 0x7f, 0x13, 0xca, 0xf7, 0x34, 0xfe, 0x60, 0x0b, 0xb7, 0xdd, 0x72, 0x42, 0x9d, 0x61,
-	0xa7, 0xe0, 0x15, 0x1b, 0x60, 0x17, 0x5a, 0xd3, 0x93, 0x20, 0x9c, 0x4d, 0x4f, 0x3f, 0xd2, 0x3d,
-	0xec, 0x40, 0x73, 0x12, 0x85, 0x61, 0x30, 0x99, 0x51, 0x07, 0x6f, 0x42, 0xe7, 0x7c, 0xc6, 0x83,
-	0xe3, 0xf7, 0x9f, 0xa2, 0x0f, 0x41, 0x48, 0x09, 0x22, 0xf4, 0x6c, 0xe1, 0xec, 0x38, 0x3c, 0x79,
-	0x17, 0x70, 0xea, 0xb2, 0xbf, 0x0e, 0xb4, 0xb8, 0xc8, 0x64, 0x9a, 0x64, 0x02, 0x1f, 0xd7, 0x3c,
-	0xbb, 0xbb, 0xe1, 0x99, 0x11, 0x6c, 0x9a, 0xf6, 0x04, 0x1a, 0x42, 0xa9, 0x54, 0x59, 0xcb, 0xd6,
-	0xe2, 0xa0, 0xa8, 0x96, 0x04, 0x37, 0x22, 0x7c, 0x56, 0xfa, 0x35, 0x4d, 0x2e, 0x53, 0xeb, 0xd7,
-	0xed, 0xad, 0x85, 0x8b, 0x16, 0xdf, 0x90, 0xe1, 0x73, 0x68, 0x2d, 0x62, 0x91, 0xe4, 0x8b, 0xcb,
-	0xa5, 0xf5, 0xe8, 0xb0, 0x42, 0xa6, 0xb6, 0x51, 0x7d, 0xa8, 0x92, 0xb2, 0x43, 0x6b, 0xcd, 0x0d,
-	0x20, 0xd1, 0x5b, 0xba, 0x87, 0x6d, 0x68, 0x04, 0x9c, 0x47, 0x9c, 0x3a, 0xec, 0x05, 0xd0, 0x6d,
-	0x10, 0x7b, 0x40, 0x16, 0xb1, 0x5e, 0xb9, 0xcb, 0xc9, 0x22, 0xc6, 0x03, 0x68, 0xcc, 0xe3, 0x58,
-	0x65, 0x3e, 0x19, 0xb8, 0xc3, 0x2e, 0x37, 0x09, 0x3b, 0x82, 0x5e, 0xfd, 0x16, 0x10, 0xc1, 0x93,
-	0x42, 0x28, 0x4b, 0xea, 0x78, 0x07, 0xfb, 0x12, 0x6e, 0xfd, 0x77, 0x11, 0xbb, 0x70, 0x7d, 0xd1,
-	0x1a, 0x6f, 0x73, 0x93, 0xb0, 0x57, 0x70, 0x70, 0xdd, 0x45, 0xe8, 0x09, 0xf3, 0xfc, 0xab, 0x9e,
-	0xd0, 0xe6, 0x3a, 0xde, 0x31, 0xe1, 0x21, 0xec, 0xd7, 0x5e, 0x05, 0x29, 0xb8, 0x57, 0xd9, 0x17,
-	0x4b, 0x16, 0x21, 0x7b, 0x03, 0xb0, 0x7e, 0x85, 0x6b, 0x7f, 0x0e, 0xc1, 0x2b, 0xd6, 0xf1, 0x89,
-	0xa9, 0x15, 0xf1, 0xfa, 0x73, 0xae, 0x9e, 0x64, 0x92, 0xd7, 0xdd, 0x5f, 0xab, 0xbe, 0xf3, 0x7b,
-	0xd5, 0x77, 0xfe, 0xac, 0xfa, 0xce, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xd8, 0xcf, 0x8f, 0x86,
-	0xaa, 0x03, 0x00, 0x00,
+var fileDescriptor_p2pd_da0de569b408cb7e = []byte{
+	// 758 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x54, 0x5d, 0x6e, 0xf3, 0x44,
+	0x14, 0xad, 0xed, 0xa4, 0x4e, 0x6e, 0xd2, 0x30, 0x9d, 0xaf, 0x05, 0x17, 0x41, 0x15, 0x2c, 0x15,
+	0x05, 0x54, 0x22, 0x08, 0x42, 0x42, 0x95, 0x90, 0x48, 0xe3, 0x69, 0x63, 0x1a, 0xec, 0x68, 0xe2,
+	0x56, 0xea, 0x53, 0x14, 0xe2, 0x29, 0x8d, 0x68, 0x6d, 0xe3, 0x38, 0x48, 0x5d, 0x07, 0x1b, 0x60,
+	0x0f, 0x6c, 0x82, 0x47, 0x96, 0x50, 0x75, 0x01, 0xac, 0x01, 0xcd, 0x8f, 0x1d, 0xa7, 0xa4, 0x12,
+	0x6f, 0xf7, 0xe7, 0x9c, 0x7b, 0xed, 0xe3, 0x73, 0x0d, 0x90, 0xf4, 0x92, 0xb0, 0x9b, 0xa4, 0x71,
+	0x16, 0x63, 0x53, 0xc6, 0x3f, 0xd9, 0xcf, 0x3a, 0x98, 0x94, 0xfd, 0xba, 0x62, 0xcb, 0x0c, 0x7f,
+	0x06, 0x95, 0xec, 0x29, 0x61, 0x96, 0xd6, 0xd6, 0x3b, 0xad, 0xde, 0x61, 0x57, 0x61, 0xba, 0xaa,
+	0xdf, 0x0d, 0x9e, 0x12, 0x46, 0x05, 0x04, 0x7f, 0x05, 0xe6, 0x3c, 0x8e, 0x22, 0x36, 0xcf, 0x2c,
+	0xbd, 0xad, 0x75, 0x1a, 0xbd, 0x0f, 0x0a, 0xf4, 0x40, 0xd6, 0x15, 0x89, 0xe6, 0x38, 0x7c, 0x06,
+	0xb0, 0xcc, 0x52, 0x36, 0x7b, 0xf4, 0x13, 0x16, 0x59, 0x86, 0x60, 0x7d, 0x58, 0xb0, 0x26, 0x45,
+	0x2b, 0x27, 0x96, 0xd0, 0x78, 0x00, 0x7b, 0x32, 0x1b, 0xce, 0xa2, 0xf0, 0x81, 0xa5, 0x56, 0x45,
+	0xd0, 0x3f, 0x7e, 0x45, 0x57, 0xdd, 0x7c, 0xc2, 0x26, 0x07, 0x9f, 0x80, 0x11, 0xde, 0x67, 0x56,
+	0x55, 0x50, 0xdf, 0x15, 0x54, 0x67, 0x18, 0xe4, 0x04, 0xde, 0xb7, 0x7d, 0xa8, 0xf0, 0x17, 0xc5,
+	0x4d, 0xa8, 0xb9, 0x0e, 0xf1, 0x02, 0xf7, 0xe2, 0x16, 0xed, 0xe0, 0x06, 0x98, 0x03, 0xdf, 0xf3,
+	0xc8, 0x20, 0x40, 0x1a, 0x7e, 0x0f, 0x1a, 0x93, 0x80, 0x92, 0xfe, 0x8f, 0x53, 0x7f, 0x4c, 0x3c,
+	0xa4, 0x63, 0x0c, 0x2d, 0x55, 0x18, 0xf6, 0x3d, 0x67, 0x44, 0x28, 0x32, 0xb0, 0x09, 0x86, 0x33,
+	0x0c, 0x50, 0xc5, 0xfe, 0x5d, 0x87, 0x1a, 0x65, 0xcb, 0x24, 0x8e, 0x96, 0x0c, 0x7f, 0xbe, 0xa1,
+	0xf1, 0xfb, 0x25, 0x8d, 0x25, 0xa0, 0x2c, 0xf2, 0x29, 0x54, 0x59, 0x9a, 0xc6, 0xa9, 0x92, 0x78,
+	0x0d, 0x26, 0xbc, 0x9a, 0x33, 0xa8, 0x04, 0xe1, 0xaf, 0x73, 0x7d, 0xdd, 0xe8, 0x2e, 0x56, 0xfa,
+	0xbe, 0x7b, 0x25, 0x10, 0x6f, 0xd1, 0x12, 0x0c, 0x7f, 0x03, 0xb5, 0x45, 0xc8, 0xa2, 0x6c, 0x71,
+	0xf7, 0xa4, 0x34, 0x3d, 0x2a, 0x28, 0xae, 0x6a, 0x14, 0x8b, 0x0a, 0x28, 0xfe, 0xb4, 0x2c, 0xe5,
+	0xc1, 0xa6, 0x94, 0x0a, 0x2c, 0xb4, 0x3c, 0x52, 0x5a, 0xee, 0x82, 0xee, 0x5f, 0xa1, 0x1d, 0x5c,
+	0x87, 0x2a, 0xa1, 0xd4, 0xa7, 0x48, 0xb3, 0xbf, 0x05, 0xf4, 0x7a, 0x01, 0x6e, 0x81, 0xbe, 0x08,
+	0x85, 0x34, 0x4d, 0xaa, 0x2f, 0x42, 0x7c, 0x00, 0xd5, 0x59, 0x18, 0xa6, 0x4b, 0x4b, 0x6f, 0x1b,
+	0x9d, 0x26, 0x95, 0x89, 0x7d, 0x06, 0xad, 0x4d, 0x8f, 0x61, 0x0c, 0x95, 0x84, 0xb1, 0x54, 0x31,
+	0x45, 0xfc, 0x06, 0xf7, 0x3b, 0xd8, 0xff, 0x8f, 0xd3, 0xde, 0xa2, 0x8b, 0x4b, 0x11, 0xf4, 0x3a,
+	0x95, 0x89, 0xfd, 0x3d, 0x1c, 0x6c, 0x73, 0x9a, 0x98, 0x30, 0xcb, 0xee, 0xc5, 0x84, 0x3a, 0x15,
+	0xf1, 0x1b, 0x13, 0x3e, 0x81, 0xbd, 0x8d, 0xaf, 0x87, 0x11, 0x18, 0x8f, 0xcb, 0x9f, 0x15, 0x93,
+	0x87, 0xf6, 0x0f, 0x00, 0xeb, 0xaf, 0xb5, 0xf5, 0xe1, 0x30, 0x54, 0xf8, 0xeb, 0x58, 0xba, 0xac,
+	0xf1, 0x78, 0xbd, 0xce, 0x10, 0x93, 0xd4, 0xba, 0x7f, 0x74, 0x80, 0xb5, 0xc1, 0xf1, 0xe9, 0x86,
+	0xfb, 0xac, 0x2d, 0x37, 0x50, 0xf6, 0x5f, 0xbe, 0x9a, 0xdb, 0x2f, 0x5f, 0x8d, 0xc0, 0x98, 0x2f,
+	0x42, 0x61, 0xaf, 0x26, 0xe5, 0x21, 0xaf, 0xfc, 0xc2, 0xa4, 0x7b, 0xea, 0x94, 0x87, 0xfc, 0x51,
+	0x7e, 0x9b, 0x3d, 0xac, 0x98, 0xf0, 0x47, 0x93, 0xca, 0x84, 0x57, 0xe7, 0xf1, 0x2a, 0xca, 0xac,
+	0xdd, 0xb6, 0xd6, 0xa9, 0x52, 0x99, 0x60, 0x0b, 0xcc, 0x6c, 0xf1, 0xc8, 0xe2, 0x55, 0x66, 0x99,
+	0x6d, 0xad, 0x63, 0xd0, 0x3c, 0xb5, 0xff, 0xd4, 0x94, 0x79, 0xf6, 0xa0, 0x7e, 0xe1, 0x7a, 0xce,
+	0x74, 0x4c, 0x08, 0x45, 0x3b, 0xb8, 0x0d, 0x1f, 0x15, 0xe9, 0x64, 0xaa, 0x8e, 0x92, 0x38, 0xd3,
+	0xc0, 0x97, 0x08, 0x8d, 0x5f, 0xa3, 0x44, 0x50, 0xff, 0xc6, 0x75, 0x08, 0x9d, 0x20, 0x1d, 0x1f,
+	0xc2, 0xfe, 0x25, 0x09, 0xa6, 0x83, 0x91, 0x3f, 0x21, 0x93, 0x40, 0x92, 0x91, 0xc1, 0xa1, 0xbc,
+	0x3c, 0xbe, 0x3e, 0x1f, 0xb9, 0x83, 0xe9, 0x15, 0xb9, 0x45, 0x15, 0xbe, 0x8f, 0xd7, 0x6e, 0xfa,
+	0xa3, 0x6b, 0x82, 0xaa, 0x18, 0x41, 0x73, 0x42, 0xfa, 0x74, 0x30, 0x54, 0x95, 0x5d, 0x0e, 0x18,
+	0x5f, 0xe7, 0x00, 0x93, 0xff, 0x1a, 0xd4, 0x26, 0x54, 0xb3, 0xff, 0xd0, 0xa0, 0x51, 0x3a, 0x03,
+	0xfc, 0xc5, 0x86, 0xe2, 0x47, 0xdb, 0x4e, 0xa5, 0x2c, 0xf9, 0x49, 0x49, 0xf2, 0x46, 0x6f, 0xbf,
+	0x80, 0x8f, 0x19, 0x4b, 0xc5, 0xf1, 0x16, 0xee, 0x94, 0x0a, 0x1b, 0x25, 0x85, 0xed, 0x13, 0x25,
+	0x58, 0x1d, 0xaa, 0xe7, 0xe4, 0xd2, 0xf5, 0xe4, 0xc1, 0xc9, 0xc7, 0xd4, 0xf8, 0xff, 0x88, 0x78,
+	0x0e, 0xd2, 0xed, 0x2f, 0xa1, 0x96, 0x8f, 0xfb, 0x7f, 0x17, 0x77, 0xde, 0xfc, 0xeb, 0xe5, 0x58,
+	0xfb, 0xfb, 0xe5, 0x58, 0x7b, 0x7e, 0x39, 0xd6, 0xfe, 0x0d, 0x00, 0x00, 0xff, 0xff, 0xd6, 0x03,
+	0xd0, 0x6f, 0x48, 0x06, 0x00, 0x00,
 }
