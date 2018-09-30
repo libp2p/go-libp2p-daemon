@@ -6,6 +6,8 @@ import (
 
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
+	cid "github.com/ipfs/go-cid"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	peer "github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 )
@@ -109,7 +111,38 @@ func (d *Daemon) doDHTFindPeersConnectedToPeer(req *pb.DHTRequest) (*pb.Response
 }
 
 func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
-	return errorResponseString("XXX Implement me!"), nil, nil
+	if req.Cid == nil {
+		return errorResponseString("Malformed request; missing cid parameter"), nil, nil
+	}
+
+	cid, err := cid.Cast(req.Cid)
+	if err != nil {
+		return errorResponse(err), nil, nil
+	}
+
+	count := dht.KValue
+	if req.GetCount() > 0 {
+		count = int(*req.Count)
+	}
+
+	ctx, cancel := d.dhtRequestContext(req)
+
+	ch := d.dht.FindProvidersAsync(ctx, cid, count)
+
+	rch := make(chan *pb.DHTResponse)
+	go func() {
+		defer cancel()
+		defer close(rch)
+		for pi := range ch {
+			select {
+			case rch <- dhtResponsePeer(pi):
+			case <-ctx.Done():
+				return
+			}
+		}
+	}()
+
+	return dhtOkResponse(dhtResponseBegin()), rch, cancel
 }
 
 func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTResponse, func()) {
