@@ -9,6 +9,7 @@ message Request {
     STREAM_OPEN    = 2;
     STREAM_HANDLER = 3;
     DHT            = 4;
+    LIST_PEERS     = 5;
   }
 
   required Type type = 1;
@@ -30,6 +31,7 @@ message Response {
   optional StreamInfo streamInfo = 3;
   optional IdentifyResponse identify = 4;
   optional DHTResponse dht = 5;
+  repeated PeerInfo peers = 6;
 }
 
 message IdentifyResponse {

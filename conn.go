@@ -106,6 +106,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 				}
 			}
 
+		case pb.Request_LIST_PEERS:
+			res := d.doListPeers(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				return
+			}
+
 		default:
 			log.Debugf("Unexpected request type: %d", *req.Type)
 			return
@@ -214,6 +222,21 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	}
 
 	return okResponse()
+}
+
+func (d *Daemon) doListPeers(req *pb.Request) *pb.Response {
+	conns := d.host.Network().Conns()
+	peers := make([]*pb.PeerInfo, len(conns))
+	for x, conn := range conns {
+		peers[x] = &pb.PeerInfo{
+			Id:    []byte(conn.RemotePeer()),
+			Addrs: [][]byte{conn.RemoteMultiaddr().Bytes()},
+		}
+	}
+
+	res := okResponse()
+	res.Peers = peers
+	return res
 }
 
 func okResponse() *pb.Response {
