@@ -14,6 +14,9 @@ func main() {
 	sock := flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
+	bootstrap := flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled")
+	dht := flag.Bool("dht", false, "Enables the DHT in full node mode")
+	dhtClient := flag.Bool("dhtClient", false, "Enables the DHT in client mode")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -30,6 +33,20 @@ func main() {
 	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if *dht || *dhtClient {
+		err = d.EnableDHT(*dhtClient)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if *bootstrap {
+		err = d.Bootstrap()
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if !*quiet {
