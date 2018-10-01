@@ -8,9 +8,12 @@ import (
 
 	libp2p "github.com/libp2p/go-libp2p"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 )
 
 func main() {
+	identify.ClientVersion = "p2pd"
+
 	sock := flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
