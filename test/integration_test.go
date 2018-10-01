@@ -1,7 +1,6 @@
 package test
 
 import (
-	"bytes"
 	"context"
 	"io"
 	"io/ioutil"
@@ -11,7 +10,7 @@ import (
 
 	"github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -49,7 +48,7 @@ func TestIdentify(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if !bytes.Equal(cid, []byte(d.ID())) {
+	if cid != d.ID() {
 		t.Fatal("peer id not equal to query result")
 	}
 	daddrs := d.Addrs()
@@ -68,7 +67,7 @@ func TestIdentify(t *testing.T) {
 }
 
 func connect(c *p2pclient.Client, d *p2pd.Daemon) error {
-	return c.Connect([]byte(d.ID()), d.Addrs())
+	return c.Connect(d.ID(), d.Addrs())
 }
 
 func TestConnect(t *testing.T) {
@@ -82,7 +81,7 @@ func TestConnect(t *testing.T) {
 	if err := connect(c2, d1); err != nil {
 		t.Fatal(err)
 	}
-	if err := c1.Connect([]byte("foobar"), d2.Addrs()); err == nil {
+	if err := c1.Connect(peer.ID("foobar"), d2.Addrs()); err == nil {
 		t.Fatal("expected connection to invalid peer id to fail")
 	}
 }
@@ -94,7 +93,7 @@ func TestConnectFailsOnBadAddress(t *testing.T) {
 	defer closer2()
 	addr, _ := ma.NewMultiaddr("/ip4/1.2.3.4/tcp/4000")
 	addrs := []ma.Multiaddr{addr}
-	if err := c1.Connect([]byte(d2.ID()), addrs); err == nil {
+	if err := c1.Connect(d2.ID(), addrs); err == nil {
 		t.Fatal("expected connection to invalid address to fail")
 	}
 }
@@ -110,7 +109,7 @@ func TestStreams(t *testing.T) {
 	testprotos := []string{"/test"}
 
 	done := make(chan struct{})
-	c1.NewStreamHandler(testprotos, func(info *pb.StreamInfo, conn io.ReadWriteCloser) {
+	c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 		defer conn.Close()
 		var buf []byte
 		n, err := conn.Read(buf)
@@ -123,7 +122,7 @@ func TestStreams(t *testing.T) {
 		done <- struct{}{}
 	})
 
-	_, conn, err := c2.NewStream([]byte(d1.ID()), testprotos)
+	_, conn, err := c2.NewStream(d1.ID(), testprotos)
 	if err != nil {
 		t.Fatal(err)
 	}
