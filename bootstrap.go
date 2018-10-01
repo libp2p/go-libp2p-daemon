@@ -6,6 +6,7 @@ import (
 	"math/rand"
 	"time"
 
+	inet "github.com/libp2p/go-libp2p-net"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 	ma "github.com/multiformats/go-multiaddr"
 )
@@ -87,6 +88,9 @@ func (d *Daemon) connectBootstrapPeers(pis []*pstore.PeerInfo, toconnect int) in
 	defer cancel()
 
 	for _, pi := range pis {
+		if d.host.Network().Connectedness(pi.ID) == inet.Connected {
+			continue
+		}
 		err := d.host.Connect(ctx, *pi)
 		if err != nil {
 			log.Debugf("Error connecting to bootstrap peer %s: %s", pi.ID, err.Error())
