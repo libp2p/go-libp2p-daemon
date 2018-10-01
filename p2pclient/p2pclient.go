@@ -8,6 +8,7 @@ import (
 	ggio "github.com/gogo/protobuf/io"
 	logging "github.com/ipfs/go-log"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	peer "github.com/libp2p/go-libp2p-peer"
 	multiaddr "github.com/multiformats/go-multiaddr"
 )
 
@@ -48,30 +49,34 @@ func (c *Client) newControlConn() (net.Conn, error) {
 }
 
 // Identify queries the daemon for its peer ID and listen addresses.
-func (c *Client) Identify() ([]byte, []multiaddr.Multiaddr, error) {
+func (c *Client) Identify() (peer.ID, []multiaddr.Multiaddr, error) {
 	control, err := c.newControlConn()
 	if err != nil {
-		return nil, nil, err
+		return peer.ID(""), nil, err
 	}
 	defer control.Close()
 	r := ggio.NewDelimitedReader(control, MessageSizeMax)
 	w := ggio.NewDelimitedWriter(control)
 
 	req := &pb.Request{Type: pb.Request_IDENTIFY.Enum()}
-	if err := w.WriteMsg(req); err != nil {
-		return nil, nil, err
+	if err = w.WriteMsg(req); err != nil {
+		return peer.ID(""), nil, err
 	}
 
 	res := &pb.Response{}
-	if err := r.ReadMsg(res); err != nil {
-		return nil, nil, err
+	if err = r.ReadMsg(res); err != nil {
+		return peer.ID(""), nil, err
 	}
 
-	if err := res.GetError(); err != nil {
-		return nil, nil, errors.New(err.GetMsg())
+	if reserr := res.GetError(); reserr != nil {
+		return peer.ID(""), nil, errors.New(reserr.GetMsg())
 	}
 
 	idres := res.GetIdentify()
+	id, err := peer.IDFromBytes(idres.Id)
+	if err != nil {
+		return peer.ID(""), nil, err
+	}
 	addrs := make([]multiaddr.Multiaddr, 0, len(idres.Addrs))
 	for i, addrbytes := range idres.Addrs {
 		addr, err := multiaddr.NewMultiaddrBytes(addrbytes)
@@ -82,12 +87,12 @@ func (c *Client) Identify() ([]byte, []multiaddr.Multiaddr, error) {
 		addrs = append(addrs, addr)
 	}
 
-	return idres.Id, addrs, nil
+	return id, addrs, nil
 }
 
 // Connect establishes a connection to a peer after populating the Peerstore
 // entry for said peer with a list of addresses.
-func (c *Client) Connect(p []byte, addrs []multiaddr.Multiaddr) error {
+func (c *Client) Connect(p peer.ID, addrs []multiaddr.Multiaddr) error {
 	control, err := c.newControlConn()
 	if err != nil {
 		return err
@@ -104,7 +109,7 @@ func (c *Client) Connect(p []byte, addrs []multiaddr.Multiaddr) error {
 	req := &pb.Request{
 		Type: pb.Request_CONNECT.Enum(),
 		Connect: &pb.ConnectRequest{
-			Peer:  p,
+			Peer:  []byte(p),
 			Addrs: addrbytes,
 		},
 	}
