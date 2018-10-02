@@ -111,12 +111,15 @@ func TestStreams(t *testing.T) {
 	done := make(chan struct{})
 	c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 		defer conn.Close()
-		var buf []byte
+		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)
-		if err != nil && n < 4 {
+		if err != nil {
 			t.Fatal(err)
 		}
-		if string(buf) != "test" {
+		if n != 4 {
+			t.Fatal("expected to read 4 bytes")
+		}
+		if string(buf[0:4]) != "test" {
 			t.Fatalf(`expected "test", got "%s"`, string(buf))
 		}
 		done <- struct{}{}
@@ -126,14 +129,12 @@ func TestStreams(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	for i := 0; i < 1000; i++ {
-		n, err := conn.Write([]byte("test"))
-		if err != nil {
-			t.Fatal(err)
-		}
-		if n != 4 {
-			t.Fatal("wrote wrong # of bytes")
-		}
+	n, err := conn.Write([]byte("test"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if n != 4 {
+		t.Fatal("wrote wrong # of bytes")
 	}
 
 	select {
