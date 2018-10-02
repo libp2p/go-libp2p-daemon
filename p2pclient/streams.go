@@ -3,12 +3,12 @@ package p2pclient
 import (
 	"bytes"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"io"
 	"net"
 
 	ggio "github.com/gogo/protobuf/io"
+	"github.com/gogo/protobuf/proto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
@@ -21,7 +21,7 @@ type StreamInfo struct {
 	Proto string
 }
 
-func converStreamInfo(info *pb.StreamInfo) (*StreamInfo, error) {
+func convertStreamInfo(info *pb.StreamInfo) (*StreamInfo, error) {
 	id, err := peer.IDFromBytes(info.Peer)
 	if err != nil {
 		return nil, err
@@ -39,20 +39,20 @@ func converStreamInfo(info *pb.StreamInfo) (*StreamInfo, error) {
 }
 
 type byteReaderConn struct {
-	io.Reader
+	net.Conn
 }
 
 func (c *byteReaderConn) ReadByte() (byte, error) {
 	b := make([]byte, 1)
-	_, err := c.Reader.Read(b)
+	_, err := c.Read(b)
 	if err != nil {
 		return 0, err
 	}
 	return b[0], nil
 }
 
-func readHeader(r net.Conn) (*bytes.Buffer, error) {
-	len, err := binary.ReadUvarint(&byteReaderConn{r})
+func readMsgBytes(r *byteReaderConn) (*bytes.Buffer, error) {
+	len, err := binary.ReadUvarint(r)
 	if err != nil {
 		return nil, err
 	}
@@ -69,13 +69,28 @@ func readHeader(r net.Conn) (*bytes.Buffer, error) {
 	return out, nil
 }
 
+func readMsgSafe(c *byteReaderConn, msg proto.Message) error {
+	header, err := readMsgBytes(c)
+	if err != nil {
+		return err
+	}
+
+	r := ggio.NewDelimitedReader(header, MessageSizeMax)
+	if err = r.ReadMsg(msg); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // NewStream initializes a new stream on one of the protocols in protos with
 // the specified peer.
 func (c *Client) NewStream(peer peer.ID, protos []string) (*StreamInfo, io.ReadWriteCloser, error) {
-	control, err := c.newControlConn()
+	controlconn, err := c.newControlConn()
 	if err != nil {
 		return nil, nil, err
 	}
+	control := &byteReaderConn{controlconn}
 	w := ggio.NewDelimitedWriter(control)
 
 	req := &pb.Request{
@@ -91,27 +106,18 @@ func (c *Client) NewStream(peer peer.ID, protos []string) (*StreamInfo, io.ReadW
 		return nil, nil, err
 	}
 
-	headerbuf, err := readHeader(control)
+	resp := &pb.Response{}
+	err = readMsgSafe(control, resp)
 	if err != nil {
 		control.Close()
 		return nil, nil, err
 	}
-	r := ggio.NewDelimitedReader(headerbuf, MessageSizeMax)
-	res := &pb.Response{}
-	if err = r.ReadMsg(res); err != nil {
-		control.Close()
-		return nil, nil, err
+	if err := resp.GetError(); err != nil {
+		return nil, nil, fmt.Errorf("error from daemon: %s", err.GetMsg())
 	}
-
-	if err := res.GetError(); err != nil {
-		control.Close()
-		return nil, nil, errors.New(err.GetMsg())
-	}
-
-	info, err := converStreamInfo(res.GetStreamInfo())
+	info, err := convertStreamInfo(resp.GetStreamInfo())
 	if err != nil {
-		control.Close()
-		return nil, nil, err
+		return nil, nil, fmt.Errorf("parsing stream info: %s", err)
 	}
 
 	return info, control, nil
@@ -127,28 +133,23 @@ func (c *Client) Close() error {
 
 func (c *Client) streamDispatcher() {
 	for {
-		conn, err := c.listener.Accept()
+		rawconn, err := c.listener.Accept()
 		if err != nil {
 			log.Errorf("accepting incoming connection: %s", err)
 			return
 		}
+		conn := &byteReaderConn{rawconn}
 
-		headerbuf, err := readHeader(conn)
+		info := &pb.StreamInfo{}
+		err = readMsgSafe(conn, info)
 		if err != nil {
-			log.Errorf("reading stream header: %s", err)
+			log.Errorf("error reading stream info: %s", err)
 			conn.Close()
 			continue
 		}
-		r := ggio.NewDelimitedReader(headerbuf, MessageSizeMax)
-		pbStreamInfo := &pb.StreamInfo{}
-		if err = r.ReadMsg(pbStreamInfo); err != nil {
-			log.Errorf("reading stream info: %s", err)
-			conn.Close()
-			continue
-		}
-		streamInfo, err := converStreamInfo(pbStreamInfo)
+		streamInfo, err := convertStreamInfo(info)
 		if err != nil {
-			log.Errorf("parsing stream info: %s", err)
+			log.Errorf("error parsing stream info: %s", err)
 			conn.Close()
 			continue
 		}
