@@ -51,14 +51,12 @@ func (c *byteReaderConn) ReadByte() (byte, error) {
 	return b[0], nil
 }
 
-func readMsgBytes(r *byteReaderConn) (*bytes.Buffer, error) {
+func readMsgBytesSafe(r *byteReaderConn) (*bytes.Buffer, error) {
 	len, err := binary.ReadUvarint(r)
 	if err != nil {
 		return nil, err
 	}
-	outbuf := make([]byte, 8)
-	sz := binary.PutUvarint(outbuf, len)
-	out := bytes.NewBuffer(outbuf[0:sz])
+	out := &bytes.Buffer{}
 	n, err := io.CopyN(out, r, int64(len))
 	if err != nil {
 		return nil, err
@@ -70,12 +68,12 @@ func readMsgBytes(r *byteReaderConn) (*bytes.Buffer, error) {
 }
 
 func readMsgSafe(c *byteReaderConn, msg proto.Message) error {
-	header, err := readMsgBytes(c)
+	header, err := readMsgBytesSafe(c)
 	if err != nil {
 		return err
 	}
 
-	r := ggio.NewDelimitedReader(header, MessageSizeMax)
+	r := ggio.NewFullReader(header, MessageSizeMax)
 	if err = r.ReadMsg(msg); err != nil {
 		return err
 	}
