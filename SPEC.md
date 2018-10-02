@@ -21,95 +21,160 @@ There are two pieces to the libp2p daemon:
 
 ### Technical Details
 
-The libp2p daemon and client will communicate with each other over an HTTP API
-for the time being. In the future, this may likely evolve into a simpler,
-lighter weight protocol. Both the daemon and the client will run HTTP servers,
-facilitating bidirectional communication.
-
-In the initial implementation, communication between end users and the daemon
-will take place over unix sockets. Each unix socket will correspond to a libp2p
-stream, operating on a given protocol.
+The libp2p daemon and client will communicate with each other over a simple TCP
+protocol built with [protobuf](https://developers.google.com/protocol-buffers/).
+At present, the protocol operates over Unix sockets.
 
 Future implementations may attempt to take advantage of shared memory (shmem)
 or other IPC constructs.
 
-## HTTP API Specification
+## Protocol Specification
 
 ### Data Types
 
-_Keys surrounded in <> brackets are optional. Values surrounded in [] are
-arrays._
+The data structures are defined in [pb/p2pd.proto](pb/p2pd.proto).
 
-- `Error`
-  ```
-  {
-    error: <message>,
+### Protocol Requests
+
+*Protocols described in pseudo-go. Items of the form [item, ...] are lists of
+many items.*
+
+#### Errors
+
+Any response that may be an error, will take the form of:
+
+```
+Response{
+  Type: ERROR,
+  ErrorResponse: {
+    Msg: <error message>,
+  },
+}
+```
+
+#### `Connect`
+
+Clients issue a `Connect` request when they wish to add a known peer's addresses
+to the daemon's `Peerstore` and connect to it.
+
+**Client**
+```
+Request{
+  Type: CONNECT,
+  ConnectRequest: {
+    Peer: <peer id>,
+    Addrs: [<addr>, ...],
+  },
+}
+```
+
+**Daemon**
+*May return an error.*
+```
+Response{
+  Type: OK,
+}
+```
+
+#### `Identify`
+
+Clients issue an `Identify` request when they wish to determine the peer ID and
+listen addresses of the daemon.
+
+**Client**
+```
+Request{
+  Type: IDENTIFY,
+}
+```
+
+**Daemon**
+```
+Response{
+  Type: OK,
+  IdentifyResponse: {
+      Id: <daemon peer id>,
+      Addrs: [<daemon listen addr>, ...],
+  },
+}
+```
+
+#### `StreamOpen`
+
+Clients issue a `StreamOpen` request when they wish to initiate an outbound
+stream to a peer on one of a set of protocols.
+
+**Client**
+```
+Request{
+  Type: STREAM_OPEN,
+  StreamOpenRequest: {
+    Peer: <peer id>,
+    Proto: [<protocol string>, ...],
+  },
+}
+```
+
+**Daemon**
+*May return an error, short circuiting.*
+```
+Response{
+  Type: OK,
+  StreamInfo: {
+    Peer: <peer id>,
+    Addr: <peer address connected to>,
+    Proto: <protocol we connected on>,
+  },
+}
+```
+
+After writing the response message to the socket, the daemon begins piping the
+newly created stream to the client over the socket. Clients may read from and
+write to the socket as if it were the stream. **WARNING**: Clients must be
+careful not to read excess bytes from the socket when parsing the daemon
+response, otherwise they risk reading into the stream output.
+
+#### `StreamHandler` - Register
+
+Clients issue a `StreamHandler` request to register a handler for inbound
+streams on a given protocol. Prior to issuing the request, the client must be
+listening to a Unix socket at the specified path.
+
+**Client**
+```
+Request{
+  Type: STREAM_HANDLER,
+  StreamHandlerRequest: {
+    Path: <path to unix socket client is listening to>,
+    Proto: [<protocols to route to this handler>, ...],
   }
-  ```
+}
+```
 
-- `Direction`
-  ```
-  INCOMING or OUTGOING
-  ```
+**Daemon**
+*May return an error indicating a handler for a specified protocol was already
+registered.*
+```
+Response{
+  Type: OK,
+}
+```
 
-- `Stream`
-  ```
-  {
-    "localAddr": <multiaddr>,
-    "localID": <peer ID>,
-    "remoteAddr": <multiaddr>,
-    "remoteID": <peer ID>,
-    "createdAt": <time>,
-    "direction": <Direction>,
-    "socketPath": <path>,
-    "protocol": <string>,
-  }
-  ```
+#### `StreamHandler` - Inbound stream
 
-- `Peer`
-  ```
-  {
-    "peerID": <b58 formatted peer id>,
-    "addresses": [<multiaddr>],
-    "<connected>": <bool>,
-    "<streams>": [<Stream>],
-  }
-  ```
+When peers connect to the daemon on a protocol for which our client has a
+registered handler, the daemon will connect to the client on the registered unix
+socket.
 
-- `Address`
-  ```
-  {
-    "address": <multiaddr>,
-  }
-  ```
+**Daemon**
+*Note: this message is NOT wrapped in a `Response` object.*
+```
+StreamInfo{
+  Peer: <peer id>,
+  Addr: <address of the peer>,
+  Proto: <protocol stream opened on>,
+}
+```
 
-### API Routes
-
-The API has two namespaces, daemon and client.
-
-#### Daemon
-
-- `POST /api/daemon/peers` __Adds a peer to the Host's Peerstore.__
-  - Request `Peer`
-  - Response
-    - 204 _Successfully added addresses for peer_
-    - 500 _Failed adding addresses for peer_
-      `Error`
-- `GET /api/daemon/peers` _Returns all known peers in the Host's Peerstore_
-  - Response
-    `[Peer]`
-- `GET /api/daemon/peers/<id>`
-  - Response
-    - 404 _Peer not in store_
-    - 200 _Peer information_
-      `Peer`
-- `POST /api/daemon/peers/<id>/streams` _Creates a new stream for a peer_
-  - Request _Includes either an empty body or an `Address` to connect to._
-  - Response `Stream`
-
-#### Client
-
-- `POST /api/client/peers/<id>/streams` _Notify the client of an incoming stream
-  request._
-  - Request `Stream`
-  - Response 204
+After writing the `StreamInfo` message, the daemon will once again begin piping
+data from the stream to the unix socket and vice-versa.
