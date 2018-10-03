@@ -21,9 +21,8 @@ There are two pieces to the libp2p daemon:
 
 ### Technical Details
 
-The libp2p daemon and client will communicate with each other over a simple TCP
-protocol built with [protobuf](https://developers.google.com/protocol-buffers/).
-At present, the protocol operates over Unix sockets.
+The libp2p daemon and client will communicate with each other over a simple Unix
+socket based protocol built with [protobuf](https://developers.google.com/protocol-buffers/).
 
 Future implementations may attempt to take advantage of shared memory (shmem)
 or other IPC constructs.
@@ -54,8 +53,8 @@ Response{
 
 #### `Connect`
 
-Clients issue a `Connect` request when they wish to add a known peer's addresses
-to the daemon's `Peerstore` and connect to it.
+Clients issue a `Connect` request when they wish to connect to a known peer on a
+given set of addresses.
 
 **Client**
 ```
@@ -152,8 +151,8 @@ Request{
 ```
 
 **Daemon**
-*May return an error indicating a handler for a specified protocol was already
-registered.*
+*In the event that a stream binding already exists, this will overwrite that
+stream binding with the one specified in the new request.*
 ```
 Response{
   Type: OK,
