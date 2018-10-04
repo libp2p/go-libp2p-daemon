@@ -7,9 +7,9 @@
 [![Coverage Status](https://coveralls.io/repos/github/libp2p/go-libp2p-daemon/badge.svg?branch=master)](https://coveralls.io/github/libp2p/go-libp2p-daemon?branch=master)
 [![Build Status](https://travis-ci.org/libp2p/go-libp2p-daemon.svg?branch=master)](https://travis-ci.org/libp2p/go-libp2p-daemon)
 
-> A standalone deployment of a libp2p host, running in its own OS process and installing a set of 
+> A standalone deployment of a libp2p host, running in its own OS process and installing a set of
   virtual endpoints to enable co-local applications to: communicate with peers, handle protocols,
-  interact with the DHT, participate in pubsub, etc. no matter the language they are developed in, 
+  interact with the DHT, participate in pubsub, etc. no matter the language they are developed in,
   nor whether a native libp2p implementation exists in that language.
 
 🚧 This project is under active development! 🚧
@@ -28,6 +28,14 @@ $ p2pd
 ## Usage
 
 Check out the [GoDocs](https://godoc.org/github.com/libp2p/go-libp2p-daemon).
+
+## Implementing Language Bindings
+
+See the [spec](SPEC.md) for the daemon control protocol and API.
+
+Reference implementations:
+- Go bindings in the [p2pclient](p2pclient) package.
+- Gerbil bindings in [gerbil-libp2p](https://github.com/vyzo/gerbil-libp2p).
 
 ## Contribute
 
