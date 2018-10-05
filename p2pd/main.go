@@ -13,7 +13,7 @@ import (
 )
 
 func main() {
-	identify.ClientVersion = "p2pd"
+	identify.ClientVersion = "p2pd/0.1"
 
 	sock := flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path")
 	quiet := flag.Bool("q", false, "be quiet")
