@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
@@ -18,6 +19,7 @@ func main() {
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
 	bootstrap := flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled")
+	bootstrapPeers := flag.String("bootstrapPeers", "", "comma separated list of bootstrap peers; defaults to the IPFS DHT peers")
 	dht := flag.Bool("dht", false, "Enables the DHT in full node mode")
 	dhtClient := flag.Bool("dhtClient", false, "Enables the DHT in client mode")
 	flag.Parse()
@@ -45,6 +47,10 @@ func main() {
 		}
 	}
 
+	if *bootstrapPeers != "" {
+		p2pd.BootstrapPeers = strings.Split(*bootstrapPeers, ",")
+	}
+
 	if *bootstrap {
 		err = d.Bootstrap()
 		if err != nil {
@@ -58,6 +64,12 @@ func main() {
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
 			fmt.Printf("%s\n", addr.String())
+		}
+		if *bootstrap && *bootstrapPeers != "" {
+			fmt.Printf("Bootstrap peers:\n")
+			for _, p := range p2pd.BootstrapPeers {
+				fmt.Printf("%s\n", p)
+			}
 		}
 	}
 
