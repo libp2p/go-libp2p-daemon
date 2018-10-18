@@ -12,8 +12,11 @@ import (
 	ma "github.com/multiformats/go-multiaddr"
 )
 
+// PeerInfo wraps the PeerInfo message from our protobuf with richer types.
 type PeerInfo struct {
-	Id    peer.ID
+	// Id is the peer's ID
+	ID peer.ID
+	// Addrs are the peer's listen addresses.
 	Addrs []ma.Multiaddr
 }
 
@@ -33,7 +36,7 @@ func convertPbPeerInfo(pbi *pb.PeerInfo) (*PeerInfo, error) {
 	}
 
 	pi := &PeerInfo{
-		Id:    id,
+		ID:    id,
 		Addrs: addrs,
 	}
 
@@ -108,6 +111,7 @@ func (c *Client) FindPeer(peer peer.ID) (*PeerInfo, error) {
 		err = fmt.Errorf("error from daemon in findpeer: %s", msg.GetError().GetMsg())
 		return nil, err
 	}
+
 	dht := msg.GetDht()
 	if dht == nil {
 		return nil, errors.New("dht response was not populated in findpeer")
