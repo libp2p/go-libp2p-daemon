@@ -1,4 +1,4 @@
-# libp2p Daemon
+# libp2p Daemon Control Protocol
 
 The libp2p daemon is a standalone binary meant to make it easy to bring
 peer-to-peer networking to new languages without fully porting libp2p and all

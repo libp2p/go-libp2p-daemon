@@ -31,7 +31,7 @@ Check out the [GoDocs](https://godoc.org/github.com/libp2p/go-libp2p-daemon).
 
 ## Implementing Language Bindings
 
-See the [spec](SPEC.md) for the daemon control protocol and API.
+See the [spec](specs/README.md) for the daemon control protocol and API.
 
 Reference implementations:
 - Go bindings in the [p2pclient](p2pclient) package.
