@@ -1,4 +1,4 @@
-# libp2p Daemon Control Protocol
+# libp2p Daemon Protocol
 
 The libp2p daemon DHT protocol allows clients to query and announce to the
 libp2p DHT.
@@ -16,16 +16,19 @@ are varint-delimited. For the DHT queries, the relevant data types are:
 - `DHTRequest`
 - `DHTResponse`
 
-All DHT requests will be wrapped in a `Request` message with `Type: DHT`. All
+All DHT requests will be wrapped in a `Request` message with `Type: DHT`. Most
 DHT responses from the daemon will be wrapped in a `Response` with the
-`DHTResponse` field populated.
+`DHTResponse` field populated. Some responses will be basic `Response` messages to convey whether or not there was an error.
 
 `DHTRequest` messages have a `Type` parameter that specifies the specific query
 the client wishes to execute.
 
-`DHTResponse` messages have a `Type` parameter that specifies whether a response
-marks the `BEGIN`ning of a stream of messages, a `VALUE` within a stream of
-messages, or the `END` of a stream of messages.
+The DHT protocol supports asynchronous stream responses with arbitrary numbers
+of results as well as responses that return a single value. `DHTResponse`
+messages have a `Type` parameter that specifies whether a response marks the
+`BEGIN`ning of a stream of messages, a `VALUE` within a stream of messages, or
+the `END` of a stream of messages. Single-value responses will simply return a
+single `DHTResponse` with type `VALUE`.
 
 ### Protocol Requests
 
@@ -107,14 +110,11 @@ Response{
 *Can return any number of responses like this, including 0*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: VALUE,
-    Peer: PeerInfo{
-      Id: <peer id>,
-      Addrs: [<addr>, ...],
-    },
+DHTResponse{
+  Type: VALUE,
+  Peer: PeerInfo{
+    Id: <peer id>,
+    Addrs: [<addr>, ...],
   },
 }
 ```
@@ -123,11 +123,8 @@ Response{
 *Marks the end of the result stream*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: END,
-  }
+DHTResponse{
+  Type: END,
 }
 ```
 
@@ -156,7 +153,7 @@ Response{
   Type: OK,
   DHTResponse: DHTResponse{
     Type: BEGIN,
-  }
+  },
 }
 ```
 
@@ -164,14 +161,11 @@ Response{
 *Can return any number of responses like this, including 0*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: VALUE,
-    Peer: PeerInfo{
-      Id: <peer id>,
-      Addrs: [<addr>, ...],
-    },
+DHTResponse{
+  Type: VALUE,
+  Peer: PeerInfo{
+    Id: <peer id>,
+    Addrs: [<addr>, ...],
   },
 }
 ```
@@ -180,11 +174,8 @@ Response{
 *Marks the end of the result stream*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: END,
-  }
+DHTResponse{
+  Type: END,
 }
 ```
 
@@ -219,12 +210,9 @@ Response{
 *Can return any number of responses like this, including 0*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: VALUE,
-    Value: <peer id>,
-  },
+DHTResponse{
+  Type: VALUE,
+  Value: <peer id>,
 }
 ```
 
@@ -232,11 +220,8 @@ Response{
 *Marks the end of the result stream*
 
 ```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: END,
-  }
+DHTResponse{
+  Type: END,
 }
 ```
 
