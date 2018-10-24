@@ -1,4 +1,4 @@
-# libp2p Daemon
+# libp2p Daemon Control Protocol
 
 The libp2p daemon is a standalone binary meant to make it easy to bring
 peer-to-peer networking to new languages without fully porting libp2p and all
@@ -31,7 +31,7 @@ or other IPC constructs.
 
 ### Data Types
 
-The data structures are defined in [pb/p2pd.proto](pb/p2pd.proto). All messages
+The data structures are defined in [pb/p2pd.proto](../pb/p2pd.proto). All messages
 are varint-delimited.
 
 ### Protocol Requests
