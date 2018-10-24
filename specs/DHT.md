@@ -70,7 +70,7 @@ Request{
 Response{
   Type: OK,
   DHTResponse: DHTResponse{
-    Type: Value,
+    Type: VALUE,
     Peer: PeerInfo{
       Id: <peer id>,
       Addrs: [<addr>, ...],
