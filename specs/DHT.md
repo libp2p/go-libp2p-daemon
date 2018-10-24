@@ -1,4 +1,4 @@
-# libp2p Daemon Protocol
+# libp2p Daemon DHT Protocol
 
 The libp2p daemon DHT protocol allows clients to query and announce to the
 libp2p DHT.
@@ -234,7 +234,7 @@ for a given peer's public key.
 Request{
   Type: DHT,
   DHTRequest: DHTRequest{
-    Type: GET_CLOSEST_PEERS,
+    Type: GET_PUBLIC_KEY,
     Peer: <peer id>,
   },
 }
