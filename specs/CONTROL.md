@@ -31,7 +31,7 @@ or other IPC constructs.
 
 ### Data Types
 
-The data structures are defined in [pb/p2pd.proto](pb/p2pd.proto). All messages
+The data structures are defined in [pb/p2pd.proto](../pb/p2pd.proto). All messages
 are varint-delimited.
 
 ### Protocol Requests

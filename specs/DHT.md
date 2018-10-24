@@ -10,7 +10,7 @@ changes until stabilization._
 
 ### Data Types
 
-The data structures are defined in [pb/p2pd.proto](pb/p2pd.proto). All messages
+The data structures are defined in [pb/p2pd.proto](../pb/p2pd.proto). All messages
 are varint-delimited. For the DHT queries, the relevant data types are:
 
 - `DHTRequest`
