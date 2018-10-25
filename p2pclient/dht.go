@@ -54,34 +54,45 @@ func newDHTReq(req *pb.DHTRequest) *pb.Request {
 	}
 }
 
-func readDhtResponseStream(ctx context.Context, control net.Conn) <-chan *pb.Response {
-	out := make(chan *pb.Response)
+func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DHTResponse, error) {
+	r := ggio.NewDelimitedReader(control, MessageSizeMax)
+	msg := &pb.Response{}
+	if err := r.ReadMsg(msg); err != nil {
+		return nil, err
+	}
+	if msg.GetType() != pb.Response_OK {
+		return nil, errors.New(msg.GetError().GetMsg())
+	}
+	if msg.Dht.GetType() != pb.DHTResponse_BEGIN {
+		return nil, fmt.Errorf("expected a stream BEGIN message but got %s", msg.Dht.GetType().String())
+	}
 
+	out := make(chan *pb.DHTResponse)
 	go func() {
 		defer close(out)
 		defer control.Close()
 
-		r := ggio.NewDelimitedReader(control, MessageSizeMax)
 		for {
 			select {
 			case <-ctx.Done():
 				return
 			default:
-				msg := &pb.Response{}
+				msg := &pb.DHTResponse{}
 				if err := r.ReadMsg(msg); err != nil {
 					log.Errorf("reading FindPeer response: %s", err)
 					return
 				}
 
-				out <- msg
-				if msg.GetType() == pb.Response_ERROR || msg.Dht.GetType() == pb.DHTResponse_END {
+				if msg.GetType() == pb.DHTResponse_END {
 					return
 				}
+
+				out <- msg
 			}
 		}
 	}()
 
-	return out
+	return out, nil
 }
 
 // FindPeer queries the daemon for a peer's address.
@@ -144,21 +155,20 @@ func (c *Client) FindPeersConnectedToPeer(ctx context.Context, peer peer.ID) (<-
 		Peer: []byte(peer),
 	})
 
-	if err := w.WriteMsg(req); err != nil {
+	if err = w.WriteMsg(req); err != nil {
+		return nil, err
+	}
+
+	respc, err := readDhtResponseStream(ctx, control)
+	if err != nil {
 		return nil, err
 	}
 
 	go func() {
 		defer close(out)
-		respc := readDhtResponseStream(ctx, control)
 
 		for resp := range respc {
-			if resp.GetType() != pb.Response_OK {
-				log.Errorf("error from daemon in findpeersconnectedtopeer: %s", resp.GetError().GetMsg())
-				return
-			}
-
-			info, err := convertPbPeerInfo(resp.Dht.GetPeer())
+			info, err := convertPbPeerInfo(resp.GetPeer())
 			if err != nil {
 				continue
 			}
