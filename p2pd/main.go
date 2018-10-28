@@ -25,8 +25,8 @@ func main() {
 	dht := flag.Bool("dht", false, "Enables the DHT in full node mode")
 	dhtClient := flag.Bool("dhtClient", false, "Enables the DHT in client mode")
 	connMgr := flag.Bool("connManager", false, "Enables the Connection Manager")
-	connMgrLo := flag.Int("connLow", 256, "Connection Manager Low Water mark")
-	connMgrHi := flag.Int("connLow", 512, "Connection Manager High Water mark")
+	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
+	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)")
 	flag.Parse()
 
