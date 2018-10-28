@@ -7,14 +7,14 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmVsVARb86uSe1qYouewFMNd2p2sp2NGWm1JGPReVDWchW",
+      "hash": "QmUDTcnDp2WssbmiDLC6aYurUeyt7QeRakHUQMxA2mZ5iB",
       "name": "go-libp2p",
-      "version": "6.0.13"
+      "version": "6.0.23"
     },
     {
-      "hash": "QmZVakpN44VAUxs9eXAuUGLFYTCGmSyqSy6hyEKfMv68ME",
+      "hash": "QmQHnqaNULV8WeUGgh97o9K3KAW6kWQmDyNf9UuikgnPTe",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.2"
+      "version": "4.4.12"
     }
   ],
   "gxVersion": "0.12.1",
@@ -24,3 +24,4 @@
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
   "version": "0.0.0"
 }
+
