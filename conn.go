@@ -114,6 +114,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_CONNMANAGER:
+			res := d.doConnManager(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				return
+			}
+
 		default:
 			log.Debugf("Unexpected request type: %d", *req.Type)
 			return
