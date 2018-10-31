@@ -172,7 +172,7 @@ func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
 // GetValue queries the daemon for a value stored at a key.
 func (c *Client) GetValue(key string) ([]byte, error) {
 	req := newDHTReq(&pb.DHTRequest{
-		Type: pb.DHTRequest_FIND_PEER.Enum(),
+		Type: pb.DHTRequest_GET_VALUE.Enum(),
 		Key:  &key,
 	})
 
@@ -199,7 +199,7 @@ func (c *Client) PutValue(key string, value []byte) error {
 // Provide announces that our peer provides content described by a CID.
 func (c *Client) Provide(id cid.Cid) error {
 	req := newDHTReq(&pb.DHTRequest{
-		Type: pb.DHTRequest_PUT_VALUE.Enum(),
+		Type: pb.DHTRequest_PROVIDE.Enum(),
 		Cid:  id.Bytes(),
 	})
 
@@ -207,8 +207,8 @@ func (c *Client) Provide(id cid.Cid) error {
 	return err
 }
 
-func convertResponseToPeerInfo(respc <-chan *pb.DHTResponse) <-chan *PeerInfo {
-	out := make(chan *PeerInfo, 10)
+func convertResponseToPeerInfo(respc <-chan *pb.DHTResponse) <-chan PeerInfo {
+	out := make(chan PeerInfo, 10)
 
 	go func() {
 		defer close(out)
@@ -216,10 +216,11 @@ func convertResponseToPeerInfo(respc <-chan *pb.DHTResponse) <-chan *PeerInfo {
 		for resp := range respc {
 			info, err := convertPbPeerInfo(resp.GetPeer())
 			if err != nil {
+				log.Errorf("error converting peerinfo: %s", err.Error())
 				continue
 			}
 
-			out <- info
+			out <- *info
 		}
 	}()
 
@@ -235,6 +236,7 @@ func convertResponseToPeerID(respc <-chan *pb.DHTResponse) <-chan peer.ID {
 		for resp := range respc {
 			id, err := peer.IDFromBytes(resp.GetValue())
 			if err != nil {
+				log.Errorf("error parsing peer id: %s", err.Error())
 				continue
 			}
 
@@ -273,7 +275,7 @@ func (c *Client) streamRequest(ctx context.Context, req *pb.Request) (<-chan *pb
 	return readDhtResponseStream(ctx, control)
 }
 
-func (c *Client) streamRequestPeerInfo(ctx context.Context, req *pb.Request) (<-chan *PeerInfo, error) {
+func (c *Client) streamRequestPeerInfo(ctx context.Context, req *pb.Request) (<-chan PeerInfo, error) {
 	respc, err := c.streamRequest(ctx, req)
 	if err != nil {
 		return nil, err
@@ -305,7 +307,7 @@ func (c *Client) streamRequestValue(ctx context.Context, req *pb.Request) (<-cha
 
 // FindPeersConnectedToPeer queries the DHT for peers that have an active
 // connection to a given peer.
-func (c *Client) FindPeersConnectedToPeer(ctx context.Context, peer peer.ID) (<-chan *PeerInfo, error) {
+func (c *Client) FindPeersConnectedToPeer(ctx context.Context, peer peer.ID) (<-chan PeerInfo, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_FIND_PEERS_CONNECTED_TO_PEER.Enum(),
 		Peer: []byte(peer),
@@ -316,7 +318,7 @@ func (c *Client) FindPeersConnectedToPeer(ctx context.Context, peer peer.ID) (<-
 
 // FindProviders queries the DHT for peers that provide a piece of content
 // identified by a CID.
-func (c *Client) FindProviders(ctx context.Context, cid cid.Cid) (<-chan *PeerInfo, error) {
+func (c *Client) FindProviders(ctx context.Context, cid cid.Cid) (<-chan PeerInfo, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_FIND_PROVIDERS.Enum(),
 		Cid:  cid.Bytes(),
