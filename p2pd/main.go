@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"log"
 	"strings"
-	"time"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
@@ -27,7 +26,7 @@ func main() {
 	connMgr := flag.Bool("connManager", false, "Enables the Connection Manager")
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
-	connMgrGrace := flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)")
+	connMgrGrace := flag.Duration("connGrace", 120, "Connection Manager grace period (in seconds)")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -42,7 +41,7 @@ func main() {
 	}
 
 	if *connMgr {
-		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, time.Duration(*connMgrGrace)*time.Second)
+		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, *connMgrGrace)
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
