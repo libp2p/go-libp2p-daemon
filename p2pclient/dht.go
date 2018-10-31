@@ -22,26 +22,27 @@ type PeerInfo struct {
 	Addrs []ma.Multiaddr
 }
 
-func convertPbPeerInfo(pbi *pb.PeerInfo) (*PeerInfo, error) {
+func convertPbPeerInfo(pbi *pb.PeerInfo) (PeerInfo, error) {
 	if pbi == nil {
-		return nil, errors.New("null peerinfo")
+		return PeerInfo{}, errors.New("null peerinfo")
 	}
 
 	id, err := peer.IDFromBytes(pbi.GetId())
 	if err != nil {
-		return nil, err
+		return PeerInfo{}, err
 	}
 
 	addrs := make([]ma.Multiaddr, 0, len(pbi.Addrs))
 	for _, addrbytes := range pbi.Addrs {
 		addr, err := ma.NewMultiaddrBytes(addrbytes)
 		if err != nil {
-			return nil, err
+			log.Errorf("error parsing multiaddr in peerinfo: %s", err)
+			continue
 		}
 		addrs = append(addrs, addr)
 	}
 
-	pi := &PeerInfo{
+	pi := PeerInfo{
 		ID:    id,
 		Addrs: addrs,
 	}
@@ -81,7 +82,7 @@ func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DH
 			default:
 				msg := &pb.DHTResponse{}
 				if err := r.ReadMsg(msg); err != nil {
-					log.Errorf("reading FindPeer response: %s", err)
+					log.Errorf("reading daemon response: %s", err)
 					return
 				}
 
@@ -121,29 +122,32 @@ func (c *Client) request(req *pb.Request) (*pb.DHTResponse, error) {
 		return nil, err
 	}
 
-	dht := msg.GetDht()
-	if dht == nil {
-		return nil, errors.New("dht response was not populated in findpeer")
-	}
+	return msg.GetDht(), nil
+}
 
-	return dht, nil
+func (c *Client) requestNonNil(req *pb.Request) (*pb.DHTResponse, error) {
+	resp, err := c.request(req)
+	if err != nil && resp == nil {
+		return nil, fmt.Errorf("dht response was not populated in %s request", req.GetType().String())
+	}
+	return resp, err
 }
 
 // FindPeer queries the daemon for a peer's address.
-func (c *Client) FindPeer(peer peer.ID) (*PeerInfo, error) {
+func (c *Client) FindPeer(peer peer.ID) (PeerInfo, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_FIND_PEER.Enum(),
 		Peer: []byte(peer),
 	})
 
-	msg, err := c.request(req)
+	msg, err := c.requestNonNil(req)
 	if err != nil {
-		return nil, err
+		return PeerInfo{}, err
 	}
 
 	info, err := convertPbPeerInfo(msg.GetPeer())
 	if err != nil {
-		return nil, err
+		return PeerInfo{}, err
 	}
 
 	return info, nil
@@ -156,7 +160,7 @@ func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
 		Peer: []byte(peer),
 	})
 
-	msg, err := c.request(req)
+	msg, err := c.requestNonNil(req)
 	if err != nil {
 		return nil, err
 	}
@@ -176,7 +180,7 @@ func (c *Client) GetValue(key string) ([]byte, error) {
 		Key:  &key,
 	})
 
-	msg, err := c.request(req)
+	msg, err := c.requestNonNil(req)
 	if err != nil {
 		return nil, err
 	}
@@ -220,7 +224,7 @@ func convertResponseToPeerInfo(respc <-chan *pb.DHTResponse) <-chan PeerInfo {
 				continue
 			}
 
-			out <- *info
+			out <- info
 		}
 	}()
 
