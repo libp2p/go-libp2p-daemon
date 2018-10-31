@@ -127,7 +127,7 @@ func (c *Client) request(req *pb.Request) (*pb.DHTResponse, error) {
 
 func (c *Client) requestNonNil(req *pb.Request) (*pb.DHTResponse, error) {
 	resp, err := c.request(req)
-	if err != nil && resp == nil {
+	if err == nil && resp == nil {
 		return nil, fmt.Errorf("dht response was not populated in %s request", req.GetType().String())
 	}
 	return resp, err
