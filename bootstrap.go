@@ -95,6 +95,7 @@ func (d *Daemon) connectBootstrapPeers(pis []*pstore.PeerInfo, toconnect int) in
 		if err != nil {
 			log.Debugf("Error connecting to bootstrap peer %s: %s", pi.ID, err.Error())
 		} else {
+			d.host.ConnManager().TagPeer(pi.ID, "bootstrap", 1)
 			count++
 			toconnect--
 		}

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
+	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 )
@@ -22,6 +23,10 @@ func main() {
 	bootstrapPeers := flag.String("bootstrapPeers", "", "comma separated list of bootstrap peers; defaults to the IPFS DHT peers")
 	dht := flag.Bool("dht", false, "Enables the DHT in full node mode")
 	dhtClient := flag.Bool("dhtClient", false, "Enables the DHT in client mode")
+	connMgr := flag.Bool("connManager", false, "Enables the Connection Manager")
+	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
+	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
+	connMgrGrace := flag.Duration("connGrace", 120, "Connection Manager grace period (in seconds)")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -33,6 +38,11 @@ func main() {
 		}
 
 		opts = append(opts, libp2p.Identity(key))
+	}
+
+	if *connMgr {
+		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, *connMgrGrace)
+		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)

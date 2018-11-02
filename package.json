@@ -15,6 +15,12 @@
       "hash": "QmQHnqaNULV8WeUGgh97o9K3KAW6kWQmDyNf9UuikgnPTe",
       "name": "go-libp2p-kad-dht",
       "version": "4.4.12"
+    },
+    {
+      "author": "whyrusleeping",
+      "hash": "QmTSih5JrkhMH62dp1oGjEwcaC38dxXBgRwTbeQEL4mPcU",
+      "name": "go-libp2p-connmgr",
+      "version": "0.3.23"
     }
   ],
   "gxVersion": "0.12.1",
