@@ -1,10 +1,7 @@
 package test
 
 import (
-	"context"
 	"io"
-	"io/ioutil"
-	"os"
 	"testing"
 	"time"
 
@@ -13,33 +10,6 @@ import (
 	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
-
-func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
-	root := os.TempDir()
-	dir, err := ioutil.TempDir(root, "p2pd")
-	if err != nil {
-		t.Fatal(err)
-	}
-	daemonPath := dir + "/daemon.sock"
-	clientPath := dir + "/client.sock"
-	ctx, cancelCtx := context.WithCancel(context.Background())
-	daemon, err := p2pd.NewDaemon(ctx, daemonPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client, err := p2pclient.NewClient(daemonPath, clientPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	closer := func() {
-		cancelCtx()
-		client.Close()
-		os.RemoveAll(dir)
-	}
-	return daemon, client, closer
-}
 
 func TestIdentify(t *testing.T) {
 	d, c, closer := createDaemonClientPair(t)
