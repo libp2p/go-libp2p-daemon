@@ -2,17 +2,20 @@ package test
 
 import (
 	"context"
+	"crypto/rand"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
 
+	cid "github.com/ipfs/go-cid"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	peer "github.com/libp2p/go-libp2p-peer"
 	peertest "github.com/libp2p/go-libp2p-peer/test"
 	ma "github.com/multiformats/go-multiaddr"
+	mh "github.com/multiformats/go-multihash"
 )
 
 func createTempDir(t *testing.T) (string, string, func()) {
@@ -88,6 +91,20 @@ func randPeerIDs(t *testing.T, n int) []peer.ID {
 		ids[i] = randPeerID(t)
 	}
 	return ids
+}
+
+func randCid(t *testing.T) cid.Cid {
+	buf := make([]byte, 10)
+	rand.Read(buf)
+	hash, err := mh.Sum(buf, mh.SHA2_256, -1)
+	if err != nil {
+		t.Fatalf("creating hash for cid: %s", err)
+	}
+	id := cid.NewCidV1(cid.Raw, hash)
+	if err != nil {
+		t.Fatalf("creating cid: %s", err)
+	}
+	return id
 }
 
 func wrapDhtResponse(dht *pb.DHTResponse) *pb.Response {

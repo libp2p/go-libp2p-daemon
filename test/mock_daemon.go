@@ -128,12 +128,14 @@ func streamEnd() *pb.DHTResponse {
 }
 
 func wrapResponseStream(resps []*pb.DHTResponse) []proto.Message {
-	respStream := make([]proto.Message, 0, len(resps)+2)
+	respStream := make([]proto.Message, len(resps)+2)
 	respStream[0] = streamStart()
+	i := 1
 	for _, resp := range resps {
-		respStream = append(respStream, resp)
+		respStream[i] = resp
+		i++
 	}
-	respStream = append(respStream, streamEnd())
+	respStream[len(resps)+1] = streamEnd()
 	return respStream
 }
 
