@@ -17,7 +17,7 @@ type mockdaemon struct {
 	listener   net.Listener
 }
 
-func newMockDaemon(t *testing.T, listenPath, clientPath string) *mockdaemon {
+func newMockDaemon(t testing.TB, listenPath, clientPath string) *mockdaemon {
 	_, err := os.Stat(clientPath)
 	if err != nil {
 		t.Fatalf("searching for client socket in mock daemon: %s", err)
@@ -46,7 +46,7 @@ type mockconn struct {
 	w ggio.WriteCloser
 }
 
-func (d *mockdaemon) ExpectConn(t *testing.T) *mockconn {
+func (d *mockdaemon) ExpectConn(t testing.TB) *mockconn {
 	timeoutc := make(chan struct{}, 1)
 	go func() {
 		select {
@@ -75,7 +75,7 @@ func (d *mockdaemon) ExpectConn(t *testing.T) *mockconn {
 	}
 }
 
-func (c *mockconn) ExpectRequestType(t *testing.T, typ pb.Request_Type) *pb.Request {
+func (c *mockconn) ExpectRequestType(t testing.TB, typ pb.Request_Type) *pb.Request {
 	req := &pb.Request{}
 	if err := c.r.ReadMsg(req); err != nil {
 		t.Fatalf("reading message: %s", err)
@@ -88,7 +88,7 @@ func (c *mockconn) ExpectRequestType(t *testing.T, typ pb.Request_Type) *pb.Requ
 	return req
 }
 
-func (c *mockconn) ExpectDHTRequestType(t *testing.T, typ pb.DHTRequest_Type) *pb.DHTRequest {
+func (c *mockconn) ExpectDHTRequestType(t testing.TB, typ pb.DHTRequest_Type) *pb.DHTRequest {
 	req := &pb.Request{}
 	if err := c.r.ReadMsg(req); err != nil {
 		t.Fatalf("reading message: %s", err)
@@ -105,7 +105,7 @@ func (c *mockconn) ExpectDHTRequestType(t *testing.T, typ pb.DHTRequest_Type) *p
 	return req.Dht
 }
 
-func (c *mockconn) SendMessage(t *testing.T, mes proto.Message) {
+func (c *mockconn) SendMessage(t testing.TB, mes proto.Message) {
 	err := c.w.WriteMsg(mes)
 	if err != nil {
 		t.Fatalf("sending message: %s", err)
@@ -139,7 +139,7 @@ func wrapResponseStream(resps []*pb.DHTResponse) []proto.Message {
 	return respStream
 }
 
-func (c *mockconn) SendStreamAsync(t *testing.T, resps []*pb.DHTResponse) {
+func (c *mockconn) SendStreamAsync(t testing.TB, resps []*pb.DHTResponse) {
 	go func() {
 		messages := wrapResponseStream(resps)
 		for _, mes := range messages {
