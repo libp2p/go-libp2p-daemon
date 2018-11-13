@@ -3,12 +3,14 @@ package test
 import (
 	"context"
 	"crypto/rand"
+	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"os"
 	"testing"
 
 	cid "github.com/ipfs/go-cid"
+	crypto "github.com/libp2p/go-libp2p-crypto"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
@@ -107,6 +109,38 @@ func randCid(t *testing.T) cid.Cid {
 	return id
 }
 
+func randCids(t *testing.T, n int) []cid.Cid {
+	ids := make([]cid.Cid, n)
+	for i := 0; i < n; i++ {
+		ids[i] = randCid(t)
+	}
+	return ids
+}
+
+func randString(t *testing.T) string {
+	buf := make([]byte, 10)
+	rand.Read(buf)
+	return hex.EncodeToString(buf)
+}
+
+func randStrings(t *testing.T, n int) []string {
+	out := make([]string, n)
+	for i := 0; i < n; i++ {
+		buf := make([]byte, 10)
+		rand.Read(buf)
+		out[i] = hex.EncodeToString(buf)
+	}
+	return out
+}
+
+func randPubKey(t *testing.T) crypto.PubKey {
+	_, pub, err := crypto.GenerateEd25519Key(rand.Reader)
+	if err != nil {
+		t.Fatalf("generating pubkey: %s", err)
+	}
+	return pub
+}
+
 func wrapDhtResponse(dht *pb.DHTResponse) *pb.Response {
 	return &pb.Response{
 		Type: pb.Response_OK.Enum(),
@@ -125,5 +159,19 @@ func peerInfoResponse(t *testing.T, id peer.ID) *pb.DHTResponse {
 			Id:    []byte(id),
 			Addrs: [][]byte{addr.Bytes()},
 		},
+	}
+}
+
+func peerIDResponse(t *testing.T, id peer.ID) *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type:  pb.DHTResponse_VALUE.Enum(),
+		Value: []byte(id),
+	}
+}
+
+func valueResponse(buf []byte) *pb.DHTResponse {
+	return &pb.DHTResponse{
+		Type:  pb.DHTResponse_VALUE.Enum(),
+		Value: buf,
 	}
 }
