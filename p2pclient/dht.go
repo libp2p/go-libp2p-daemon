@@ -98,7 +98,7 @@ func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DH
 	return out, nil
 }
 
-func (c *Client) do(req *pb.Request) (*pb.DHTResponse, error) {
+func (c *Client) Do(req *pb.Request) (*pb.DHTResponse, error) {
 	control, err := c.newControlConn()
 	if err != nil {
 		return nil, err
@@ -126,7 +126,7 @@ func (c *Client) do(req *pb.Request) (*pb.DHTResponse, error) {
 }
 
 func (c *Client) requestNonNil(req *pb.Request) (*pb.DHTResponse, error) {
-	resp, err := c.do(req)
+	resp, err := c.Do(req)
 	if err == nil && resp == nil {
 		return nil, fmt.Errorf("dht response was not populated in %s request", req.GetType().String())
 	}
@@ -196,7 +196,7 @@ func (c *Client) PutValue(key string, value []byte) error {
 		Value: value,
 	})
 
-	_, err := c.do(req)
+	_, err := c.Do(req)
 	return err
 }
 
@@ -207,7 +207,7 @@ func (c *Client) Provide(id cid.Cid) error {
 		Cid:  id.Bytes(),
 	})
 
-	_, err := c.do(req)
+	_, err := c.Do(req)
 	return err
 }
 
