@@ -99,7 +99,7 @@ func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DH
 }
 
 // DoDHT issues a request to the daemon and returns its DHTResponse.
-func (c *Client) DoDHT(req *pb.Request) (*pb.DHTResponse, error) {
+func (c *Client) DoDHT(dhtReq *pb.DHTRequest) (*pb.DHTResponse, error) {
 	control, err := c.newControlConn()
 	if err != nil {
 		return nil, err
@@ -107,6 +107,7 @@ func (c *Client) DoDHT(req *pb.Request) (*pb.DHTResponse, error) {
 	defer control.Close()
 
 	w := ggio.NewDelimitedWriter(control)
+	req := newDHTReq(dhtReq)
 	if err = w.WriteMsg(req); err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func (c *Client) DoDHT(req *pb.Request) (*pb.DHTResponse, error) {
 // DoDHTNonNil issues a request to the daemon and returns its DHTResponse, ensuring
 // it's not nil and returning an error when it is. This is a convenience
 // function.
-func (c *Client) DoDHTNonNil(req *pb.Request) (*pb.DHTResponse, error) {
+func (c *Client) DoDHTNonNil(req *pb.DHTRequest) (*pb.DHTResponse, error) {
 	resp, err := c.DoDHT(req)
 	if err == nil && resp == nil {
 		return nil, fmt.Errorf("dht response was not populated in %s request", req.GetType().String())
@@ -139,10 +140,10 @@ func (c *Client) DoDHTNonNil(req *pb.Request) (*pb.DHTResponse, error) {
 
 // FindPeer queries the daemon for a peer's address.
 func (c *Client) FindPeer(peer peer.ID) (PeerInfo, error) {
-	req := newDHTReq(&pb.DHTRequest{
+	req := &pb.DHTRequest{
 		Type: pb.DHTRequest_FIND_PEER.Enum(),
 		Peer: []byte(peer),
-	})
+	}
 
 	msg, err := c.DoDHTNonNil(req)
 	if err != nil {
@@ -159,10 +160,10 @@ func (c *Client) FindPeer(peer peer.ID) (PeerInfo, error) {
 
 // GetPublicKey queries the daemon for a peer's address.
 func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
-	req := newDHTReq(&pb.DHTRequest{
+	req := &pb.DHTRequest{
 		Type: pb.DHTRequest_GET_PUBLIC_KEY.Enum(),
 		Peer: []byte(peer),
-	})
+	}
 
 	msg, err := c.DoDHTNonNil(req)
 	if err != nil {
@@ -179,10 +180,10 @@ func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
 
 // GetValue queries the daemon for a value stored at a key.
 func (c *Client) GetValue(key string) ([]byte, error) {
-	req := newDHTReq(&pb.DHTRequest{
+	req := &pb.DHTRequest{
 		Type: pb.DHTRequest_GET_VALUE.Enum(),
 		Key:  &key,
-	})
+	}
 
 	msg, err := c.DoDHTNonNil(req)
 	if err != nil {
@@ -194,11 +195,11 @@ func (c *Client) GetValue(key string) ([]byte, error) {
 
 // PutValue sets the value stored at a given key in the DHT to a given value.
 func (c *Client) PutValue(key string, value []byte) error {
-	req := newDHTReq(&pb.DHTRequest{
+	req := &pb.DHTRequest{
 		Type:  pb.DHTRequest_PUT_VALUE.Enum(),
 		Key:   &key,
 		Value: value,
-	})
+	}
 
 	_, err := c.DoDHT(req)
 	return err
@@ -206,10 +207,10 @@ func (c *Client) PutValue(key string, value []byte) error {
 
 // Provide announces that our peer provides content described by a CID.
 func (c *Client) Provide(id cid.Cid) error {
-	req := newDHTReq(&pb.DHTRequest{
+	req := &pb.DHTRequest{
 		Type: pb.DHTRequest_PROVIDE.Enum(),
 		Cid:  id.Bytes(),
-	})
+	}
 
 	_, err := c.DoDHT(req)
 	return err
