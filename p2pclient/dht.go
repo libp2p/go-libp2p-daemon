@@ -98,8 +98,8 @@ func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DH
 	return out, nil
 }
 
-// DoDHT issues a request to the daemon and returns its DHTResponse.
-func (c *Client) DoDHT(dhtReq *pb.DHTRequest) (*pb.DHTResponse, error) {
+// doDHT issues a request to the daemon and returns its DHTResponse.
+func (c *Client) doDHT(dhtReq *pb.DHTRequest) (*pb.DHTResponse, error) {
 	control, err := c.newControlConn()
 	if err != nil {
 		return nil, err
@@ -127,11 +127,11 @@ func (c *Client) DoDHT(dhtReq *pb.DHTRequest) (*pb.DHTResponse, error) {
 	return msg.GetDht(), nil
 }
 
-// DoDHTNonNil issues a request to the daemon and returns its DHTResponse, ensuring
+// doDHTNonNil issues a request to the daemon and returns its DHTResponse, ensuring
 // it's not nil and returning an error when it is. This is a convenience
 // function.
-func (c *Client) DoDHTNonNil(req *pb.DHTRequest) (*pb.DHTResponse, error) {
-	resp, err := c.DoDHT(req)
+func (c *Client) doDHTNonNil(req *pb.DHTRequest) (*pb.DHTResponse, error) {
+	resp, err := c.doDHT(req)
 	if err == nil && resp == nil {
 		return nil, fmt.Errorf("dht response was not populated in %s request", req.GetType().String())
 	}
@@ -145,7 +145,7 @@ func (c *Client) FindPeer(peer peer.ID) (PeerInfo, error) {
 		Peer: []byte(peer),
 	}
 
-	msg, err := c.DoDHTNonNil(req)
+	msg, err := c.doDHTNonNil(req)
 	if err != nil {
 		return PeerInfo{}, err
 	}
@@ -165,7 +165,7 @@ func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
 		Peer: []byte(peer),
 	}
 
-	msg, err := c.DoDHTNonNil(req)
+	msg, err := c.doDHTNonNil(req)
 	if err != nil {
 		return nil, err
 	}
@@ -185,7 +185,7 @@ func (c *Client) GetValue(key string) ([]byte, error) {
 		Key:  &key,
 	}
 
-	msg, err := c.DoDHTNonNil(req)
+	msg, err := c.doDHTNonNil(req)
 	if err != nil {
 		return nil, err
 	}
@@ -201,7 +201,7 @@ func (c *Client) PutValue(key string, value []byte) error {
 		Value: value,
 	}
 
-	_, err := c.DoDHT(req)
+	_, err := c.doDHT(req)
 	return err
 }
 
@@ -212,7 +212,7 @@ func (c *Client) Provide(id cid.Cid) error {
 		Cid:  id.Bytes(),
 	}
 
-	_, err := c.DoDHT(req)
+	_, err := c.doDHT(req)
 	return err
 }
 
