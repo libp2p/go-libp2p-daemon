@@ -122,6 +122,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_DISCONNECT:
+			res := d.doDisconnect(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				return
+			}
+
 		default:
 			log.Debugf("Unexpected request type: %d", *req.Type)
 			return
@@ -173,6 +181,24 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 	err = d.host.Connect(ctx, pi)
 	if err != nil {
 		log.Debugf("error opening connection to %s: %s", pid.Pretty(), err.Error())
+		return errorResponse(err)
+	}
+
+	return okResponse()
+}
+
+func (d *Daemon) doDisconnect(req *pb.Request) *pb.Response {
+	if req.Disconnect == nil {
+		return errorResponseString("Malformed request; missing parameters")
+	}
+
+	p, err := peer.IDFromBytes(req.Disconnect.GetPeer())
+	if err != nil {
+		return errorResponse(err)
+	}
+
+	err = d.host.Network().ClosePeer(p)
+	if err != nil {
 		return errorResponse(err)
 	}
 

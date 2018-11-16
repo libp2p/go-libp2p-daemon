@@ -52,6 +52,29 @@ Response{
 }
 ```
 
+#### `Identify`
+
+Clients issue an `Identify` request when they wish to determine the peer ID and
+listen addresses of the daemon.
+
+**Client**
+```
+Request{
+  Type: IDENTIFY,
+}
+```
+
+**Daemon**
+```
+Response{
+  Type: OK,
+  IdentifyResponse: {
+      Id: <daemon peer id>,
+      Addrs: [<daemon listen addr>, ...],
+  },
+}
+```
+
 #### `Connect`
 
 Clients issue a `Connect` request when they wish to connect to a known peer on a
@@ -76,28 +99,28 @@ Response{
 }
 ```
 
-#### `Identify`
+#### `Disconnect`
 
-Clients issue an `Identify` request when they wish to determine the peer ID and
-listen addresses of the daemon.
+Clients issue a `Disconnect` request when they wish to disconnect from a peer
 
 **Client**
 ```
 Request{
-  Type: IDENTIFY,
+  Type: DISCONNECT,
+  DisconnectRequest: {
+    Peer: <peer id>,
+  },
 }
 ```
 
 **Daemon**
+*May return an error.*
 ```
 Response{
   Type: OK,
-  IdentifyResponse: {
-      Id: <daemon peer id>,
-      Addrs: [<daemon listen addr>, ...],
-  },
 }
 ```
+
 
 #### `StreamOpen`
 
