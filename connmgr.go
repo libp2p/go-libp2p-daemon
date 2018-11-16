@@ -51,15 +51,6 @@ func (d *Daemon) doConnManager(req *pb.Request) *pb.Response {
 		d.host.ConnManager().TrimOpenConns(ctx)
 		return okResponse()
 
-	case pb.ConnManagerRequest_DISCONNECT_PEER:
-		p, err := peer.IDFromBytes(req.ConnManager.GetPeer())
-		if err != nil {
-			return errorResponse(err)
-		}
-
-		d.host.Network().ClosePeer(p)
-		return okResponse()
-
 	default:
 		log.Debugf("Unexpected ConnManager request type: %d", *req.ConnManager.Type)
 		return errorResponseString("Unexpected request")
