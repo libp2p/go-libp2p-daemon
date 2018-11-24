@@ -30,7 +30,7 @@ type Client struct {
 // NewClient creates a new libp2p daemon client, connecting to a daemon
 // listening on a unix socket at controlPath, and establishing an inbound socket
 // at listenPath.
-func NewClient(controlPath string, listenPath string) (*Client, error) {
+func NewClient(controlPath, listenPath string) (*Client, error) {
 	client := &Client{
 		controlPath: controlPath,
 		listenPath:  listenPath,

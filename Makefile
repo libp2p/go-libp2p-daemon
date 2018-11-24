@@ -1,30 +1,54 @@
-CLASS_PATH = .
+SHELL := /bin/bash
+OS = $(shell uname -s | tr '[:upper:]' '[:lower:]')
+
+ifeq ($(OS), linux)
+	EXT = so
+	OS_LFLAGS =
+	JAVA_HOME = 
+else ifeq ($(OS), darwin)
+	EXT = dylib
+	OS_LFLAGS = -mmacosx-version-min=$(shell defaults read loginwindow SystemVersionStampAsString) -framework CoreFoundation -framework Security
+	JAVA_HOME = $(shell /usr/libexec/java_home)
+endif
+
+CC = gcc
 CFLAGS = -O2 -fPIC
-DIR = p2pclient/java
-JAVA_INCLUDES = -I$(JAVA_HOME)/include/darwin -I$(JAVA_HOME)/include -I$(JAVA_HOME)/include/linux
+LFLAGS = $(OS_LFLAGS) -shared
+
+JAVA_INCLUDES = -I$(JAVA_HOME)/include/$(OS) -I$(JAVA_HOME)/include
+CLASS_PATH = .
 vpath %.class $(CLASS_PATH)
+
+DDIR := p2pd
+CDIR := p2pc
+JDIR := p2pclient/java
+DNAME := p2pd
+
 
 .DEFAULT_GOAL := go-daemon
 
-java-daemon: libp2pd.jnilib
+java-daemon: lib$(DNAME).$(EXT)
 
-libp2pd.jnilib : libp2pd.o
-	ld -dylib -flat_namespace -undefined suppress -macosx_version_min 10.13.4 -o $(DIR)/$@ $(DIR)/*.o -L$(DIR) -lp2pd
+lib$(DNAME).$(EXT): java-$(DNAME).o go-$(DNAME).a
+	$(CC) $(LFLAGS) -o $(JDIR)/$@ $(JDIR)/*.o $(JDIR)/*.a
 
-libp2pd.o : libp2pd.a
-	gcc $(CFLAGS) -c $(DIR)/p2pd.c $(JAVA_INCLUDES) -o $(DIR)/$@
+java-$(DNAME).o: java-$(DNAME).h $(DNAME).class go-$(DNAME).a
+	$(CC) $(CFLAGS) -c $(JDIR)/java-$(DNAME).c $(JAVA_INCLUDES) -o $(JDIR)/$@
 
-libp2pd.a: p2pd.h
-	go build -o $(DIR)/$@ -buildmode=c-archive p2pd/main.go
+go-$(DNAME).a: 
+	go build -o $(JDIR)/$@ -buildmode=c-archive $(DDIR)/main.go
 
-p2pd.h : p2pd.class
-	cd $(DIR) && javac -h $(CLASS_PATH) $*.java
+java-$(DNAME).h:
+	cd $(JDIR) && javac -h $(CLASS_PATH) $(DNAME).java && mv $(DNAME).h $@
 
-p2pd.class: go-daemon
-	cd $(DIR) && javac p2pd.java
+$(DNAME).class: go-daemon
+	cd $(JDIR) && javac $(DNAME).java
+
+go-client: deps
+	cd $(CDIR) && go install ./...
 
 go-daemon: deps
-	go install ./...
+	cd $(DDIR) && go install ./...
 
 deps: gx
 	gx --verbose install --global
@@ -35,9 +59,10 @@ gx:
 	go get github.com/whyrusleeping/gx-go
 
 clean:
-	rm -f p2pclient/java/*.o \
-	&& rm -f p2pclient/java/*.a \
-	&& rm -f p2pclient/java/*.jnilib \
-	&& rm -f p2pclient/java/*.class \
-	&& rm -f p2pclient/java/*.h
+	gx-go uw
+	rm -f $(JDIR)/*.o \
+	&& rm -f $(JDIR)/*.a \
+	&& rm -f $(JDIR)/*.$(EXT) \
+	&& rm -f $(JDIR)/*.class \
+	&& rm -f $(JDIR)/*.h
 

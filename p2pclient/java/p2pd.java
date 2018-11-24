@@ -1,7 +1,8 @@
 
+import java.util.Arrays;
 public class p2pd {
-    public static native void startD();
-    public static native void stopD();
+    public static native void startDaemon();
+    public static native void stopDaemon();
     static {
         try {
             
@@ -13,6 +14,6 @@ public class p2pd {
         }
     }
     public static void main(String[] args) {
-        startD();
+        startDaemon();
     }
 }
