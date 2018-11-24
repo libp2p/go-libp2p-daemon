@@ -11,7 +11,7 @@ import (
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	peer "github.com/libp2p/go-libp2p-peer"
 
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	"github.com/libp2p/go-libp2p-daemon/p2pclient/go"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 

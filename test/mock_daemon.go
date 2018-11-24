@@ -8,7 +8,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	"github.com/gogo/protobuf/proto"
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	"github.com/libp2p/go-libp2p-daemon/p2pclient/go"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
