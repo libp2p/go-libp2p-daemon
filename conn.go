@@ -151,12 +151,12 @@ func (d *Daemon) doIdentify(req *pb.Request) *pb.Response {
 }
 
 func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
-	ctx, cancel := context.WithTimeout(d.ctx, DefaultTimeout)
-	defer cancel()
-
 	if req.Connect == nil {
 		return errorResponseString("Malformed request; missing parameters")
 	}
+
+	ctx, cancel := d.requestContext(req.Connect.GetTimeout())
+	defer cancel()
 
 	pid, err := peer.IDFromBytes(req.Connect.Peer)
 	if err != nil {
@@ -206,12 +206,12 @@ func (d *Daemon) doDisconnect(req *pb.Request) *pb.Response {
 }
 
 func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
-	ctx, cancel := context.WithTimeout(d.ctx, DefaultTimeout)
-	defer cancel()
-
 	if req.StreamOpen == nil {
 		return errorResponseString("Malformed request; missing parameters"), nil
 	}
+
+	ctx, cancel := d.requestContext(req.StreamOpen.GetTimeout())
+	defer cancel()
 
 	pid, err := peer.IDFromBytes(req.StreamOpen.Peer)
 	if err != nil {
@@ -271,6 +271,15 @@ func (d *Daemon) doListPeers(req *pb.Request) *pb.Response {
 	res := okResponse()
 	res.Peers = peers
 	return res
+}
+
+func (d *Daemon) requestContext(utime int64) (context.Context, func()) {
+	timeout := DefaultTimeout
+	if utime > 0 {
+		timeout = time.Duration(utime)
+	}
+
+	return context.WithTimeout(d.ctx, timeout)
 }
 
 func okResponse() *pb.Response {

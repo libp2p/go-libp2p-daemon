@@ -287,12 +287,7 @@ func (d *Daemon) doDHTProvide(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTR
 }
 
 func (d *Daemon) dhtRequestContext(req *pb.DHTRequest) (context.Context, func()) {
-	timeout := 60 * time.Second
-	if req.GetTimeout() > 0 {
-		timeout = time.Duration(*req.Timeout)
-	}
-
-	return context.WithTimeout(d.ctx, timeout)
+	return requestContext(req.GetTimeout())
 }
 
 func dhtResponseBegin() *pb.DHTResponse {
