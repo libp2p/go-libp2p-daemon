@@ -2,7 +2,6 @@ package p2pd
 
 import (
 	"context"
-	"time"
 
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
@@ -287,7 +286,7 @@ func (d *Daemon) doDHTProvide(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHTR
 }
 
 func (d *Daemon) dhtRequestContext(req *pb.DHTRequest) (context.Context, func()) {
-	return requestContext(req.GetTimeout())
+	return d.requestContext(req.GetTimeout())
 }
 
 func dhtResponseBegin() *pb.DHTResponse {
