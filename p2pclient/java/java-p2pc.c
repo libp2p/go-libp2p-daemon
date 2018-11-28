@@ -1,8 +1,8 @@
 #include <jni.h>
-#include "java-p2pd.h"
-#include "go-p2pd.h"
+#include "java-p2pc.h"
+#include "go-p2pc.h"
 
-JNIEXPORT void JNICALL Java_p2pd_startDaemon (JNIEnv *jenv, jclass jcls, jstring jarg1){
+JNIEXPORT void JNICALL Java_p2pc_startClient (JNIEnv *jenv, jclass jcls, jstring jarg1){
   char *arg1 = (char *) 0 ;
   (void)jenv;
   (void)jcls;
@@ -11,10 +11,6 @@ JNIEXPORT void JNICALL Java_p2pd_startDaemon (JNIEnv *jenv, jclass jcls, jstring
     arg1 = (char *)(*jenv)->GetStringUTFChars(jenv, jarg1, 0);
     if (!arg1) return ;
   }
-  startDaemon(arg1);
+  startClient(arg1);
   if (arg1) (*jenv)->ReleaseStringUTFChars(jenv, jarg1, (const char *)arg1);
-}
-
-JNIEXPORT void JNICALL Java_p2pd_stopDaemon (JNIEnv *jenv, jclass jcls){
-    stopDaemon();
 }

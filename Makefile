@@ -19,30 +19,35 @@ JAVA_INCLUDES = -I$(JAVA_HOME)/include/$(OS) -I$(JAVA_HOME)/include
 CLASS_PATH = .
 vpath %.class $(CLASS_PATH)
 
-DDIR := p2pd
-CDIR := p2pc
-JDIR := p2pclient/java
-DNAME := p2pd
+DDIR = p2pd
+CDIR = p2pc
+JDIR = p2pclient/java
+DNAME = p2pd
+CNAME = p2pc
 
+.PHONY : all java-daemon java-client go-client go-daemon deps gx clean
+.DEFAULT_GOAL : go-daemon
 
-.DEFAULT_GOAL := go-daemon
+all: go-daemon go-client java-daemon java-client
 
 java-daemon: lib$(DNAME).$(EXT)
 
-lib$(DNAME).$(EXT): java-$(DNAME).o go-$(DNAME).a
-	$(CC) $(LFLAGS) -o $(JDIR)/$@ $(JDIR)/*.o $(JDIR)/*.a
+java-client: lib$(CNAME).$(EXT)
 
-java-$(DNAME).o: java-$(DNAME).h $(DNAME).class go-$(DNAME).a
-	$(CC) $(CFLAGS) -c $(JDIR)/java-$(DNAME).c $(JAVA_INCLUDES) -o $(JDIR)/$@
+lib%.$(EXT): java-%.o go-%.a
+	$(CC) $(LFLAGS) -o $(JDIR)/$@ $(JDIR)/$(firstword $^) $(JDIR)/$(lastword $^)
 
-go-$(DNAME).a: 
-	go build -o $(JDIR)/$@ -buildmode=c-archive $(DDIR)/main.go
+java-%.o: go-%.a java-%.h %.class 
+	$(CC) $(CFLAGS) -c $(JDIR)/java-$*.c $(JAVA_INCLUDES) -o $(JDIR)/$@
 
-java-$(DNAME).h:
-	cd $(JDIR) && javac -h $(CLASS_PATH) $(DNAME).java && mv $(DNAME).h $@
+go-%.a: 
+	go build -o $(JDIR)/$@ -buildmode=c-archive $*/main.go
 
-$(DNAME).class: go-daemon
-	cd $(JDIR) && javac $(DNAME).java
+java-%.h:
+	cd $(JDIR) && javac -h $(CLASS_PATH) $*.java && mv $*.h $@
+
+%.class: deps
+	cd $(JDIR) && javac $*.java
 
 go-client: deps
 	cd $(CDIR) && go install ./...

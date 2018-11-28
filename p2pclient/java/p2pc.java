@@ -1,7 +1,6 @@
-public class p2pd {
-    private static final String NAME = "p2pd"; 
-    public static native void startDaemon(String arg1);
-    public static native void stopDaemon();
+public class p2pc {
+    private static final String NAME = "p2pc"; 
+    public static native void startClient(String arg1);
     static {
         try {
             
@@ -17,6 +16,6 @@ public class p2pd {
         if( args.length > 0 ){
             parsedArgs += "|" + String.join("|", args);
         }
-        startDaemon(parsedArgs);
+        startClient(parsedArgs);
     }
 }

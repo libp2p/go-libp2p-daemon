@@ -35,15 +35,12 @@ type DaemonConfig struct {
 
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
-
-	config := initConfig()
-	flag.Parse()
-
+	config := initialize()
 	start(config)
 }
 
-func initConfig() DaemonConfig {
-	return DaemonConfig{
+func initialize() DaemonConfig {
+	config := DaemonConfig{
 		sock:           flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path"),
 		quiet:          flag.Bool("q", false, "be quiet"),
 		id:             flag.String("id", "", "peer identity; private key file"),
@@ -55,8 +52,17 @@ func initConfig() DaemonConfig {
 		connMgrLo:      flag.Int("connLo", 256, "Connection Manager Low Water mark"),
 		connMgrHi:      flag.Int("connHi", 512, "Connection Manager High Water mark"),
 		connMgrGrace:   flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)"),
-		args:           flag.Args(),
 	}
+	flag.Parse()
+	config.args = flag.Args()
+	// delete control socket if it already exists
+	if _, err := os.Stat(*config.sock); !os.IsNotExist(err) {
+		err = os.Remove(*config.sock)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	return config
 }
 
 func start(config DaemonConfig) {
@@ -133,22 +139,14 @@ func start(config DaemonConfig) {
 	select {}
 }
 
-func updateConfig(config, defaultConfig DaemonConfig) DaemonConfig {
-	//Add fields to config that are found in defaultConfig, but missing from config
-	config = defaultConfig //TODO temp hack
-	return config
-}
-
 //export startDaemon
-func startDaemon() {
-	//1. pass in config from Java->C->Go StartDaemon()
-	//Not implemented
-	//2. call initConfig() to create default config
-	defaultConfig := initConfig()
-	//3. call updateConfig(defaultConfig) to replace default config options with configs passed from Java
-	config := defaultConfig //TODO: temp hack
-	config = updateConfig(config, defaultConfig)
-	//3. call start(config)
+func startDaemon(args *C.char) {
+	//replace default config options with configs passed from external source
+	argsGoString := C.GoString(args)
+	argsArray := strings.Split(argsGoString, "|")
+	os.Args = argsArray
+	//call initialize() to get config
+	config := initialize()
 	start(config)
 }
 
