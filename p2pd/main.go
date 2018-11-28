@@ -12,9 +12,10 @@ import (
 
 	libp2p "github.com/libp2p/go-libp2p"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
-	p2pd "github.com/libp2p/go-libp2p-daemon"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
+
+	p2pd "github.com/libp2p/go-libp2p-daemon"
 )
 
 // DaemonConfig defines the configuration options
@@ -30,6 +31,8 @@ type DaemonConfig struct {
 	connMgrLo      *int
 	connMgrHi      *int
 	connMgrGrace   *int
+	QUIC           *bool
+	natPortMap     *bool
 	args           []string
 }
 
@@ -52,6 +55,8 @@ func initialize() DaemonConfig {
 		connMgrLo:      flag.Int("connLo", 256, "Connection Manager Low Water mark"),
 		connMgrHi:      flag.Int("connHi", 512, "Connection Manager High Water mark"),
 		connMgrGrace:   flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)"),
+		QUIC:           flag.Bool("quic", false, "Enables the QUIC transport"),
+		natPortMap:     flag.Bool("natPortMap", false, "Enables NAT port mapping"),
 	}
 	flag.Parse()
 	config.args = flag.Args()
@@ -82,7 +87,7 @@ func start(config DaemonConfig) {
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
-	if *QUIC {
+	if *config.QUIC {
 		opts = append(opts,
 			libp2p.DefaultTransports,
 			libp2p.Transport(quic.NewTransport),
@@ -94,11 +99,12 @@ func start(config DaemonConfig) {
 			))
 	}
 
-	if *natPortMap {
+	if *config.natPortMap {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), *config.sock, opts...)
+
 	if err != nil {
 		log.Fatal(err)
 	}

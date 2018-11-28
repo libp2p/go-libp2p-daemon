@@ -24,6 +24,25 @@ type ClientConfig struct {
 	args    []string
 }
 
+type Command int
+
+const (
+	Identify         Command = 0
+	Connect          Command = 1
+	ListenForMessage Command = 2
+	SendMessage      Command = 3
+)
+
+func (c Command) String() string {
+	commands := [...]string{
+		"Identify",
+		"Connect",
+		"ListenForMessage",
+		"SendMessage",
+	}
+	return commands[c]
+}
+
 func main() {
 	identify.ClientVersion = "p2pc/0.1"
 	config := initialize()
@@ -49,20 +68,25 @@ func initialize() ClientConfig {
 }
 
 func start(config ClientConfig) {
+
 	client, err := p2pclient.NewClient(*config.pathd, *config.pathc)
+	defer os.Remove(*config.pathc)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if *config.command == "Identify" {
+	switch *config.command {
+
+	case Identify.String():
 		id, addrs, err := client.Identify()
 		if err != nil {
 			log.Fatal(err)
 		}
 		fmt.Printf("Daemon ID: %s\n", id.Pretty())
 		fmt.Printf("Peer addresses: %v\n", addrs)
-	} else if *config.command == "Connect" {
+
+	case Connect.String():
 		id, err := peer.IDB58Decode(config.args[0])
 		var addrs []multiaddr.Multiaddr
 		addrs = make([]multiaddr.Multiaddr, len(config.args[1:]))
@@ -78,7 +102,7 @@ func start(config ClientConfig) {
 		pi, err := client.FindPeer(id)
 		fmt.Printf("ID: %s has multiaddr: %v", pi.ID, pi.Addrs)
 
-	} else if *config.command == "ListenForMessage" {
+	case ListenForMessage.String():
 		protos := []string{"/test"}
 		done := make(chan struct{})
 		client.NewStreamHandler(protos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
@@ -92,7 +116,8 @@ func start(config ClientConfig) {
 			done <- struct{}{}
 		})
 		select {}
-	} else if *config.command == "SendMessage" {
+
+	case SendMessage.String():
 		protos := []string{"/test"}
 		recipientID, err := peer.IDB58Decode(config.args[0])
 		_, conn, err := client.NewStream(recipientID, protos)
@@ -104,9 +129,9 @@ func start(config ClientConfig) {
 			log.Fatal(err)
 		}
 
-	}
+	default:
 
-	os.Remove(*config.pathc)
+	}
 }
 
 //export startClient
