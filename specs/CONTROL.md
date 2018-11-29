@@ -87,6 +87,7 @@ Request{
   ConnectRequest: {
     Peer: <peer id>,
     Addrs: [<addr>, ...],
+    timeout: time, // optional, in seconds
   },
 }
 ```
@@ -134,6 +135,7 @@ Request{
   StreamOpenRequest: {
     Peer: <peer id>,
     Proto: [<protocol string>, ...],
+    timeout: time, // optional, in seconds
   },
 }
 ```
