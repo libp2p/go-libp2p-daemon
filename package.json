@@ -7,20 +7,20 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmUDTcnDp2WssbmiDLC6aYurUeyt7QeRakHUQMxA2mZ5iB",
+      "hash": "QmVvV8JQmmqPCwXAaesWJPheUiEFQJ9HWRhWhuFuxVQxpR",
       "name": "go-libp2p",
-      "version": "6.0.23"
+      "version": "6.0.27"
     },
     {
-      "hash": "QmQHnqaNULV8WeUGgh97o9K3KAW6kWQmDyNf9UuikgnPTe",
+      "hash": "QmQsw6Nq2A345PqChdtbWVoYbSno7uqRDHwYmYpbPHmZNc",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.12"
+      "version": "4.4.16"
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmTSih5JrkhMH62dp1oGjEwcaC38dxXBgRwTbeQEL4mPcU",
+      "hash": "QmV4Z9ufnVy7tMFHfBnoxbbAxDwFfKNKWtZAbY4CHCp79W",
       "name": "go-libp2p-connmgr",
-      "version": "0.3.23"
+      "version": "0.3.27"
     },
     {
       "author": "marten-seemann",
