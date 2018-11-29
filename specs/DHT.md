@@ -30,6 +30,8 @@ messages have a `Type` parameter that specifies whether a response marks the
 the `END` of a stream of messages. Single-value responses will simply return a
 single `DHTResponse` with type `VALUE`.
 
+All `DHTRequest`s also take an optional timeout in seconds.
+
 ### Protocol Requests
 
 *Protocols described in pseudo-go. Items of the form [item, ...] are lists of

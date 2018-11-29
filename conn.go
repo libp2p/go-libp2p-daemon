@@ -276,7 +276,7 @@ func (d *Daemon) doListPeers(req *pb.Request) *pb.Response {
 func (d *Daemon) requestContext(utime int64) (context.Context, func()) {
 	timeout := DefaultTimeout
 	if utime > 0 {
-		timeout = time.Duration(utime)
+		timeout = time.Duration(utime) * time.Second
 	}
 
 	return context.WithTimeout(d.ctx, timeout)
