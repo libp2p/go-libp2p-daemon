@@ -21,6 +21,12 @@
       "hash": "QmTSih5JrkhMH62dp1oGjEwcaC38dxXBgRwTbeQEL4mPcU",
       "name": "go-libp2p-connmgr",
       "version": "0.3.23"
+    },
+    {
+      "author": "marten-seemann",
+      "hash": "QmWY1pHdRP1rA2ifUuCu1ZwFJ8ZzpSEcgXsu9haH21AYKd",
+      "name": "go-libp2p-quic-transport",
+      "version": "0.2.13"
     }
   ],
   "gxVersion": "0.12.1",
