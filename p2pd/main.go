@@ -10,6 +10,7 @@ import (
 	libp2p "github.com/libp2p/go-libp2p"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 )
 
@@ -27,6 +28,7 @@ func main() {
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Duration("connGrace", 120, "Connection Manager grace period (in seconds)")
+	QUIC := flag.Bool("quic", false, "Enables the QUIC transport")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -43,6 +45,18 @@ func main() {
 	if *connMgr {
 		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, *connMgrGrace)
 		opts = append(opts, libp2p.ConnectionManager(cm))
+	}
+
+	if *QUIC {
+		opts = append(opts,
+			libp2p.DefaultTransports,
+			libp2p.Transport(quic.NewTransport),
+			libp2p.ListenAddrStrings(
+				"/ip4/0.0.0.0/tcp/0",
+				"/ip4/0.0.0.0/udp/0/quic",
+				"/ip6/::1/tcp/0",
+				"/ip6/::1/udp/0/quic",
+			))
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
