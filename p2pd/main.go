@@ -48,7 +48,15 @@ func main() {
 	}
 
 	if *QUIC {
-		opts = append(opts, libp2p.DefaultTransports, libp2p.Transport(quic.NewTransport))
+		opts = append(opts,
+			libp2p.DefaultTransports,
+			libp2p.Transport(quic.NewTransport),
+			libp2p.ListenAddrStrings(
+				"/ip4/0.0.0.0/tcp/0",
+				"/ip4/0.0.0.0/udp/0/quic",
+				"/ip6/::1/tcp/0",
+				"/ip6/::1/udp/0/quic",
+			))
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
