@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"testing"
 
 	cid "github.com/ipfs/go-cid"
@@ -26,8 +27,8 @@ func createTempDir(t *testing.T) (string, string, func()) {
 	if err != nil {
 		t.Fatalf("creating temp dir: %s", err)
 	}
-	daemonPath := dir + "/daemon.sock"
-	clientPath := dir + "/client.sock"
+	daemonPath := filepath.Join(dir, "daemon.sock")
+	clientPath := filepath.Join(dir, "client.sock")
 	closer := func() {
 		os.RemoveAll(dir)
 	}
