@@ -29,6 +29,7 @@ func main() {
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Duration("connGrace", 120, "Connection Manager grace period (in seconds)")
 	QUIC := flag.Bool("quic", false, "Enables the QUIC transport")
+	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -57,6 +58,10 @@ func main() {
 				"/ip6/::1/tcp/0",
 				"/ip6/::1/udp/0/quic",
 			))
+	}
+
+	if *natPortMap {
+		opts = append(opts, libp2p.NATPortMap())
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
