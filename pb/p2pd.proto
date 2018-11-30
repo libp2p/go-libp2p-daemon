@@ -136,14 +136,11 @@ message PSRequest {
     LIST_PEERS = 1;
     PUBLISH    = 2;
     SUBSCRIBE  = 3;
-    CANCEL     = 4;
-    NEXT       = 5;
   }
 
   required Type type = 1;
   optional string topic = 2;
   optional bytes data = 3;
-  optional int64 timeout = 4;
 }
 
 message PSMessage {
@@ -159,11 +156,9 @@ message PSResponse {
   enum Type {
     TOPICS = 0;
     PEERS  = 1;
-    NEXT   = 2;
   }
 
   required Type type = 1;
-  optional PSMessage message = 2;
-  repeated string topics = 3;
-  repeated bytes peerIDs = 4;
+  repeated string topics = 2;
+  repeated bytes peerIDs = 3;
 }

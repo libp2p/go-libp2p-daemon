@@ -22,8 +22,6 @@ PubSub responses from the daemon will be wrapped in a `Response` with the
 `PSRequest` messages have a `Type` parameter that specifies the specific query
 the client wishes to execute.
 
-All `PSRequest`s also take an optional timeout in seconds.
-
 ### Protocol Requests
 
 *Protocols described in pseudo-go. Items of the form [item, ...] are lists of
@@ -140,55 +138,4 @@ Response{
   Type: OK,
 }
 ```
-
-#### `CANCEL`
-Clients can issue a `CANCEL` request to cancel the subscription on a given topic.
-
-**Client**
-```
-Request{
-  Type: PUBSUB,
-  PSRequest: PSRequest{
-    Type: CANCEL,
-    Topic: <topic>,
-  },
-}
-```
-
-**Daemon**
-*Can return an error*
-
-```
-Response{
-  Type: OK,
-}
-```
-
-#### `NEXT`
-Clients can issue a `NEXT` request to request the next message in a subscription of 
-
-**Client**
-```
-Request{
-  Type: PUBSUB,
-  PSRequest: PSRequest{
-    Type: NEXT,
-    Topic: <topic>
-  },
-}
-```
-
-**Daemon**
-*Can return an error*
-
-```
-Response{
-  Type: OK,
-  PSResponse: PSResponse{
-    Type: NEXT,
-    Message: PSMessage{
-      ...
-    },
-  }
-}
-```
+After an OK response, the connection becomes a stream of PSMessages from the daemon. To unsubscribe from the topic, the client closes the connection.
