@@ -60,7 +60,6 @@ Request{
 Response{
   Type: OK,
   PSResponse: PSResponse{
-    Type: TOPICS,
     Topics: [<topic>, ...],
   }
 }
@@ -86,7 +85,6 @@ Request{
 Response{
   Type: OK,
   PSResponse: PSResponse{
-    Type: PEERS,
     PeerIDs: [<id>, ...],
   }
 }
