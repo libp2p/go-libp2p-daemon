@@ -153,12 +153,6 @@ message PSMessage {
 }
 
 message PSResponse {
-  enum Type {
-    TOPICS = 0;
-    PEERS  = 1;
-  }
-
-  required Type type = 1;
-  repeated string topics = 2;
-  repeated bytes peerIDs = 3;
+  repeated string topics = 1;
+  repeated bytes peerIDs = 2;
 }
