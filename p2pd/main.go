@@ -32,8 +32,8 @@ func main() {
 	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
-	pubsubSign := flag.Bool("pubsubSign", true, "Enabls pubsub message signing")
-	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enabls pubsub strict signature verification")
+	pubsubSign := flag.Bool("pubsubSign", true, "Enables pubsub message signing")
+	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
 	flag.Parse()
 
 	var opts []libp2p.Option
