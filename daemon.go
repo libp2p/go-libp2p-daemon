@@ -80,10 +80,10 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 
 	if sign {
 		opts = append(opts, ps.WithMessageSigning(sign))
-	}
 
-	if strict {
-		opts = append(opts, ps.WithStrictSignatureVerification(strict))
+		if strict {
+			opts = append(opts, ps.WithStrictSignatureVerification(strict))
+		}
 	}
 
 	switch router {
