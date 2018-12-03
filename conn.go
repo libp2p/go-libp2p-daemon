@@ -130,6 +130,22 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_PUBSUB:
+			res, sub := d.doPubsub(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugf("Error writing response: %s", err.Error())
+				if sub != nil {
+					sub.Cancel()
+				}
+				return
+			}
+
+			if sub != nil {
+				d.doPubsubPipe(sub, r, w)
+				return
+			}
+
 		default:
 			log.Debugf("Unexpected request type: %d", *req.Type)
 			return

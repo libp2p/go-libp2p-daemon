@@ -12,6 +12,7 @@ import (
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
+	ps "github.com/libp2p/go-libp2p-pubsub"
 	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
 )
@@ -23,7 +24,8 @@ type Daemon struct {
 	host     host.Host
 	listener net.Listener
 
-	dht *dht.IpfsDHT
+	dht    *dht.IpfsDHT
+	pubsub *ps.PubSub
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to unix socket path
