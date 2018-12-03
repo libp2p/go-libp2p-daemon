@@ -27,6 +27,12 @@
       "hash": "QmWY1pHdRP1rA2ifUuCu1ZwFJ8ZzpSEcgXsu9haH21AYKd",
       "name": "go-libp2p-quic-transport",
       "version": "0.2.13"
+    },
+    {
+      "author": "whyrusleeping",
+      "hash": "Qmc3BYVGtLs8y3p4uVpARWyo3Xk2oCBFF1AhYUVMPWgwUK",
+      "name": "go-libp2p-pubsub",
+      "version": "0.11.7"
     }
   ],
   "gxVersion": "0.12.1",
