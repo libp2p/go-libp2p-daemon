@@ -2,6 +2,7 @@ package p2pd
 
 import (
 	"context"
+	"fmt"
 	"net"
 	"sync"
 
@@ -12,6 +13,7 @@ import (
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
+	ps "github.com/libp2p/go-libp2p-pubsub"
 	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
 )
@@ -23,7 +25,8 @@ type Daemon struct {
 	host     host.Host
 	listener net.Listener
 
-	dht *dht.IpfsDHT
+	dht    *dht.IpfsDHT
+	pubsub *ps.PubSub
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to unix socket path
@@ -70,6 +73,40 @@ func (d *Daemon) EnableDHT(client bool) error {
 	d.host = rhost.Wrap(d.host, d.dht)
 
 	return nil
+}
+
+func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
+	var opts []ps.Option
+
+	if sign {
+		opts = append(opts, ps.WithMessageSigning(sign))
+
+		if strict {
+			opts = append(opts, ps.WithStrictSignatureVerification(strict))
+		}
+	}
+
+	switch router {
+	case "floodsub":
+		pubsub, err := ps.NewFloodSub(d.ctx, d.host, opts...)
+		if err != nil {
+			return err
+		}
+		d.pubsub = pubsub
+		return nil
+
+	case "gossipsub":
+		pubsub, err := ps.NewGossipSub(d.ctx, d.host, opts...)
+		if err != nil {
+			return err
+		}
+		d.pubsub = pubsub
+		return nil
+
+	default:
+		return fmt.Errorf("unknown pubsub router: %s", router)
+	}
+
 }
 
 func (d *Daemon) ID() peer.ID {
