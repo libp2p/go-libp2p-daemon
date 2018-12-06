@@ -23,10 +23,11 @@ language. Running *multiple instances* of the daemon is also possible, and
 specially useful for testing purposes.
 
 When establishing connections, the daemon handles transport selection, security
-negotiation, and protocol and stream multiplexing. Streams are mapped 1:1 to
-local endpoints (e.g. unix sockets, shared-memory). Writes and reads to/from
-those endpoints are converted to writes and reads to/from the stream, allowing
-any application to interact with a libp2p network through simple, local IO.
+negotiation, and protocol and stream multiplexing. Streams are mapped 1:1 to 
+connections over streaming transports supported by go-multiaddr-net. Writes and 
+reads to/from those addresses are converted to writes and reads to/from the 
+stream, allowing any application to interact with a libp2p network through 
+simple, well-defined IO.
 
 The daemon exposes a control endpoint for management, supporting basic
 operations such as peer connection/disconnection, stream opening/closing, etc.
@@ -55,6 +56,7 @@ please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 - ✅ Daemon identity: auto-generated, and persisted.
 - 🚧 Subsystem: DHT interactions.
 - 🚧 Subsystem: Pubsub interactions.
+- 🚧 Support multiaddr protocols instead of exclusively unix sockets.
 - Subsystem: Circuit relay support.
 - Subsystem: Peerstore operations.
 - Connection notifications.

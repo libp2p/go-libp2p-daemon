@@ -33,6 +33,11 @@
       "hash": "QmaqGyUhWLsJbVo1QAujSu13mxNjFJ98Kt2VWGSnShGE1Q",
       "name": "go-libp2p-pubsub",
       "version": "0.11.9"
+    },
+    {
+      "hash": "QmZcLBXKaFe8ND5YHPkJRAwmhJGrVsi1JqDZNyJ4nRK5Mj",
+      "name": "go-multiaddr-net",
+      "version": "1.7.1"
     }
   ],
   "gxVersion": "0.12.1",

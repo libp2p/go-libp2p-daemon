@@ -1,6 +1,7 @@
 package p2pd
 
 import (
+	"github.com/multiformats/go-multiaddr-net"
 	"io"
 	"net"
 	"sync"
@@ -33,7 +34,7 @@ func (d *Daemon) handleStream(s inet.Stream) {
 	p := s.Protocol()
 
 	d.mx.Lock()
-	path, ok := d.handlers[p]
+	maddr, ok := d.handlers[p]
 	d.mx.Unlock()
 
 	if !ok {
@@ -42,9 +43,9 @@ func (d *Daemon) handleStream(s inet.Stream) {
 		return
 	}
 
-	c, err := net.Dial("unix", path)
+	c, err := manet.Dial(maddr)
 	if err != nil {
-		log.Debugf("error dialing handler at %s: %s", path, err.Error())
+		log.Debugf("error dialing handler at %s: %s", maddr, err.Error())
 		s.Reset()
 		return
 	}

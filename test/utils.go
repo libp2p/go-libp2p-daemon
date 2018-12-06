@@ -35,17 +35,17 @@ func createTempDir(t *testing.T) (string, string, func()) {
 	return daemonPath, clientPath, closer
 }
 
-func createDaemon(t *testing.T, daemonPath string) (*p2pd.Daemon, func()) {
+func createDaemon(t *testing.T, daemonAddr ma.Multiaddr) (*p2pd.Daemon, func()) {
 	ctx, cancelCtx := context.WithCancel(context.Background())
-	daemon, err := p2pd.NewDaemon(ctx, daemonPath)
+	daemon, err := p2pd.NewDaemon(ctx, daemonAddr)
 	if err != nil {
 		t.Fatal(err)
 	}
 	return daemon, cancelCtx
 }
 
-func createClient(t *testing.T, daemonPath, clientPath string) (*p2pclient.Client, func()) {
-	client, err := p2pclient.NewClient(daemonPath, clientPath)
+func createClient(t *testing.T, daemonAddr ma.Multiaddr, clientAddr ma.Multiaddr) (*p2pclient.Client, func()) {
+	client, err := p2pclient.NewClient(daemonAddr, clientAddr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,29 +55,45 @@ func createClient(t *testing.T, daemonPath, clientPath string) (*p2pclient.Clien
 	return client, closer
 }
 
-func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
+func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func(), error) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
-	daemon, closeDaemon := createDaemon(t, daemonPath)
-	client, closeClient := createClient(t, daemonPath, clientPath)
+	dmaddr, err := ma.NewComponent("unix", daemonPath)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	cmaddr, err := ma.NewComponent("unix", clientPath)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	daemon, closeDaemon := createDaemon(t, dmaddr)
+	client, closeClient := createClient(t, dmaddr, cmaddr)
 
 	closer := func() {
 		closeDaemon()
 		closeClient()
 		dirCloser()
 	}
-	return daemon, client, closer
+	return daemon, client, closer, nil
 }
 
-func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func()) {
+func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func(), error) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
-	client, clientCloser := createClient(t, daemonPath, clientPath)
-	daemon := newMockDaemon(t, daemonPath, clientPath)
+	dmaddr, err := ma.NewComponent("unix", daemonPath)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	cmaddr, err := ma.NewComponent("unix", clientPath)
+	if err != nil {
+		return nil, nil, nil, err
+	}
+	client, clientCloser := createClient(t, dmaddr, cmaddr)
+	daemon := newMockDaemon(t, dmaddr, cmaddr)
 	closer := func() {
 		daemon.Close()
 		clientCloser()
 		dirCloser()
 	}
-	return daemon, client, closer
+	return daemon, client, closer, nil
 }
 
 func randPeerID(t *testing.T) peer.ID {

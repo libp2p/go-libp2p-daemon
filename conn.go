@@ -10,7 +10,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	inet "github.com/libp2p/go-libp2p-net"
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ma "github.com/multiformats/go-multiaddr"
@@ -260,15 +260,18 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	d.mx.Lock()
 	defer d.mx.Unlock()
 
-	path := *req.StreamHandler.Path
+	maddr, err := ma.NewMultiaddrBytes(req.StreamHandler.Addr)
+	if err != nil {
+		return errorResponseString(err.Error())
+	}
 	for _, sp := range req.StreamHandler.Proto {
 		p := proto.ID(sp)
 		_, ok := d.handlers[p]
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
 		}
-		log.Debugf("set stream handler: %s -> %s", sp, path)
-		d.handlers[p] = path
+		log.Debugf("set stream handler: %s -> %s", sp, maddr)
+		d.handlers[p] = maddr
 	}
 
 	return okResponse()

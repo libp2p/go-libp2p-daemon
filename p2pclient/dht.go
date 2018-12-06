@@ -7,10 +7,10 @@ import (
 	"net"
 
 	ggio "github.com/gogo/protobuf/io"
-	cid "github.com/ipfs/go-cid"
-	crypto "github.com/libp2p/go-libp2p-crypto"
+	"github.com/ipfs/go-cid"
+	"github.com/libp2p/go-libp2p-crypto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
 

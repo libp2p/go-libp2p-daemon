@@ -4,15 +4,14 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
-	"io"
-	"net"
-	"os"
-
 	ggio "github.com/gogo/protobuf/io"
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	peer "github.com/libp2p/go-libp2p-peer"
+	"github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr-net"
+	"io"
+	"net"
 )
 
 // StreamInfo wraps the protobuf structure with friendlier types.
@@ -53,17 +52,17 @@ func (c *byteReaderConn) ReadByte() (byte, error) {
 }
 
 func readMsgBytesSafe(r *byteReaderConn) (*bytes.Buffer, error) {
-	len, err := binary.ReadUvarint(r)
+	length, err := binary.ReadUvarint(r)
 	if err != nil {
 		return nil, err
 	}
 	out := &bytes.Buffer{}
-	n, err := io.CopyN(out, r, int64(len))
+	n, err := io.CopyN(out, r, int64(length))
 	if err != nil {
 		return nil, err
 	}
-	if n != int64(len) {
-		return nil, fmt.Errorf("read incorrect number of bytes in header: expected %d, got %d", len, n)
+	if n != int64(length) {
+		return nil, fmt.Errorf("read incorrect number of bytes in header: expected %d, got %d", length, n)
 	}
 	return out, nil
 }
@@ -122,11 +121,10 @@ func (c *Client) NewStream(peer peer.ID, protos []string) (*StreamInfo, io.ReadW
 	return info, control, nil
 }
 
-// Close stops the listener socket.
+// Close stops the listener address.
 func (c *Client) Close() error {
 	if c.listener != nil {
 		err := c.listener.Close()
-		os.Remove(c.listenPath)
 		return err
 	}
 	return nil
@@ -136,7 +134,7 @@ func (c *Client) streamDispatcher() {
 	for {
 		rawconn, err := c.listener.Accept()
 		if err != nil {
-			log.Errorf("accepting incoming connection: %s", err)
+			log.Warningf("accepting incoming connection: %s", err)
 			return
 		}
 		conn := &byteReaderConn{rawconn}
@@ -168,7 +166,7 @@ func (c *Client) streamDispatcher() {
 }
 
 func (c *Client) listen() error {
-	l, err := net.Listen("unix", c.listenPath)
+	l, err := manet.Listen(c.listenMaddr)
 	if err != nil {
 		return err
 	}
@@ -183,7 +181,7 @@ func (c *Client) listen() error {
 // on a given protocol.
 type StreamHandlerFunc func(*StreamInfo, io.ReadWriteCloser)
 
-// NewStreamHandler establishes an inbound unix socket and starts a listener.
+// NewStreamHandler establishes an inbound multi-address and starts a listener.
 // All inbound connections to the listener are delegated to the provided
 // handler.
 func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) error {
@@ -199,7 +197,7 @@ func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) er
 	req := &pb.Request{
 		Type: pb.Request_STREAM_HANDLER.Enum(),
 		StreamHandler: &pb.StreamHandlerRequest{
-			Path:  &c.listenPath,
+			Addr:  c.listenMaddr.Bytes(),
 			Proto: protos,
 		},
 	}

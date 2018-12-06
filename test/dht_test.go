@@ -8,11 +8,10 @@ import (
 	"testing"
 	"time"
 
-	crypto "github.com/libp2p/go-libp2p-crypto"
-	peer "github.com/libp2p/go-libp2p-peer"
-
+	"github.com/libp2p/go-libp2p-crypto"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	"github.com/libp2p/go-libp2p-peer"
 )
 
 func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, arg interface{}) interface{} {
@@ -58,7 +57,10 @@ func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, a
 }
 
 func TestDHTFindPeer(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	id := randPeerID(t)
 
@@ -84,7 +86,10 @@ func TestDHTFindPeer(t *testing.T) {
 }
 
 func TestDHTGetPublicKey(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	id := randPeerID(t)
 	key := randPubKey(t)
@@ -109,7 +114,10 @@ func TestDHTGetPublicKey(t *testing.T) {
 }
 
 func TestDHTGetValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	key := randBytes(t)
 	value := randBytes(t)
@@ -130,7 +138,10 @@ func TestDHTGetValue(t *testing.T) {
 }
 
 func TestDHTPutValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	key := randBytes(t)
 	value := randBytes(t)
@@ -156,7 +167,10 @@ func TestDHTPutValue(t *testing.T) {
 }
 
 func TestDHTProvide(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	cid := randCid(t)
 	donec := make(chan struct{})
@@ -180,7 +194,10 @@ func TestDHTProvide(t *testing.T) {
 }
 
 func TestDHTFindPeersConnectedToPeer(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	ids := randPeerIDs(t, 3)
 
@@ -208,7 +225,10 @@ func TestDHTFindPeersConnectedToPeer(t *testing.T) {
 }
 
 func TestDHTFindProviders(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	ids := randPeerIDs(t, 3)
 
@@ -237,7 +257,10 @@ func TestDHTFindProviders(t *testing.T) {
 }
 
 func TestDHTGetClosestPeers(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	ids := randPeerIDs(t, 2)
 	key := randBytes(t)
@@ -267,7 +290,10 @@ func TestDHTGetClosestPeers(t *testing.T) {
 }
 
 func TestDHTSearchValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer, err := createMockDaemonClientPair(t)
+	if err != nil {
+		t.Fatal(err)
+	}
 	defer closer()
 	key := randBytes(t)
 	values := make([][]byte, 2)

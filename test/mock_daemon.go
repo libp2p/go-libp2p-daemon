@@ -10,27 +10,34 @@ import (
 	"github.com/gogo/protobuf/proto"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	ma "github.com/multiformats/go-multiaddr"
+	"github.com/multiformats/go-multiaddr-net"
 )
 
 type mockdaemon struct {
-	clientPath string
-	listener   net.Listener
+	clientMaddr ma.Multiaddr
+	listener    manet.Listener
 }
 
-func newMockDaemon(t testing.TB, listenPath, clientPath string) *mockdaemon {
-	_, err := os.Stat(clientPath)
+func newMockDaemon(t testing.TB, listenMaddr, clientMaddr ma.Multiaddr) *mockdaemon {
+	path, err := clientMaddr.ValueForProtocol(ma.P_UNIX)
 	if err != nil {
-		t.Fatalf("searching for client socket in mock daemon: %s", err)
+		t.Fatal(err)
 	}
 
-	listener, err := net.Listen("unix", listenPath)
+	_, err = os.Stat(path)
 	if err != nil {
-		t.Fatalf("listening on unix domain socket in mock daemon: %s", err)
+		t.Fatalf("searching for client maddr in mock daemon: %s", err)
+	}
+
+	listener, err := manet.Listen(listenMaddr)
+	if err != nil {
+		t.Fatalf("listening on maddr in mock daemon: %s", err)
 	}
 
 	return &mockdaemon{
-		clientPath: clientPath,
-		listener:   listener,
+		clientMaddr: clientMaddr,
+		listener:    listener,
 	}
 }
 
