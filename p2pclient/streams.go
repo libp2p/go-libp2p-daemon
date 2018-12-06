@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"net"
+	"os"
 
 	ggio "github.com/gogo/protobuf/io"
 	"github.com/gogo/protobuf/proto"
@@ -124,7 +125,9 @@ func (c *Client) NewStream(peer peer.ID, protos []string) (*StreamInfo, io.ReadW
 // Close stops the listener socket.
 func (c *Client) Close() error {
 	if c.listener != nil {
-		return c.listener.Close()
+		err := c.listener.Close()
+		os.Remove(c.listenPath)
+		return err
 	}
 	return nil
 }
