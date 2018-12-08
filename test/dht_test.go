@@ -3,16 +3,16 @@ package test
 import (
 	"bytes"
 	"context"
-	"crypto/rand"
 	"fmt"
 	"reflect"
 	"testing"
 	"time"
 
 	crypto "github.com/libp2p/go-libp2p-crypto"
+	peer "github.com/libp2p/go-libp2p-peer"
+
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	peer "github.com/libp2p/go-libp2p-peer"
 )
 
 func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, arg interface{}) interface{} {
@@ -111,9 +111,8 @@ func TestDHTGetPublicKey(t *testing.T) {
 func TestDHTGetValue(t *testing.T) {
 	daemon, client, closer := createMockDaemonClientPair(t)
 	defer closer()
-	key := randString(t)
-	value := make([]byte, 10)
-	rand.Read(value)
+	key := randBytes(t)
+	value := randBytes(t)
 
 	valuec := clientRequestAsync(t, client, "GetValue", key).(chan []byte)
 	conn := daemon.ExpectConn(t)
@@ -133,9 +132,8 @@ func TestDHTGetValue(t *testing.T) {
 func TestDHTPutValue(t *testing.T) {
 	daemon, client, closer := createMockDaemonClientPair(t)
 	defer closer()
-	key := randString(t)
-	value := make([]byte, 10)
-	rand.Read(value)
+	key := randBytes(t)
+	value := randBytes(t)
 
 	donec := make(chan struct{})
 	go func() {
@@ -242,13 +240,13 @@ func TestDHTGetClosestPeers(t *testing.T) {
 	daemon, client, closer := createMockDaemonClientPair(t)
 	defer closer()
 	ids := randPeerIDs(t, 2)
-	key := randString(t)
+	key := randBytes(t)
 
 	idc := clientRequestAsync(t, client, "GetClosestPeers", key).(chan peer.ID)
 
 	conn := daemon.ExpectConn(t)
 	req := conn.ExpectDHTRequestType(t, pb.DHTRequest_GET_CLOSEST_PEERS)
-	if req.GetKey() != key {
+	if !bytes.Equal(req.GetKey(), key) {
 		t.Fatal("request key didn't match expected key")
 	}
 	fmt.Println("we good")
@@ -271,11 +269,10 @@ func TestDHTGetClosestPeers(t *testing.T) {
 func TestDHTSearchValue(t *testing.T) {
 	daemon, client, closer := createMockDaemonClientPair(t)
 	defer closer()
-	key := randString(t)
+	key := randBytes(t)
 	values := make([][]byte, 2)
 	for i := range values {
-		values[i] = make([]byte, 10)
-		rand.Read(values[i])
+		values[i] = randBytes(t)
 	}
 
 	valuec := clientRequestAsync(t, client, "SearchValue", key).(chan []byte)

@@ -89,7 +89,7 @@ message DHTRequest {
   required Type type = 1;
   optional bytes peer = 2;
   optional bytes cid = 3;
-  optional string key = 4;
+  optional bytes key = 4;
   optional bytes value = 5;
   optional int32 count = 6;
   optional int64 timeout = 7;

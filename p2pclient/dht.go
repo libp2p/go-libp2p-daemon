@@ -179,10 +179,10 @@ func (c *Client) GetPublicKey(peer peer.ID) (crypto.PubKey, error) {
 }
 
 // GetValue queries the daemon for a value stored at a key.
-func (c *Client) GetValue(key string) ([]byte, error) {
+func (c *Client) GetValue(key []byte) ([]byte, error) {
 	req := &pb.DHTRequest{
 		Type: pb.DHTRequest_GET_VALUE.Enum(),
-		Key:  &key,
+		Key:  key,
 	}
 
 	msg, err := c.doDHTNonNil(req)
@@ -194,10 +194,10 @@ func (c *Client) GetValue(key string) ([]byte, error) {
 }
 
 // PutValue sets the value stored at a given key in the DHT to a given value.
-func (c *Client) PutValue(key string, value []byte) error {
+func (c *Client) PutValue(key []byte, value []byte) error {
 	req := &pb.DHTRequest{
 		Type:  pb.DHTRequest_PUT_VALUE.Enum(),
-		Key:   &key,
+		Key:   key,
 		Value: value,
 	}
 
@@ -341,7 +341,7 @@ func (c *Client) FindProviders(ctx context.Context, cid cid.Cid) (<-chan PeerInf
 func (c *Client) GetClosestPeers(ctx context.Context, key string) (<-chan peer.ID, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_GET_CLOSEST_PEERS.Enum(),
-		Key:  &key,
+		Key:  key,
 	})
 
 	return c.streamRequestPeerID(ctx, req)
@@ -349,10 +349,10 @@ func (c *Client) GetClosestPeers(ctx context.Context, key string) (<-chan peer.I
 
 // SearchValue queries the DHT for the best/most valid value stored at a key.
 // Later responses are better.
-func (c *Client) SearchValue(ctx context.Context, key string) (<-chan []byte, error) {
+func (c *Client) SearchValue(ctx context.Context, key []byte) (<-chan []byte, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_SEARCH_VALUE.Enum(),
-		Key:  &key,
+		Key:  key,
 	})
 
 	return c.streamRequestValue(ctx, req)
