@@ -10,6 +10,7 @@ import (
 	libp2p "github.com/libp2p/go-libp2p"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 )
@@ -34,6 +35,8 @@ func main() {
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
 	pubsubSign := flag.Bool("pubsubSign", true, "Enables pubsub message signing")
 	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
+	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
+	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -74,6 +77,14 @@ func main() {
 	}
 
 	if *pubsub {
+		if *gossipsubHeartbeatInterval > 0 {
+			ps.GossipSubHeartbeatInterval = *gossipsubHeartbeatInterval
+		}
+
+		if *gossipsubHeartbeatInitialDelay > 0 {
+			ps.GossipSubHeartbeatInitialDelay = *gossipsubHeartbeatInitialDelay
+		}
+
 		err = d.EnablePubsub(*pubsubRouter, *pubsubSign, *pubsubSignStrict)
 		if err != nil {
 			log.Fatal(err)
