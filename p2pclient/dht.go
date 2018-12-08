@@ -338,7 +338,7 @@ func (c *Client) FindProviders(ctx context.Context, cid cid.Cid) (<-chan PeerInf
 
 // GetClosestPeers queries the DHT routing table for peers that are closest
 // to a provided key.
-func (c *Client) GetClosestPeers(ctx context.Context, key string) (<-chan peer.ID, error) {
+func (c *Client) GetClosestPeers(ctx context.Context, key []byte) (<-chan peer.ID, error) {
 	req := newDHTReq(&pb.DHTRequest{
 		Type: pb.DHTRequest_GET_CLOSEST_PEERS.Enum(),
 		Key:  key,
