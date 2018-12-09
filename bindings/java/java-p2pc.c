@@ -1,6 +1,5 @@
-#include <jni.h>
 #include "java-p2pc.h"
-#include "go-p2pc.h"
+#include "../go-p2pc.h"
 
 JNIEXPORT void JNICALL Java_p2pc_startClient (JNIEnv *jenv, jclass jcls, jstring jarg1){
   char *arg1 = (char *) 0 ;

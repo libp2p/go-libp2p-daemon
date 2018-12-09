@@ -1,6 +1,5 @@
-#include <jni.h>
 #include "java-p2pd.h"
-#include "go-p2pd.h"
+#include "../go-p2pd.h"
 
 JNIEXPORT void JNICALL Java_p2pd_startDaemon (JNIEnv *jenv, jclass jcls, jstring jarg1){
   char *arg1 = (char *) 0 ;
