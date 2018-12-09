@@ -61,7 +61,7 @@ func NewDaemon(ctx context.Context, path string, opts ...libp2p.Option) (*Daemon
 	signal.Notify(sigc, os.Interrupt, syscall.SIGTERM)
 	go func(ln net.Listener, c chan os.Signal) {
 		sig := <-c
-		fmt.Printf("Caught signal %s: shutting down.\n", sig)
+		log.Debugf("Caught signal %s: shutting down.\n", sig)
 		ln.Close()
 		os.Exit(0)
 	}(d.listener, sigc)

@@ -12,28 +12,33 @@ import (
 
 	libp2p "github.com/libp2p/go-libp2p"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
+	p2pd "github.com/libp2p/go-libp2p-daemon"
+	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
-
-	p2pd "github.com/libp2p/go-libp2p-daemon"
 )
 
 // DaemonConfig defines the configuration options
 type DaemonConfig struct {
-	sock           *string
-	quiet          *bool
-	id             *string
-	bootstrap      *bool
-	bootstrapPeers *string
-	dht            *bool
-	dhtClient      *bool
-	connMgr        *bool
-	connMgrLo      *int
-	connMgrHi      *int
-	connMgrGrace   *int
-	QUIC           *bool
-	natPortMap     *bool
-	args           []string
+	sock                           *string
+	quiet                          *bool
+	id                             *string
+	bootstrap                      *bool
+	bootstrapPeers                 *string
+	dht                            *bool
+	dhtClient                      *bool
+	connMgr                        *bool
+	connMgrLo                      *int
+	connMgrHi                      *int
+	connMgrGrace                   *int
+	QUIC                           *bool
+	natPortMap                     *bool
+	pubsub                         *bool
+	pubsubRouter                   *bool
+	pubsubSign                     *bool
+	pubsubSignStrict               *bool
+	gossipsubHeartbeatInterval     *int
+	gossipsubHeartbeatInitialDelay *int
 }
 
 func main() {
@@ -44,19 +49,25 @@ func main() {
 
 func initialize() DaemonConfig {
 	config := DaemonConfig{
-		sock:           flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path"),
-		quiet:          flag.Bool("q", false, "be quiet"),
-		id:             flag.String("id", "", "peer identity; private key file"),
-		bootstrap:      flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled"),
-		bootstrapPeers: flag.String("bootstrapPeers", "", "comma separated list of bootstrap peers; defaults to the IPFS DHT peers"),
-		dht:            flag.Bool("dht", true, "Enables the DHT in full node mode"),
-		dhtClient:      flag.Bool("dhtClient", true, "Enables the DHT in client mode"),
-		connMgr:        flag.Bool("connManager", false, "Enables the Connection Manager"),
-		connMgrLo:      flag.Int("connLo", 256, "Connection Manager Low Water mark"),
-		connMgrHi:      flag.Int("connHi", 512, "Connection Manager High Water mark"),
-		connMgrGrace:   flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)"),
-		QUIC:           flag.Bool("quic", false, "Enables the QUIC transport"),
-		natPortMap:     flag.Bool("natPortMap", false, "Enables NAT port mapping"),
+		sock:                           flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path"),
+		quiet:                          flag.Bool("q", false, "be quiet"),
+		id:                             flag.String("id", "", "peer identity; private key file"),
+		bootstrap:                      flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled"),
+		bootstrapPeers:                 flag.String("bootstrapPeers", "", "comma separated list of bootstrap peers; defaults to the IPFS DHT peers"),
+		dht:                            flag.Bool("dht", true, "Enables the DHT in full node mode"),
+		dhtClient:                      flag.Bool("dhtClient", true, "Enables the DHT in client mode"),
+		connMgr:                        flag.Bool("connManager", false, "Enables the Connection Manager"),
+		connMgrLo:                      flag.Int("connLo", 256, "Connection Manager Low Water mark"),
+		connMgrHi:                      flag.Int("connHi", 512, "Connection Manager High Water mark"),
+		connMgrGrace:                   flag.Int("connGrace", 120, "Connection Manager grace period (in seconds)"),
+		QUIC:                           flag.Bool("quic", false, "Enables the QUIC transport"),
+		natPortMap:                     flag.Bool("natPortMap", false, "Enables NAT port mapping"),
+		pubsub:                         flag.Bool("pubsub", false, "Enables pubsub"),
+		pubsubRouter:                   flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation"),
+		pubsubSign:                     flag.Bool("pubsubSign", true, "Enables pubsub message signing"),
+		pubsubSignStrict:               flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification"),
+		gossipsubHeartbeatInterval:     flag.Int("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval"),
+		gossipsubHeartbeatInitialDelay: flag.Int("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay"),
 	}
 	flag.Parse()
 	config.args = flag.Args()
@@ -104,9 +115,23 @@ func start(config DaemonConfig) {
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), *config.sock, opts...)
-
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if *config.pubsub {
+		if *config.gossipsubHeartbeatInterval > 0 {
+			ps.GossipSubHeartbeatInterval = time.Duration(*config.gossipsubHeartbeatInterval)
+		}
+
+		if *config.gossipsubHeartbeatInitialDelay > 0 {
+			ps.GossipSubHeartbeatInitialDelay = time.Duration(*config.gossipsubHeartbeatInitialDelay)
+		}
+
+		err = d.EnablePubsub(*config.pubsubRouter, *config.pubsubSign, *config.pubsubSignStrict)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if *config.dht || *config.dhtClient {

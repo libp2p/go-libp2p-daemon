@@ -1,4 +1,4 @@
-SHELL := /bin/bash
+SHELL := /bin/sh
 OS = $(shell uname -s | tr '[:upper:]' '[:lower:]')
 
 ifeq ($(OS), linux)
