@@ -118,6 +118,12 @@ func randCids(t *testing.T, n int) []cid.Cid {
 	return ids
 }
 
+func randBytes(t *testing.T) []byte {
+	buf := make([]byte, 10)
+	rand.Read(buf)
+	return buf
+}
+
 func randString(t *testing.T) string {
 	buf := make([]byte, 10)
 	rand.Read(buf)

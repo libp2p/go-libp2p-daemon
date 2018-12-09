@@ -152,7 +152,8 @@ func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan 
 
 	ctx, cancel := d.dhtRequestContext(req)
 
-	ch, err := d.dht.GetClosestPeers(ctx, *req.Key)
+	keyString := string(req.Key)
+	ch, err := d.dht.GetClosestPeers(ctx, keyString)
 	if err != nil {
 		cancel()
 		return errorResponse(err), nil, nil
@@ -207,7 +208,8 @@ func (d *Daemon) doDHTGetValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 	ctx, cancel := d.dhtRequestContext(req)
 	defer cancel()
 
-	val, err := d.dht.GetValue(ctx, *req.Key)
+	keyString := string(req.Key)
+	val, err := d.dht.GetValue(ctx, keyString)
 	if err != nil {
 		return errorResponse(err), nil, nil
 	}
@@ -222,7 +224,8 @@ func (d *Daemon) doDHTSearchValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.
 
 	ctx, cancel := d.dhtRequestContext(req)
 
-	ch, err := d.dht.SearchValue(ctx, *req.Key)
+	keyString := string(req.Key)
+	ch, err := d.dht.SearchValue(ctx, keyString)
 	if err != nil {
 		cancel()
 		return errorResponse(err), nil, nil
@@ -256,7 +259,8 @@ func (d *Daemon) doDHTPutValue(req *pb.DHTRequest) (*pb.Response, <-chan *pb.DHT
 	ctx, cancel := d.dhtRequestContext(req)
 	defer cancel()
 
-	err := d.dht.PutValue(ctx, *req.Key, req.Value)
+	keyString := string(req.Key)
+	err := d.dht.PutValue(ctx, keyString, req.Value)
 	if err != nil {
 		return errorResponse(err), nil, nil
 	}
