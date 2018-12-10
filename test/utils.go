@@ -13,7 +13,7 @@ import (
 	cid "github.com/ipfs/go-cid"
 	crypto "github.com/libp2p/go-libp2p-crypto"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
-	"github.com/libp2p/go-libp2p-daemon/p2pclient/go"
+	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	peer "github.com/libp2p/go-libp2p-peer"
 	peertest "github.com/libp2p/go-libp2p-peer/test"
