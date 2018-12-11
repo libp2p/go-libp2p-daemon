@@ -12,10 +12,7 @@ import (
 )
 
 func TestIdentify(t *testing.T) {
-	d, c, closer, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d, c, closer := createDaemonClientPair(t)
 	defer closer()
 	cid, caddrs, err := c.Identify()
 	if err != nil {
@@ -44,15 +41,9 @@ func connect(c *p2pclient.Client, d *p2pd.Daemon) error {
 }
 
 func TestConnect(t *testing.T) {
-	d1, c1, closer1, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d1, c1, closer1 := createDaemonClientPair(t)
 	defer closer1()
-	d2, c2, closer2, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d2, c2, closer2 := createDaemonClientPair(t)
 	defer closer2()
 	if err := connect(c1, d2); err != nil {
 		t.Fatal(err)
@@ -66,15 +57,9 @@ func TestConnect(t *testing.T) {
 }
 
 func TestConnectFailsOnBadAddress(t *testing.T) {
-	_, c1, closer1, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	_, c1, closer1 := createDaemonClientPair(t)
 	defer closer1()
-	d2, _, closer2, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d2, _, closer2 := createDaemonClientPair(t)
 	defer closer2()
 	addr, _ := ma.NewMultiaddr("/ip4/1.2.3.4/tcp/4000")
 	addrs := []ma.Multiaddr{addr}
@@ -84,15 +69,9 @@ func TestConnectFailsOnBadAddress(t *testing.T) {
 }
 
 func TestStreams(t *testing.T) {
-	d1, c1, closer1, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d1, c1, closer1 := createDaemonClientPair(t)
 	defer closer1()
-	d2, c2, closer2, err := createDaemonClientPair(t)
-	if err != nil {
-		t.Fatal(err)
-	}
+	d2, c2, closer2 := createDaemonClientPair(t)
 	defer closer2()
 	if err := connect(c1, d2); err != nil {
 		t.Fatal(err)
@@ -100,7 +79,7 @@ func TestStreams(t *testing.T) {
 	testprotos := []string{"/test"}
 
 	done := make(chan struct{})
-	err = c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
+	err := c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 		defer conn.Close()
 		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)

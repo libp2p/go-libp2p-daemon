@@ -55,15 +55,15 @@ func createClient(t *testing.T, daemonAddr ma.Multiaddr, clientAddr ma.Multiaddr
 	return client, closer
 }
 
-func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func(), error) {
+func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
 	dmaddr, err := ma.NewComponent("unix", daemonPath)
 	if err != nil {
-		return nil, nil, nil, err
+		t.Fatal(err)
 	}
 	cmaddr, err := ma.NewComponent("unix", clientPath)
 	if err != nil {
-		return nil, nil, nil, err
+		t.Fatal(err)
 	}
 	daemon, closeDaemon := createDaemon(t, dmaddr)
 	client, closeClient := createClient(t, dmaddr, cmaddr)
@@ -73,18 +73,18 @@ func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func
 		closeClient()
 		dirCloser()
 	}
-	return daemon, client, closer, nil
+	return daemon, client, closer
 }
 
-func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func(), error) {
+func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func()) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
 	dmaddr, err := ma.NewComponent("unix", daemonPath)
 	if err != nil {
-		return nil, nil, nil, err
+		t.Fatal(err)
 	}
 	cmaddr, err := ma.NewComponent("unix", clientPath)
 	if err != nil {
-		return nil, nil, nil, err
+		t.Fatal(err)
 	}
 	client, clientCloser := createClient(t, dmaddr, cmaddr)
 	daemon := newMockDaemon(t, dmaddr, cmaddr)
@@ -93,7 +93,7 @@ func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, f
 		clientCloser()
 		dirCloser()
 	}
-	return daemon, client, closer, nil
+	return daemon, client, closer
 }
 
 func randPeerID(t *testing.T) peer.ID {
