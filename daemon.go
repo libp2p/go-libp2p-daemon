@@ -33,7 +33,7 @@ type Daemon struct {
 	handlers map[proto.ID]ma.Multiaddr
 }
 
-func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
+func  NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
 	h, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, err

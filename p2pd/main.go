@@ -77,7 +77,7 @@ func main() {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), *maddr, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}

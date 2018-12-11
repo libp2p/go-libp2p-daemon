@@ -270,7 +270,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
 		}
-		log.Debugf("set stream handler: %s -> %s", sp, maddr)
+		log.Debugf("set stream handler: %s -> %s", sp, maddr.String())
 		d.handlers[p] = maddr
 	}
 

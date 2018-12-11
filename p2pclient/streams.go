@@ -4,14 +4,15 @@ import (
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io"
+	"net"
+
 	ggio "github.com/gogo/protobuf/io"
 	"github.com/gogo/protobuf/proto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	"github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/multiformats/go-multiaddr-net"
-	"io"
-	"net"
 )
 
 // StreamInfo wraps the protobuf structure with friendlier types.

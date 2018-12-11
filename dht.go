@@ -5,11 +5,11 @@ import (
 
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
-	crypto "github.com/libp2p/go-libp2p-crypto"
-	pstore "github.com/libp2p/go-libp2p-peerstore"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
 	cid "github.com/ipfs/go-cid"
+	crypto "github.com/libp2p/go-libp2p-crypto"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
 	peer "github.com/libp2p/go-libp2p-peer"
+	pstore "github.com/libp2p/go-libp2p-peerstore"
 )
 
 func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, func()) {
