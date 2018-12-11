@@ -7,13 +7,13 @@ import (
 	"log"
 	"strings"
 
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-connmgr"
-	"github.com/libp2p/go-libp2p-daemon"
+	libp2p "github.com/libp2p/go-libp2p"
+	connmgr "github.com/libp2p/go-libp2p-connmgr"
+	p2pd "github.com/libp2p/go-libp2p-daemon"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
-	"github.com/multiformats/go-multiaddr"
+	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	multiaddr "github.com/multiformats/go-multiaddr"
 )
 
 func main() {

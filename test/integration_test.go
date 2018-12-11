@@ -5,9 +5,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p-daemon"
+	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	"github.com/libp2p/go-libp2p-peer"
+	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
 

@@ -6,16 +6,16 @@ import (
 	"sync"
 
 	logging "github.com/ipfs/go-log"
-	"github.com/libp2p/go-libp2p"
-	"github.com/libp2p/go-libp2p-host"
-	"github.com/libp2p/go-libp2p-kad-dht"
-	"github.com/libp2p/go-libp2p-kad-dht/opts"
-	"github.com/libp2p/go-libp2p-peer"
+	libp2p "github.com/libp2p/go-libp2p"
+	host "github.com/libp2p/go-libp2p-host"
+	dht "github.com/libp2p/go-libp2p-kad-dht"
+	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
+	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 var log = logging.Logger("p2pd")
@@ -33,7 +33,7 @@ type Daemon struct {
 	handlers map[proto.ID]ma.Multiaddr
 }
 
-func  NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
+func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
 	h, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, err

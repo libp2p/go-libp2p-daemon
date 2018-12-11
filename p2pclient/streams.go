@@ -8,11 +8,11 @@ import (
 	"net"
 
 	ggio "github.com/gogo/protobuf/io"
-	"github.com/gogo/protobuf/proto"
+	proto "github.com/gogo/protobuf/proto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	"github.com/libp2p/go-libp2p-peer"
+	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
-	"github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 // StreamInfo wraps the protobuf structure with friendlier types.

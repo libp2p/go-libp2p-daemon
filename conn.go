@@ -10,7 +10,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	inet "github.com/libp2p/go-libp2p-net"
-	"github.com/libp2p/go-libp2p-peer"
+	peer "github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ma "github.com/multiformats/go-multiaddr"

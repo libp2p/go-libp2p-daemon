@@ -7,9 +7,9 @@ import (
 	ggio "github.com/gogo/protobuf/io"
 	logging "github.com/ipfs/go-log"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	"github.com/libp2p/go-libp2p-peer"
-	"github.com/multiformats/go-multiaddr"
-	"github.com/multiformats/go-multiaddr-net"
+	peer "github.com/libp2p/go-libp2p-peer"
+	multiaddr "github.com/multiformats/go-multiaddr"
+	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 var log = logging.Logger("p2pclient")
