@@ -19,7 +19,7 @@ import (
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
 
-	maddrString := flag.String("maddr", "/unix/tmp/p2pd.maddr", "daemon control multiaddr")
+	maddrString := flag.String("maddr", "/unix/tmp/p2pd.sock", "daemon control multiaddr")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
 	bootstrap := flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled")
