@@ -45,7 +45,7 @@ func (d *Daemon) handleStream(s inet.Stream) {
 
 	c, err := manet.Dial(maddr)
 	if err != nil {
-		log.Debugf("error dialing handler at %s: %s", maddr, err.Error())
+		log.Debugf("error dialing handler at %s: %s", maddr.String(), err.Error())
 		s.Reset()
 		return
 	}

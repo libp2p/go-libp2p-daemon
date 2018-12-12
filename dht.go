@@ -3,9 +3,10 @@ package p2pd
 import (
 	"context"
 
+	pb "github.com/libp2p/go-libp2p-daemon/pb"
+
 	cid "github.com/ipfs/go-cid"
 	crypto "github.com/libp2p/go-libp2p-crypto"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	peer "github.com/libp2p/go-libp2p-peer"
 	pstore "github.com/libp2p/go-libp2p-peerstore"

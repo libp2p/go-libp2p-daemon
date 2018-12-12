@@ -262,7 +262,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 
 	maddr, err := ma.NewMultiaddrBytes(req.StreamHandler.Addr)
 	if err != nil {
-		return errorResponseString(err.Error())
+		return errorResponse(err)
 	}
 	for _, sp := range req.StreamHandler.Proto {
 		p := proto.ID(sp)
