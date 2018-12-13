@@ -39,10 +39,11 @@ func main() {
 	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
-	relayEnabled := flag.Bool("relay", false, "Enables a relay")
-	relayActive := flag.Bool("relayAct", false, "Enables active mode on the relay")
+	relayEnabled := flag.Bool("relay", true, "Enables a relay")
+	relayActive := flag.Bool("relayActive", false, "Enables active mode on the relay")
 	relayHop := flag.Bool("relayHop", false, "Enables hop mode on the relay")
-	relayDiscovery := flag.Bool("relayDis", false, "Enables discovery on the relay")
+	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables discovery on the relay")
+	autoRelay := flag.Bool("autoRelay", false, "Enables auto relay")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -95,6 +96,10 @@ func main() {
 			relayOpts = append(relayOpts, relay.OptDiscovery)
 		}
 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
+
+		if *autoRelay {
+			opts = append(opts, libp2p.EnableAutoRelay())
+		}
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
