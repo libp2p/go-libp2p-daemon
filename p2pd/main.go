@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
+	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	ps "github.com/libp2p/go-libp2p-pubsub"
@@ -38,6 +39,10 @@ func main() {
 	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
+	relayEnabled := flag.Bool("relay", false, "Enables a relay")
+	relayActive := flag.Bool("relayAct", false, "Enables active mode on the relay")
+	relayHop := flag.Bool("relayHop", false, "Enables hop mode on the relay")
+	relayDiscovery := flag.Bool("relayDis", false, "Enables discovery on the relay")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -75,6 +80,21 @@ func main() {
 
 	if *natPortMap {
 		opts = append(opts, libp2p.NATPortMap())
+	}
+
+
+	if *relayEnabled {
+		var relayOpts []relay.RelayOpt
+		if *relayActive {
+			relayOpts = append(relayOpts, relay.OptActive)
+		}
+		if *relayHop {
+			relayOpts = append(relayOpts, relay.OptHop)
+		}
+		if *relayDiscovery {
+			relayOpts = append(relayOpts, relay.OptDiscovery)
+		}
+		opts = append(opts, libp2p.EnableRelay(relayOpts...))
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
