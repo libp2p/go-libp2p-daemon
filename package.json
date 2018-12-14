@@ -30,9 +30,9 @@
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmaTfHazBrintpyALv8MzmCvGyGg3XWY7vDrsVfGVnpd1j",
+      "hash": "QmaqGyUhWLsJbVo1QAujSu13mxNjFJ98Kt2VWGSnShGE1Q",
       "name": "go-libp2p-pubsub",
-      "version": "0.11.8"
+      "version": "0.11.9"
     }
   ],
   "gxVersion": "0.12.1",
@@ -40,6 +40,5 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.2"
+  "version": "0.0.3"
 }
-
