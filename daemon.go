@@ -118,8 +118,8 @@ func (d *Daemon) EnableAutoRelay() error {
 		return fmt.Errorf("DHT must be enabled for autorelay")
 	}
 
-	discovery := discovery.NewRoutingDiscovery(d.dht)
-	d.autorelay = relay.NewAutoRelayHost(d.ctx, d.host.(*bhost.BasicHost), discovery)
+	disc := discovery.NewRoutingDiscovery(d.dht)
+	d.autorelay = relay.NewAutoRelayHost(d.ctx, d.host.(*bhost.BasicHost), disc)
 	return nil
 }
 
