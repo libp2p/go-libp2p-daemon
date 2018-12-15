@@ -96,10 +96,6 @@ func main() {
 			relayOpts = append(relayOpts, relay.OptDiscovery)
 		}
 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
-
-		if *autoRelay {
-			opts = append(opts, libp2p.EnableAutoRelay())
-		}
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
@@ -135,6 +131,13 @@ func main() {
 
 	if *bootstrap {
 		err = d.Bootstrap()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if *autoRelay {
+		err = d.EnableAutoRelay()
 		if err != nil {
 			log.Fatal(err)
 		}

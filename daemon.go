@@ -7,12 +7,15 @@ import (
 
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
+	discovery "github.com/libp2p/go-libp2p-discovery"
 	host "github.com/libp2p/go-libp2p-host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	bhost "github.com/libp2p/go-libp2p/p2p/host/basic"
+	relay "github.com/libp2p/go-libp2p/p2p/host/relay"
 	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
@@ -27,6 +30,7 @@ type Daemon struct {
 
 	dht    *dht.IpfsDHT
 	pubsub *ps.PubSub
+	autorelay *relay.AutoRelayHost
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
@@ -107,6 +111,17 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 		return fmt.Errorf("unknown pubsub router: %s", router)
 	}
 
+}
+
+func (d *Daemon) EnableAutoRelay() error {
+	if d.dht == nil {
+		return fmt.Errorf("DHT must be enabled for autorelay")
+	}
+
+	routingDiscovery := discovery.NewRoutingDiscovery(d.dht)
+	ar := relay.NewAutoRelayHost(d.ctx, d.host.(*bhost.BasicHost), routingDiscovery)
+	d.autorelay = ar
+	return nil
 }
 
 func (d *Daemon) ID() peer.ID {
