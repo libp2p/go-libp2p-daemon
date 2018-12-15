@@ -137,6 +137,9 @@ func main() {
 	}
 
 	if *autoRelay {
+		if !*relayEnabled {
+			log.Fatal("Relay must be enabled to enable auto relay")
+		}
 		err = d.EnableAutoRelay()
 		if err != nil {
 			log.Fatal(err)
