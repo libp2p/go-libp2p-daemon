@@ -18,9 +18,9 @@
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmZNGvvTqtVtGzVxkhRCu5nuwbytdRdtHtJbWLGxeMYAkt",
+      "hash": "QmWJBngogUPF87Xz788NotnwfYS1B5oanKew82zuMwUkQu",
       "name": "go-libp2p-connmgr",
-      "version": "0.3.28"
+      "version": "0.3.29"
     },
     {
       "author": "marten-seemann",
@@ -40,5 +40,6 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.3"
+  "version": "0.0.4"
 }
+
