@@ -2,15 +2,15 @@ SHELL := /bin/sh
 
 include config.mk
 
-.PHONY : all java-daemon go-daemon daemon-shared-object deps gx clean
+.PHONY : all java-daemon go-daemon daemon-control-so deps gx clean
 .DEFAULT_GOAL : go-daemon
 
-all: deps go-daemon java-daemon daemon-shared-object
+all: deps go-daemon java-daemon
 
-java-daemon:
+java-daemon: daemon-control-so
 	cd $(BDIR) && make $@
 
-daemon-shared-object:
+daemon-control-so:
 	cd $(BDIR) && make $@
 
 go-daemon:

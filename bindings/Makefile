@@ -13,11 +13,11 @@ vpath %.class $(CLASS_PATH)
 
 DNAME = p2pd
 
-.PHONY : java-daemon daemon-shared-object clean
+.PHONY : java-daemon daemon-control-so clean
 
-java-daemon: daemon-shared-object $(DNAME).class 
+java-daemon: $(DNAME).class 
 
-daemon-shared-object: lib$(DNAME).$(EXT)
+daemon-control-so: lib$(DNAME).$(EXT)
 
 lib%.$(EXT): java-%.o go-%.a
 	$(CC) $(LFLAGS) -o $@ $^
