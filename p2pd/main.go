@@ -13,12 +13,13 @@ import (
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	multiaddr "github.com/multiformats/go-multiaddr"
 )
 
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
 
-	sock := flag.String("sock", "/tmp/p2pd.sock", "daemon control socket path")
+	maddrString := flag.String("listen", "/unix/tmp/p2pd.sock", "daemon control listen multiaddr")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
 	bootstrap := flag.Bool("b", false, "connects to bootstrap peers and bootstraps the dht if enabled")
@@ -40,6 +41,11 @@ func main() {
 	flag.Parse()
 
 	var opts []libp2p.Option
+
+	maddr, err := multiaddr.NewMultiaddr(*maddrString)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	if *id != "" {
 		key, err := p2pd.ReadIdentity(*id)
@@ -71,7 +77,7 @@ func main() {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), *sock, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -110,7 +116,7 @@ func main() {
 	}
 
 	if !*quiet {
-		fmt.Printf("Control socket: %s\n", *sock)
+		fmt.Printf("Control socket: %s\n", maddr.String())
 		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {

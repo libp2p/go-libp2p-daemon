@@ -260,15 +260,18 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	d.mx.Lock()
 	defer d.mx.Unlock()
 
-	path := *req.StreamHandler.Path
+	maddr, err := ma.NewMultiaddrBytes(req.StreamHandler.Addr)
+	if err != nil {
+		return errorResponse(err)
+	}
 	for _, sp := range req.StreamHandler.Proto {
 		p := proto.ID(sp)
 		_, ok := d.handlers[p]
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
 		}
-		log.Debugf("set stream handler: %s -> %s", sp, path)
-		d.handlers[p] = path
+		log.Debugf("set stream handler: %s -> %s", sp, maddr.String())
+		d.handlers[p] = maddr
 	}
 
 	return okResponse()

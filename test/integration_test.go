@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p-daemon"
+	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	peer "github.com/libp2p/go-libp2p-peer"
 	ma "github.com/multiformats/go-multiaddr"
@@ -79,7 +79,7 @@ func TestStreams(t *testing.T) {
 	testprotos := []string{"/test"}
 
 	done := make(chan struct{})
-	c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
+	err := c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 		defer conn.Close()
 		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)
@@ -94,6 +94,9 @@ func TestStreams(t *testing.T) {
 		}
 		done <- struct{}{}
 	})
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	_, conn, err := c2.NewStream(d1.ID(), testprotos)
 	if err != nil {

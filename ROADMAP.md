@@ -22,11 +22,12 @@ developed in, nor whether a native libp2p implementation exists in that
 language. Running *multiple instances* of the daemon is also possible, and
 specially useful for testing purposes.
 
-When establishing connections, the daemon handles transport selection, security
-negotiation, and protocol and stream multiplexing. Streams are mapped 1:1 to
-local endpoints (e.g. unix sockets, shared-memory). Writes and reads to/from
-those endpoints are converted to writes and reads to/from the stream, allowing
-any application to interact with a libp2p network through simple, local IO.
+When establishing connections, the daemon handles transport selection,
+security negotiation, and protocol and stream multiplexing. Streams
+are mapped 1:1 to socket connections. Writes and reads to/from those
+sockets are converted to writes and reads to/from the stream, allowing
+any application to interact with a libp2p network through simple,
+well-defined IO.
 
 The daemon exposes a control endpoint for management, supporting basic
 operations such as peer connection/disconnection, stream opening/closing, etc.
@@ -55,6 +56,7 @@ please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 - ✅ Daemon identity: auto-generated, and persisted.
 - 🚧 Subsystem: DHT interactions.
 - 🚧 Subsystem: Pubsub interactions.
+- 🚧 Support multiaddr protocols instead of exclusively unix sockets.
 - Subsystem: Circuit relay support.
 - Subsystem: Peerstore operations.
 - Connection notifications.
@@ -68,12 +70,12 @@ These are the medium-term priorities for us. If you feel something is missing,
 please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 
 - Multi-tenancy, one application = one identity = one peer ID.
-- app <> daemon isolation; trust-less scenario; programs should not be able to 
+- app <> daemon isolation; trust-less scenario; programs should not be able to
   interfere or spy on streams owned by others.
 - Shared-memory local transport between apps and the daemon: potentially more
   efficient than unix sockets.
 - Extracting local transports as go-libp2p transports.
 - Allowing "blessed" applications to act on behalf of the daemon.
 - Global services implemented in the user space.
-- Plugins: services providing features back to the daemon, for use by other 
+- Plugins: services providing features back to the daemon, for use by other
   tenants.

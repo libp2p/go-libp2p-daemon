@@ -35,17 +35,17 @@ func createTempDir(t *testing.T) (string, string, func()) {
 	return daemonPath, clientPath, closer
 }
 
-func createDaemon(t *testing.T, daemonPath string) (*p2pd.Daemon, func()) {
+func createDaemon(t *testing.T, daemonAddr ma.Multiaddr) (*p2pd.Daemon, func()) {
 	ctx, cancelCtx := context.WithCancel(context.Background())
-	daemon, err := p2pd.NewDaemon(ctx, daemonPath)
+	daemon, err := p2pd.NewDaemon(ctx, daemonAddr)
 	if err != nil {
 		t.Fatal(err)
 	}
 	return daemon, cancelCtx
 }
 
-func createClient(t *testing.T, daemonPath, clientPath string) (*p2pclient.Client, func()) {
-	client, err := p2pclient.NewClient(daemonPath, clientPath)
+func createClient(t *testing.T, daemonAddr ma.Multiaddr, clientAddr ma.Multiaddr) (*p2pclient.Client, func()) {
+	client, err := p2pclient.NewClient(daemonAddr, clientAddr)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -57,8 +57,16 @@ func createClient(t *testing.T, daemonPath, clientPath string) (*p2pclient.Clien
 
 func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
-	daemon, closeDaemon := createDaemon(t, daemonPath)
-	client, closeClient := createClient(t, daemonPath, clientPath)
+	dmaddr, err := ma.NewComponent("unix", daemonPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmaddr, err := ma.NewComponent("unix", clientPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	daemon, closeDaemon := createDaemon(t, dmaddr)
+	client, closeClient := createClient(t, dmaddr, cmaddr)
 
 	closer := func() {
 		closeDaemon()
@@ -70,8 +78,16 @@ func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func
 
 func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func()) {
 	daemonPath, clientPath, dirCloser := createTempDir(t)
-	client, clientCloser := createClient(t, daemonPath, clientPath)
-	daemon := newMockDaemon(t, daemonPath, clientPath)
+	dmaddr, err := ma.NewComponent("unix", daemonPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	cmaddr, err := ma.NewComponent("unix", clientPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client, clientCloser := createClient(t, dmaddr, cmaddr)
+	daemon := newMockDaemon(t, dmaddr, cmaddr)
 	closer := func() {
 		daemon.Close()
 		clientCloser()

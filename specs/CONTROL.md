@@ -21,8 +21,7 @@ There are two pieces to the libp2p daemon:
 
 ### Technical Details
 
-The libp2p daemon and client will communicate with each other over a simple Unix
-socket based protocol built with [protobuf](https://developers.google.com/protocol-buffers/).
+The libp2p daemon and client will communicate with each other over stream sockets with [protobuf](https://developers.google.com/protocol-buffers/).
 
 Future implementations may attempt to take advantage of shared memory (shmem)
 or other IPC constructs.
@@ -154,23 +153,24 @@ Response{
 ```
 
 After writing the response message to the socket, the daemon begins piping the
-newly created stream to the client over the socket. Clients may read from and
-write to the socket as if it were the stream. **WARNING**: Clients must be
-careful not to read excess bytes from the socket when parsing the daemon
-response, otherwise they risk reading into the stream output.
+newly created stream to the client over the socket.
+Clients may read from and write to the socket as if it were the stream.
+**WARNING**: When using a unix socket, clients must be careful not to read
+excess bytes from the socket when parsing the daemon response, otherwise they
+risk reading into the stream output.
 
 #### `StreamHandler` - Register
 
 Clients issue a `StreamHandler` request to register a handler for inbound
 streams on a given protocol. Prior to issuing the request, the client must be
-listening to a Unix socket at the specified path.
+listening at the specified multi-address.
 
 **Client**
 ```
 Request{
   Type: STREAM_HANDLER,
   StreamHandlerRequest: {
-    Path: <path to unix socket client is listening to>,
+    Addr: <a multi-address that the client is listening on>,
     Proto: [<protocols to route to this handler>, ...],
   }
 }
@@ -188,8 +188,8 @@ Response{
 #### `StreamHandler` - Inbound stream
 
 When peers connect to the daemon on a protocol for which our client has a
-registered handler, the daemon will connect to the client on the registered unix
-socket.
+registered handler, the daemon will connect to the client on the registered
+multi-address.
 
 **Daemon**
 *Note: this message is NOT wrapped in a `Response` object.*
@@ -202,4 +202,4 @@ StreamInfo{
 ```
 
 After writing the `StreamInfo` message, the daemon will once again begin piping
-data from the stream to the unix socket and vice-versa.
+data from the stream to the socket and vice-versa.

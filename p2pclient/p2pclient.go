@@ -2,7 +2,6 @@ package p2pclient
 
 import (
 	"errors"
-	"net"
 	"sync"
 
 	ggio "github.com/gogo/protobuf/io"
@@ -10,6 +9,7 @@ import (
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	peer "github.com/libp2p/go-libp2p-peer"
 	multiaddr "github.com/multiformats/go-multiaddr"
+	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 var log = logging.Logger("p2pclient")
@@ -19,22 +19,22 @@ const MessageSizeMax = 1 << 22 // 4 MB
 
 // Client is the struct that manages a connection to a libp2p daemon.
 type Client struct {
-	controlPath string
-	listenPath  string
-	listener    net.Listener
+	controlMaddr multiaddr.Multiaddr
+	listenMaddr  multiaddr.Multiaddr
+	listener    manet.Listener
 
 	mhandlers sync.Mutex
 	handlers  map[string]StreamHandlerFunc
 }
 
 // NewClient creates a new libp2p daemon client, connecting to a daemon
-// listening on a unix socket at controlPath, and establishing an inbound socket
-// at listenPath.
-func NewClient(controlPath, listenPath string) (*Client, error) {
+// listening on a multi-addr at controlMaddr, and establishing an inbound
+// listening multi-address at listenMaddr
+func NewClient(controlMaddr, listenMaddr multiaddr.Multiaddr) (*Client, error) {
 	client := &Client{
-		controlPath: controlPath,
-		listenPath:  listenPath,
-		handlers:    make(map[string]StreamHandlerFunc),
+		controlMaddr: controlMaddr,
+		listenMaddr:  listenMaddr,
+		handlers:     make(map[string]StreamHandlerFunc),
 	}
 
 	if err := client.listen(); err != nil {
@@ -44,8 +44,8 @@ func NewClient(controlPath, listenPath string) (*Client, error) {
 	return client, nil
 }
 
-func (c *Client) newControlConn() (net.Conn, error) {
-	return net.Dial("unix", c.controlPath)
+func (c *Client) newControlConn() (manet.Conn, error) {
+	return manet.Dial(c.controlMaddr)
 }
 
 // Identify queries the daemon for its peer ID and listen addresses.

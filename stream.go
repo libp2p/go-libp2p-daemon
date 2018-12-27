@@ -7,6 +7,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	inet "github.com/libp2p/go-libp2p-net"
+	manet "github.com/multiformats/go-multiaddr-net"
 )
 
 func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
@@ -33,7 +34,7 @@ func (d *Daemon) handleStream(s inet.Stream) {
 	p := s.Protocol()
 
 	d.mx.Lock()
-	path, ok := d.handlers[p]
+	maddr, ok := d.handlers[p]
 	d.mx.Unlock()
 
 	if !ok {
@@ -42,9 +43,9 @@ func (d *Daemon) handleStream(s inet.Stream) {
 		return
 	}
 
-	c, err := net.Dial("unix", path)
+	c, err := manet.Dial(maddr)
 	if err != nil {
-		log.Debugf("error dialing handler at %s: %s", path, err.Error())
+		log.Debugf("error dialing handler at %s: %s", maddr.String(), err.Error())
 		s.Reset()
 		return
 	}
