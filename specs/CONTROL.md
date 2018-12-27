@@ -152,9 +152,9 @@ Response{
 }
 ```
 
-After writing the response message to the address, the daemon begins piping the
+After writing the response message to the socket, the daemon begins piping the
 newly created stream to the client over the socket.
-Clients may read from and write to the address as if it were the stream.
+Clients may read from and write to the socket as if it were the stream.
 **WARNING**: When using a unix socket, clients must be careful not to read
 excess bytes from the socket when parsing the daemon response, otherwise they
 risk reading into the stream output.
