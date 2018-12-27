@@ -116,7 +116,7 @@ func main() {
 	}
 
 	if !*quiet {
-		fmt.Printf("Control multiaddr: %s\n", maddr.String())
+		fmt.Printf("Control socket: %s\n", maddr.String())
 		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
