@@ -21,7 +21,7 @@ There are two pieces to the libp2p daemon:
 
 ### Technical Details
 
-The libp2p daemon and client will communicate with each other over any multiaddr supported protocol with [protobuf](https://developers.google.com/protocol-buffers/).
+The libp2p daemon and client will communicate with each other over stream sockets with [protobuf](https://developers.google.com/protocol-buffers/).
 
 Future implementations may attempt to take advantage of shared memory (shmem)
 or other IPC constructs.
@@ -153,10 +153,10 @@ Response{
 ```
 
 After writing the response message to the address, the daemon begins piping the
-newly created stream to the client over the multi-address supported transport. 
-Clients may read from and write to the address as if it were the stream. 
-**WARNING**: When using a unix socket, clients must be careful not to read 
-excess bytes from the socket when parsing the daemon response, otherwise they 
+newly created stream to the client over the socket.
+Clients may read from and write to the address as if it were the stream.
+**WARNING**: When using a unix socket, clients must be careful not to read
+excess bytes from the socket when parsing the daemon response, otherwise they
 risk reading into the stream output.
 
 #### `StreamHandler` - Register
@@ -188,7 +188,7 @@ Response{
 #### `StreamHandler` - Inbound stream
 
 When peers connect to the daemon on a protocol for which our client has a
-registered handler, the daemon will connect to the client on the registered 
+registered handler, the daemon will connect to the client on the registered
 multi-address.
 
 **Daemon**
