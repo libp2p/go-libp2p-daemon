@@ -202,4 +202,4 @@ StreamInfo{
 ```
 
 After writing the `StreamInfo` message, the daemon will once again begin piping
-data from the stream to the multi-address and vice-versa.
+data from the stream to the socket and vice-versa.
