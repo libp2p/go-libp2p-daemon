@@ -83,7 +83,6 @@ func main() {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
-
 	if *relayEnabled {
 		var relayOpts []relay.RelayOpt
 		if *relayActive {
@@ -98,7 +97,17 @@ func main() {
 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
+	if *autoRelay {
+		if ! *dht {
+			log.Fatal("DHT must be enabled in full node mode in order to enable autorelay")
+		}
+		if ! *relayEnabled {
+			log.Fatal("Relay must be enabled to enable autorelay")
+		}
+		opts = append(opts, libp2p.EnableAutoRelay())
+	}
+
+	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -113,13 +122,6 @@ func main() {
 		}
 
 		err = d.EnablePubsub(*pubsubRouter, *pubsubSign, *pubsubSignStrict)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	if *dht || *dhtClient {
-		err = d.EnableDHT(*dhtClient)
 		if err != nil {
 			log.Fatal(err)
 		}

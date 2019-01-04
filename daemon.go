@@ -14,9 +14,9 @@ import (
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	routing "github.com/libp2p/go-libp2p-routing"
 	bhost "github.com/libp2p/go-libp2p/p2p/host/basic"
 	relay "github.com/libp2p/go-libp2p/p2p/host/relay"
-	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
 )
@@ -37,11 +37,27 @@ type Daemon struct {
 	handlers map[proto.ID]ma.Multiaddr
 }
 
-func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
+func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClient bool, opts ...libp2p.Option) (*Daemon, error) {
+	d := &Daemon{
+		ctx: ctx,
+		handlers: make(map[proto.ID]ma.Multiaddr),
+	}
+
+	if dhtEnabled || dhtClient {
+		var dhtOpts []dhtopts.Option
+		if dhtClient {
+			dhtOpts = append(dhtOpts, dhtopts.Client(true))
+		}
+
+		dhtRouting := d.DHTRoutingFactory(dhtOpts)
+		opts = append(opts, libp2p.Routing(dhtRouting))
+	}
+
 	h, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
+	d.host = h
 
 	l, err := manet.Listen(maddr)
 	if err != nil {
@@ -53,7 +69,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (
 		ctx:      ctx,
 		host:     h,
 		listener: l,
-		handlers: make(map[proto.ID]ma.Multiaddr),
+		handlers: make(map[proto.ID]string),
 	}
 
 	go d.listen()
@@ -61,22 +77,17 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (
 	return d, nil
 }
 
-func (d *Daemon) EnableDHT(client bool) error {
-	var opts []dhtopts.Option
-
-	if client {
-		opts = append(opts, dhtopts.Client(true))
+func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routing.PeerRouting, error) {
+	makeRouting := func(h host.Host) (routing.PeerRouting, error) {
+		dhtInst, err := dht.New(d.ctx, h, opts...)
+		if err != nil {
+			return nil, err
+		}
+		d.dht = dhtInst
+		return dhtInst, nil
 	}
 
-	dht, err := dht.New(d.ctx, d.host, opts...)
-	if err != nil {
-		return err
-	}
-
-	d.dht = dht
-	d.host = rhost.Wrap(d.host, d.dht)
-
-	return nil
+	return makeRouting
 }
 
 func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
