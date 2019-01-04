@@ -45,8 +45,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClie
 			dhtOpts = append(dhtOpts, dhtopts.Client(true))
 		}
 
-		dhtRouting := d.DHTRoutingFactory(dhtOpts)
-		opts = append(opts, libp2p.Routing(dhtRouting))
+		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))
 	}
 
 	h, err := libp2p.New(ctx, opts...)
