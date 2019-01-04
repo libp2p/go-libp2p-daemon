@@ -64,13 +64,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClie
 		h.Close()
 		return nil, err
 	}
-
-	d := &Daemon{
-		ctx:      ctx,
-		host:     h,
-		listener: l,
-		handlers: make(map[proto.ID]string),
-	}
+	d.listener = l
 
 	go d.listen()
 
