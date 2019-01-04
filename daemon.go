@@ -7,7 +7,6 @@ import (
 
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
-	discovery "github.com/libp2p/go-libp2p-discovery"
 	host "github.com/libp2p/go-libp2p-host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
@@ -15,7 +14,6 @@ import (
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	routing "github.com/libp2p/go-libp2p-routing"
-	bhost "github.com/libp2p/go-libp2p/p2p/host/basic"
 	relay "github.com/libp2p/go-libp2p/p2p/host/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
@@ -116,16 +114,6 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 		return fmt.Errorf("unknown pubsub router: %s", router)
 	}
 
-}
-
-func (d *Daemon) EnableAutoRelay() error {
-	if d.dht == nil {
-		return fmt.Errorf("DHT must be enabled for autorelay")
-	}
-
-	disc := discovery.NewRoutingDiscovery(d.dht)
-	d.autorelay = relay.NewAutoRelayHost(d.ctx, d.host.(*bhost.BasicHost), disc)
-	return nil
 }
 
 func (d *Daemon) ID() peer.ID {

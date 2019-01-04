@@ -138,16 +138,6 @@ func main() {
 		}
 	}
 
-	if *autoRelay {
-		if !*relayEnabled {
-			log.Fatal("Relay must be enabled to enable auto relay")
-		}
-		err = d.EnableAutoRelay()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
 	if !*quiet {
 		fmt.Printf("Control socket: %s\n", maddr.String())
 		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
