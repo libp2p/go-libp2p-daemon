@@ -14,7 +14,6 @@ import (
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	routing "github.com/libp2p/go-libp2p-routing"
-	relay "github.com/libp2p/go-libp2p/p2p/host/relay"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
 )
@@ -28,7 +27,6 @@ type Daemon struct {
 
 	dht    *dht.IpfsDHT
 	pubsub *ps.PubSub
-	autorelay *relay.AutoRelayHost
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
