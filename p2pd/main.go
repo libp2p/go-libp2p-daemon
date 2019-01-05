@@ -98,8 +98,8 @@ func main() {
 	}
 
 	if *autoRelay {
-		if ! *dht {
-			log.Fatal("DHT must be enabled in full node mode in order to enable autorelay")
+		if ! (*dht || *dhtClient) {
+			log.Fatal("DHT must be enabled in order to enable autorelay")
 		}
 		if ! *relayEnabled {
 			log.Fatal("Relay must be enabled to enable autorelay")
