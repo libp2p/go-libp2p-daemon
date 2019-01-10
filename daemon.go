@@ -13,7 +13,7 @@ import (
 	peer "github.com/libp2p/go-libp2p-peer"
 	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	rhost "github.com/libp2p/go-libp2p/p2p/host/routed"
+	routing "github.com/libp2p/go-libp2p-routing"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
 )
@@ -33,46 +33,50 @@ type Daemon struct {
 	handlers map[proto.ID]ma.Multiaddr
 }
 
-func NewDaemon(ctx context.Context, maddr ma.Multiaddr, opts ...libp2p.Option) (*Daemon, error) {
+func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClient bool, opts ...libp2p.Option) (*Daemon, error) {
+	d := &Daemon{
+		ctx: ctx,
+		handlers: make(map[proto.ID]ma.Multiaddr),
+	}
+
+	if dhtEnabled || dhtClient {
+		var dhtOpts []dhtopts.Option
+		if dhtClient {
+			dhtOpts = append(dhtOpts, dhtopts.Client(true))
+		}
+
+		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))
+	}
+
 	h, err := libp2p.New(ctx, opts...)
 	if err != nil {
 		return nil, err
 	}
+	d.host = h
 
 	l, err := manet.Listen(maddr)
 	if err != nil {
 		h.Close()
 		return nil, err
 	}
-
-	d := &Daemon{
-		ctx:      ctx,
-		host:     h,
-		listener: l,
-		handlers: make(map[proto.ID]ma.Multiaddr),
-	}
+	d.listener = l
 
 	go d.listen()
 
 	return d, nil
 }
 
-func (d *Daemon) EnableDHT(client bool) error {
-	var opts []dhtopts.Option
-
-	if client {
-		opts = append(opts, dhtopts.Client(true))
+func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routing.PeerRouting, error) {
+	makeRouting := func(h host.Host) (routing.PeerRouting, error) {
+		dhtInst, err := dht.New(d.ctx, h, opts...)
+		if err != nil {
+			return nil, err
+		}
+		d.dht = dhtInst
+		return dhtInst, nil
 	}
 
-	dht, err := dht.New(d.ctx, d.host, opts...)
-	if err != nil {
-		return err
-	}
-
-	d.dht = dht
-	d.host = rhost.Wrap(d.host, d.dht)
-
-	return nil
+	return makeRouting
 }
 
 func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {

@@ -8,6 +8,7 @@ import (
 	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
+	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	ps "github.com/libp2p/go-libp2p-pubsub"
@@ -38,6 +39,11 @@ func main() {
 	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
+	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
+	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
+	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
+	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -77,7 +83,31 @@ func main() {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), maddr, opts...)
+	if *relayEnabled {
+		var relayOpts []relay.RelayOpt
+		if *relayActive {
+			relayOpts = append(relayOpts, relay.OptActive)
+		}
+		if *relayHop {
+			relayOpts = append(relayOpts, relay.OptHop)
+		}
+		if *relayDiscovery {
+			relayOpts = append(relayOpts, relay.OptDiscovery)
+		}
+		opts = append(opts, libp2p.EnableRelay(relayOpts...))
+	}
+
+	if *autoRelay {
+		if !(*dht || *dhtClient) {
+			log.Fatal("DHT must be enabled in order to enable autorelay")
+		}
+		if !*relayEnabled {
+			log.Fatal("Relay must be enabled to enable autorelay")
+		}
+		opts = append(opts, libp2p.EnableAutoRelay())
+	}
+
+	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -92,13 +122,6 @@ func main() {
 		}
 
 		err = d.EnablePubsub(*pubsubRouter, *pubsubSign, *pubsubSignStrict)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	if *dht || *dhtClient {
-		err = d.EnableDHT(*dhtClient)
 		if err != nil {
 			log.Fatal(err)
 		}
