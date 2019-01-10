@@ -18,6 +18,8 @@ Check out the [ROADMAP](ROADMAP.md) to see what's coming.
 
 ## Install
 
+Note that go1.11 is required.
+
 ```sh
 $ go get github.com/libp2p/go-libp2p-daemon
 $ cd $GOPATH/src/github.com/libp2p/go-libp2p-daemon
