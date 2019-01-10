@@ -39,11 +39,11 @@ func main() {
 	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
-	relayEnabled := flag.Bool("relay", true, "Enables a relay")
-	relayActive := flag.Bool("relayActive", false, "Enables active mode on the relay")
-	relayHop := flag.Bool("relayHop", false, "Enables hop mode on the relay")
-	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables discovery on the relay")
-	autoRelay := flag.Bool("autoRelay", false, "Enables auto relay")
+	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
+	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
+	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
+	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -98,10 +98,10 @@ func main() {
 	}
 
 	if *autoRelay {
-		if ! (*dht || *dhtClient) {
+		if !(*dht || *dhtClient) {
 			log.Fatal("DHT must be enabled in order to enable autorelay")
 		}
-		if ! *relayEnabled {
+		if !*relayEnabled {
 			log.Fatal("Relay must be enabled to enable autorelay")
 		}
 		opts = append(opts, libp2p.EnableAutoRelay())
