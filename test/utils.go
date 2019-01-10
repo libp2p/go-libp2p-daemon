@@ -37,7 +37,7 @@ func createTempDir(t *testing.T) (string, string, func()) {
 
 func createDaemon(t *testing.T, daemonAddr ma.Multiaddr) (*p2pd.Daemon, func()) {
 	ctx, cancelCtx := context.WithCancel(context.Background())
-	daemon, err := p2pd.NewDaemon(ctx, daemonAddr)
+	daemon, err := p2pd.NewDaemon(ctx, daemonAddr, false, false)
 	if err != nil {
 		t.Fatal(err)
 	}
