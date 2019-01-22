@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	cid "github.com/ipfs/go-cid"
@@ -77,21 +78,41 @@ func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func
 }
 
 func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func()) {
-	daemonPath, clientPath, dirCloser := createTempDir(t)
-	dmaddr, err := ma.NewComponent("unix", daemonPath)
-	if err != nil {
-		t.Fatal(err)
+	var (
+		err     error
+		cleanup func()
+		cmaddr  ma.Multiaddr
+		dmaddr  ma.Multiaddr
+	)
+
+	if runtime.GOOS == "windows" {
+		dmaddr, err = ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
+		if err != nil {
+			t.Fatal(err)
+		}
+		cmaddr, err = ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
+		if err != nil {
+			t.Fatal(err)
+		}
+	} else {
+		daemonPath, clientPath, dirCloser := createTempDir(t)
+		dmaddr, err = ma.NewComponent("unix", daemonPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cmaddr, err = ma.NewComponent("unix", clientPath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		cleanup = dirCloser
 	}
-	cmaddr, err := ma.NewComponent("unix", clientPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+
 	client, clientCloser := createClient(t, dmaddr, cmaddr)
 	daemon := newMockDaemon(t, dmaddr, cmaddr)
 	closer := func() {
 		daemon.Close()
 		clientCloser()
-		dirCloser()
+		cleanup()
 	}
 	return daemon, client, closer
 }
