@@ -13,7 +13,7 @@ import (
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
-	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 )
 
@@ -128,7 +128,13 @@ func main() {
 	}
 
 	if *bootstrapPeers != "" {
-		p2pd.BootstrapPeers = strings.Split(*bootstrapPeers, ",")
+		for _, s := range strings.Split(*bootstrapPeers, ",") {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatalf("error parsing bootstrap peer %q: %v", s, err)
+			}
+			p2pd.BootstrapPeers = append(p2pd.BootstrapPeers, ma)
+		}
 	}
 
 	if *bootstrap {
