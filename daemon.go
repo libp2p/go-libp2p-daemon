@@ -35,7 +35,7 @@ type Daemon struct {
 
 func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClient bool, opts ...libp2p.Option) (*Daemon, error) {
 	d := &Daemon{
-		ctx: ctx,
+		ctx:      ctx,
 		handlers: make(map[proto.ID]ma.Multiaddr),
 	}
 

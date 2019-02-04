@@ -21,7 +21,7 @@ const MessageSizeMax = 1 << 22 // 4 MB
 type Client struct {
 	controlMaddr multiaddr.Multiaddr
 	listenMaddr  multiaddr.Multiaddr
-	listener    manet.Listener
+	listener     manet.Listener
 
 	mhandlers sync.Mutex
 	handlers  map[string]StreamHandlerFunc
