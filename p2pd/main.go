@@ -13,7 +13,7 @@ import (
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
-	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 )
 

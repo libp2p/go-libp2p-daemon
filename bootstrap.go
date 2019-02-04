@@ -16,7 +16,7 @@ var BootstrapPeers = dht.DefaultBootstrapPeers
 const BootstrapConnections = 4
 
 func bootstrapPeerInfo() ([]*pstore.PeerInfo, error) {
-	var pis []*pstore.PeerInfo
+	pis := make([]*pstore.PeerInfo, 0, len(BootstrapPeers))
 	for _, a := range BootstrapPeers {
 		pi, err := pstore.InfoFromP2pAddr(a)
 		if err != nil {
