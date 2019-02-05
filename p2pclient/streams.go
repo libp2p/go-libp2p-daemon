@@ -166,12 +166,13 @@ func (c *Client) streamDispatcher() {
 	}
 }
 
-func (c *Client) listen() error {
-	l, err := manet.Listen(c.listenMaddr)
+func (c *Client) listen(addr ma.Multiaddr) error {
+	l, err := manet.Listen(addr)
 	if err != nil {
 		return err
 	}
 
+	c.listenMaddr = l.Multiaddr()
 	c.listener = l
 	go c.streamDispatcher()
 

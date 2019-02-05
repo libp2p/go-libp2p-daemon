@@ -57,7 +57,7 @@ func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, a
 }
 
 func TestDHTFindPeer(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	id := randPeerID(t)
 
@@ -83,7 +83,7 @@ func TestDHTFindPeer(t *testing.T) {
 }
 
 func TestDHTGetPublicKey(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	id := randPeerID(t)
 	key := randPubKey(t)
@@ -108,7 +108,7 @@ func TestDHTGetPublicKey(t *testing.T) {
 }
 
 func TestDHTGetValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	key := randBytes(t)
 	value := randBytes(t)
@@ -129,7 +129,7 @@ func TestDHTGetValue(t *testing.T) {
 }
 
 func TestDHTPutValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	key := randBytes(t)
 	value := randBytes(t)
@@ -155,7 +155,7 @@ func TestDHTPutValue(t *testing.T) {
 }
 
 func TestDHTProvide(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	cid := randCid(t)
 	donec := make(chan struct{})
@@ -179,7 +179,7 @@ func TestDHTProvide(t *testing.T) {
 }
 
 func TestDHTFindPeersConnectedToPeer(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	ids := randPeerIDs(t, 3)
 
@@ -207,7 +207,7 @@ func TestDHTFindPeersConnectedToPeer(t *testing.T) {
 }
 
 func TestDHTFindProviders(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	ids := randPeerIDs(t, 3)
 
@@ -236,7 +236,7 @@ func TestDHTFindProviders(t *testing.T) {
 }
 
 func TestDHTGetClosestPeers(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	ids := randPeerIDs(t, 2)
 	key := randBytes(t)
@@ -266,7 +266,7 @@ func TestDHTGetClosestPeers(t *testing.T) {
 }
 
 func TestDHTSearchValue(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
+	daemon, client, closer := createMockDaemonClientPair(t, makeTcpLocalhostEndpoints)
 	defer closer()
 	key := randBytes(t)
 	values := make([][]byte, 2)

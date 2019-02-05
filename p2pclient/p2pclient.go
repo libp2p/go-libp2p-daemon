@@ -33,11 +33,10 @@ type Client struct {
 func NewClient(controlMaddr, listenMaddr multiaddr.Multiaddr) (*Client, error) {
 	client := &Client{
 		controlMaddr: controlMaddr,
-		listenMaddr:  listenMaddr,
 		handlers:     make(map[string]StreamHandlerFunc),
 	}
 
-	if err := client.listen(); err != nil {
+	if err := client.listen(listenMaddr); err != nil {
 		return nil, err
 	}
 

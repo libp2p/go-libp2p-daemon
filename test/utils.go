@@ -8,8 +8,9 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
-	"runtime"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 
 	cid "github.com/ipfs/go-cid"
 	crypto "github.com/libp2p/go-libp2p-crypto"
@@ -57,17 +58,9 @@ func createClient(t *testing.T, daemonAddr ma.Multiaddr, clientAddr ma.Multiaddr
 }
 
 func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
-	daemonPath, clientPath, dirCloser := createTempDir(t)
-	dmaddr, err := ma.NewComponent("unix", daemonPath)
-	if err != nil {
-		t.Fatal(err)
-	}
-	cmaddr, err := ma.NewComponent("unix", clientPath)
-	if err != nil {
-		t.Fatal(err)
-	}
+	dmaddr, cmaddr, dirCloser := makeTcpLocalhostEndpoints(t)
 	daemon, closeDaemon := createDaemon(t, dmaddr)
-	client, closeClient := createClient(t, dmaddr, cmaddr)
+	client, closeClient := createClient(t, daemon.Listener().Multiaddr(), cmaddr)
 
 	closer := func() {
 		closeDaemon()
@@ -77,44 +70,36 @@ func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func
 	return daemon, client, closer
 }
 
-func createMockDaemonClientPair(t *testing.T) (*mockdaemon, *p2pclient.Client, func()) {
-	var (
-		err     error
-		cleanup func()
-		cmaddr  ma.Multiaddr
-		dmaddr  ma.Multiaddr
-	)
+type makeEndpoints func(t *testing.T) (daemon, client ma.Multiaddr, cleanup func())
 
-	if runtime.GOOS == "windows" {
-		dmaddr, err = ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
-		if err != nil {
-			t.Fatal(err)
-		}
-		cmaddr, err = ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
-		if err != nil {
-			t.Fatal(err)
-		}
-	} else {
-		daemonPath, clientPath, dirCloser := createTempDir(t)
-		dmaddr, err = ma.NewComponent("unix", daemonPath)
-		if err != nil {
-			t.Fatal(err)
-		}
-		cmaddr, err = ma.NewComponent("unix", clientPath)
-		if err != nil {
-			t.Fatal(err)
-		}
-		cleanup = dirCloser
-	}
+func makeTcpLocalhostEndpoints(t *testing.T) (daemon, client ma.Multiaddr, cleanup func()) {
+	daemon, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
+	require.NoError(t, err)
+	client, err = ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
+	require.NoError(t, err)
+	cleanup = func() {}
+	return
+}
 
-	client, clientCloser := createClient(t, dmaddr, cmaddr)
+func makeUnixEndpoints(t *testing.T) (daemon, client ma.Multiaddr, cleanup func()) {
+	daemonPath, clientPath, cleanup := createTempDir(t)
+	daemon, err := ma.NewComponent("unix", daemonPath)
+	require.NoError(t, err)
+	client, err = ma.NewComponent("unix", clientPath)
+	require.NoError(t, err)
+	return
+}
+
+func createMockDaemonClientPair(t *testing.T, makeEndpoints makeEndpoints) (*mockDaemon, *p2pclient.Client, func()) {
+	dmaddr, cmaddr, cleanup := makeEndpoints(t)
+
 	daemon := newMockDaemon(t, dmaddr, cmaddr)
-	closer := func() {
+	client, clientCloser := createClient(t, daemon.listener.Multiaddr(), cmaddr)
+	return daemon, client, func() {
 		daemon.Close()
 		clientCloser()
 		cleanup()
 	}
-	return daemon, client, closer
 }
 
 func randPeerID(t *testing.T) peer.ID {
