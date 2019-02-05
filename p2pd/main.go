@@ -128,7 +128,13 @@ func main() {
 	}
 
 	if *bootstrapPeers != "" {
-		p2pd.BootstrapPeers = strings.Split(*bootstrapPeers, ",")
+		for _, s := range strings.Split(*bootstrapPeers, ",") {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatalf("error parsing bootstrap peer %q: %v", s, err)
+			}
+			p2pd.BootstrapPeers = append(p2pd.BootstrapPeers, ma)
+		}
 	}
 
 	if *bootstrap {
