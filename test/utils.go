@@ -6,8 +6,10 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
+	mathRand "math/rand"
 	"os"
 	"path/filepath"
+	"runtime"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -58,7 +60,7 @@ func createClient(t *testing.T, daemonAddr ma.Multiaddr, clientAddr ma.Multiaddr
 }
 
 func createDaemonClientPair(t *testing.T) (*p2pd.Daemon, *p2pclient.Client, func()) {
-	dmaddr, cmaddr, dirCloser := makeTcpLocalhostEndpoints(t)
+	dmaddr, cmaddr, dirCloser := getEndpointsMaker(t)(t)
 	daemon, closeDaemon := createDaemon(t, dmaddr)
 	client, closeClient := createClient(t, daemon.Listener().Multiaddr(), cmaddr)
 
@@ -90,8 +92,26 @@ func makeUnixEndpoints(t *testing.T) (daemon, client ma.Multiaddr, cleanup func(
 	return
 }
 
-func createMockDaemonClientPair(t *testing.T, makeEndpoints makeEndpoints) (*mockDaemon, *p2pclient.Client, func()) {
-	dmaddr, cmaddr, cleanup := makeEndpoints(t)
+var endpointRand = mathRand.New(mathRand.NewSource(1))
+
+// Pick a semi-random endpoint backend. May be timing dependent. Not good practice.
+func getEndpointsMaker(t *testing.T) makeEndpoints {
+	n := endpointRand.Intn(2)
+	if runtime.GOOS == "windows" {
+		n = 1 // Windows doesn't support unix sockets?
+	}
+	switch n {
+	case 0:
+		return makeUnixEndpoints
+	case 1:
+		return makeTcpLocalhostEndpoints
+	default:
+		panic("unreachable")
+	}
+}
+
+func createMockDaemonClientPair(t *testing.T) (*mockDaemon, *p2pclient.Client, func()) {
+	dmaddr, cmaddr, cleanup := getEndpointsMaker(t)(t)
 
 	daemon := newMockDaemon(t, dmaddr, cmaddr)
 	client, clientCloser := createClient(t, daemon.listener.Multiaddr(), cmaddr)
