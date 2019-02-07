@@ -80,6 +80,7 @@ func main() {
 			libp2p.Transport(quic.NewTransport),
 		)
 
+		// if we explicitly specify a transport, we must also explicitly specify the listen addrs
 		if *hostAddrs == "" {
 			opts = append(opts,
 				libp2p.ListenAddrStrings(
@@ -126,6 +127,7 @@ func main() {
 
 	if *autonat {
 		var opts []libp2p.Option
+		// allow the AutoNAT service to dial back quic addrs.
 		if *QUIC {
 			opts = append(opts,
 				libp2p.DefaultTransports,
