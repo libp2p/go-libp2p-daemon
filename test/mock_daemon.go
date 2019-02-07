@@ -2,7 +2,6 @@ package test
 
 import (
 	"net"
-	"os"
 	"testing"
 	"time"
 
@@ -14,46 +13,35 @@ import (
 	manet "github.com/multiformats/go-multiaddr-net"
 )
 
-type mockdaemon struct {
+type mockDaemon struct {
 	clientMaddr ma.Multiaddr
 	listener    manet.Listener
 }
 
-func newMockDaemon(t testing.TB, listenMaddr, clientMaddr ma.Multiaddr) *mockdaemon {
-	path, err := clientMaddr.ValueForProtocol(ma.P_UNIX)
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	_, err = os.Stat(path)
-	if err != nil {
-		t.Fatalf("searching for client maddr in mock daemon: %s", err)
-	}
-
+func newMockDaemon(t testing.TB, listenMaddr, clientMaddr ma.Multiaddr) *mockDaemon {
 	listener, err := manet.Listen(listenMaddr)
 	if err != nil {
 		t.Fatalf("listening on maddr in mock daemon: %s", err)
 	}
-
-	return &mockdaemon{
+	return &mockDaemon{
 		clientMaddr: clientMaddr,
 		listener:    listener,
 	}
 }
 
-func (d *mockdaemon) Close() error {
+func (d *mockDaemon) Close() error {
 	return d.listener.Close()
 }
 
 const testTimeout = time.Second
 
-type mockconn struct {
+type mockConn struct {
 	net.Conn
 	r ggio.ReadCloser
 	w ggio.WriteCloser
 }
 
-func (d *mockdaemon) ExpectConn(t testing.TB) *mockconn {
+func (d *mockDaemon) ExpectConn(t testing.TB) *mockConn {
 	timeoutc := make(chan struct{}, 1)
 	go func() {
 		select {
@@ -75,14 +63,14 @@ func (d *mockdaemon) ExpectConn(t testing.TB) *mockconn {
 	r := ggio.NewDelimitedReader(conn, p2pclient.MessageSizeMax)
 	w := ggio.NewDelimitedWriter(conn)
 
-	return &mockconn{
+	return &mockConn{
 		Conn: conn,
 		r:    r,
 		w:    w,
 	}
 }
 
-func (c *mockconn) ExpectRequestType(t testing.TB, typ pb.Request_Type) *pb.Request {
+func (c *mockConn) ExpectRequestType(t testing.TB, typ pb.Request_Type) *pb.Request {
 	req := &pb.Request{}
 	if err := c.r.ReadMsg(req); err != nil {
 		t.Fatalf("reading message: %s", err)
@@ -95,7 +83,7 @@ func (c *mockconn) ExpectRequestType(t testing.TB, typ pb.Request_Type) *pb.Requ
 	return req
 }
 
-func (c *mockconn) ExpectDHTRequestType(t testing.TB, typ pb.DHTRequest_Type) *pb.DHTRequest {
+func (c *mockConn) ExpectDHTRequestType(t testing.TB, typ pb.DHTRequest_Type) *pb.DHTRequest {
 	req := &pb.Request{}
 	if err := c.r.ReadMsg(req); err != nil {
 		t.Fatalf("reading message: %s", err)
@@ -112,7 +100,7 @@ func (c *mockconn) ExpectDHTRequestType(t testing.TB, typ pb.DHTRequest_Type) *p
 	return req.Dht
 }
 
-func (c *mockconn) SendMessage(t testing.TB, mes proto.Message) {
+func (c *mockConn) SendMessage(t testing.TB, mes proto.Message) {
 	err := c.w.WriteMsg(mes)
 	if err != nil {
 		t.Fatalf("sending message: %s", err)
@@ -146,7 +134,7 @@ func wrapResponseStream(resps []*pb.DHTResponse) []proto.Message {
 	return respStream
 }
 
-func (c *mockconn) SendStreamAsync(t testing.TB, resps []*pb.DHTResponse) {
+func (c *mockConn) SendStreamAsync(t testing.TB, resps []*pb.DHTResponse) {
 	go func() {
 		messages := wrapResponseStream(resps)
 		for _, mes := range messages {

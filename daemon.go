@@ -68,6 +68,10 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClie
 	return d, nil
 }
 
+func (d *Daemon) Listener() manet.Listener {
+	return d.listener
+}
+
 func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routing.PeerRouting, error) {
 	makeRouting := func(h host.Host) (routing.PeerRouting, error) {
 		dhtInst, err := dht.New(d.ctx, h, opts...)
