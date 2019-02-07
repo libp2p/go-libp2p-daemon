@@ -7,6 +7,7 @@ import (
 
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
+	autonat "github.com/libp2p/go-libp2p-autonat-svc"
 	host "github.com/libp2p/go-libp2p-host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
@@ -25,8 +26,9 @@ type Daemon struct {
 	host     host.Host
 	listener manet.Listener
 
-	dht    *dht.IpfsDHT
-	pubsub *ps.PubSub
+	dht     *dht.IpfsDHT
+	pubsub  *ps.PubSub
+	autonat *autonat.AutoNATService
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
@@ -111,6 +113,12 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 		return fmt.Errorf("unknown pubsub router: %s", router)
 	}
 
+}
+
+func (d *Daemon) EnableAutoNAT(opts ...libp2p.Option) error {
+	svc, err := autonat.NewAutoNATService(d.ctx, d.host, opts...)
+	d.autonat = svc
+	return err
 }
 
 func (d *Daemon) ID() peer.ID {
