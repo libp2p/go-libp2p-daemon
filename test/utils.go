@@ -6,7 +6,6 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
-	mathRand "math/rand"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -92,21 +91,11 @@ func makeUnixEndpoints(t *testing.T) (daemon, client ma.Multiaddr, cleanup func(
 	return
 }
 
-var endpointRand = mathRand.New(mathRand.NewSource(1))
-
-// Pick a semi-random endpoint backend. May be timing dependent. Not good practice.
 func getEndpointsMaker(t *testing.T) makeEndpoints {
-	n := endpointRand.Intn(2)
 	if runtime.GOOS == "windows" {
-		n = 1 // Windows doesn't support unix sockets?
-	}
-	switch n {
-	case 0:
-		return makeUnixEndpoints
-	case 1:
 		return makeTcpLocalhostEndpoints
-	default:
-		panic("unreachable")
+	} else {
+		return makeUnixEndpoints
 	}
 }
 
