@@ -38,6 +38,12 @@
       "hash": "QmZcLBXKaFe8ND5YHPkJRAwmhJGrVsi1JqDZNyJ4nRK5Mj",
       "name": "go-multiaddr-net",
       "version": "1.7.1"
+    },
+    {
+      "author": "vyzo",
+      "hash": "QmRmMbeY5QC5iMsuW16wchtFt8wmYTv2suWb8t9MV8dsxm",
+      "name": "go-libp2p-autonat-svc",
+      "version": "1.0.5"
     }
   ],
   "gxVersion": "0.12.1",

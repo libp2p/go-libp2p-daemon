@@ -44,6 +44,7 @@ func main() {
 	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
 	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
+	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -110,6 +111,20 @@ func main() {
 	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if *autonat {
+		var opts []libp2p.Option
+		if *QUIC {
+			opts = append(opts,
+				libp2p.DefaultTransports,
+				libp2p.Transport(quic.NewTransport),
+			)
+		}
+		err := d.EnableAutoNAT(opts...)
+		if err != nil {
+			log.Fatal(err)
+		}
 	}
 
 	if *pubsub {
