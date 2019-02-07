@@ -7,32 +7,32 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmYxivS34F2M2n44WQQnRHGAKS8aoRUxwGpi9wk4Cdn4Jf",
+      "hash": "QmSgtf5vHyugoxcwMbyNy6bZ9qPDDTJSYEED2GkWjLwitZ",
       "name": "go-libp2p",
-      "version": "6.0.30"
+      "version": "6.0.31"
     },
     {
-      "hash": "QmbSCZ2CWbbrT7NY7vdntnF39hnrvGpVbbP1XaP5fwTmvo",
+      "hash": "QmNezCH2S9TQVNNc69aggH8vRq4m1njKG9KzribKAgMPjy",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.20"
+      "version": "4.4.21"
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmYB44VSn76PMvefjvcKxdhnHtZxB36zrToCSh6u4H9U7M",
+      "hash": "Qmb5KqwKh3iqcf91oLunTUXfV9PotzvCAdyrahhPq1uZyy",
       "name": "go-libp2p-connmgr",
-      "version": "0.3.30"
+      "version": "0.3.31"
     },
     {
       "author": "marten-seemann",
-      "hash": "QmR1g19UeP13BrVPCeEJm6R1J1E5yCdueiKpQJfPdnWC9z",
+      "hash": "QmPxDT1mJcdVbPSGRrActszXdptSgcj9gtyMuhrPavXFCN",
       "name": "go-libp2p-quic-transport",
-      "version": "0.2.15"
+      "version": "0.2.16"
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmVRxA4J3UPQpw74dLrQ6NJkfysCA1H4GU28gVpXQt9zMU",
+      "hash": "QmWL6MKfes1HuSiRUNzGmwy9YyQDwcZF9V1NaA2keYKhtE",
       "name": "go-libp2p-pubsub",
-      "version": "0.11.10"
+      "version": "0.11.11"
     },
     {
       "hash": "QmZcLBXKaFe8ND5YHPkJRAwmhJGrVsi1JqDZNyJ4nRK5Mj",
@@ -47,9 +47,9 @@
     },
     {
       "author": "vyzo",
-      "hash": "QmRmMbeY5QC5iMsuW16wchtFt8wmYTv2suWb8t9MV8dsxm",
+      "hash": "QmTFYSU3zLMVpJdrz5FfAfNRnaPH7TZSyG5sxoJhCQdjAg",
       "name": "go-libp2p-autonat-svc",
-      "version": "1.0.5"
+      "version": "1.0.6"
     }
   ],
   "gxVersion": "0.12.1",
@@ -57,6 +57,6 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.5"
+  "version": "0.0.6"
 }
 
