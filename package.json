@@ -44,6 +44,12 @@
       "hash": "QmYNszQ8MWA7o9qhjTZrp6R9DXNn1fvTZufyb6LmKHcgcr",
       "name": "testify",
       "version": "1.3.0"
+    },
+    {
+      "author": "vyzo",
+      "hash": "QmRmMbeY5QC5iMsuW16wchtFt8wmYTv2suWb8t9MV8dsxm",
+      "name": "go-libp2p-autonat-svc",
+      "version": "1.0.5"
     }
   ],
   "gxVersion": "0.12.1",
