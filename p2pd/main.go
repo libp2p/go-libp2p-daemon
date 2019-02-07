@@ -45,6 +45,7 @@ func main() {
 	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
+	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -63,6 +64,11 @@ func main() {
 		opts = append(opts, libp2p.Identity(key))
 	}
 
+	if *hostAddrs != "" {
+		addrs := strings.Split(*hostAddrs, ",")
+		opts = append(opts, libp2p.ListenAddrStrings(addrs...))
+	}
+
 	if *connMgr {
 		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, *connMgrGrace)
 		opts = append(opts, libp2p.ConnectionManager(cm))
@@ -72,12 +78,17 @@ func main() {
 		opts = append(opts,
 			libp2p.DefaultTransports,
 			libp2p.Transport(quic.NewTransport),
-			libp2p.ListenAddrStrings(
-				"/ip4/0.0.0.0/tcp/0",
-				"/ip4/0.0.0.0/udp/0/quic",
-				"/ip6/::1/tcp/0",
-				"/ip6/::1/udp/0/quic",
-			))
+		)
+
+		if *hostAddrs == "" {
+			opts = append(opts,
+				libp2p.ListenAddrStrings(
+					"/ip4/0.0.0.0/tcp/0",
+					"/ip4/0.0.0.0/udp/0/quic",
+					"/ip6/::1/tcp/0",
+					"/ip6/::1/udp/0/quic",
+				))
+		}
 	}
 
 	if *natPortMap {
