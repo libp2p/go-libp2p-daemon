@@ -46,7 +46,7 @@ func main() {
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
-	announceAddrs := flag.String("announceAddrs", "", "comman separated list of multiaddrs the host should announce to the network")
+	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	flag.Parse()
 
 	var opts []libp2p.Option
