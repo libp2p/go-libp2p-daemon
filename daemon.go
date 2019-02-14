@@ -3,7 +3,10 @@ package p2pd
 import (
 	"context"
 	"fmt"
+	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	logging "github.com/ipfs/go-log"
 	libp2p "github.com/libp2p/go-libp2p"
@@ -64,6 +67,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClie
 	d.listener = l
 
 	go d.listen()
+	go d.handleSignals()
 
 	return d, nil
 }
@@ -142,5 +146,30 @@ func (d *Daemon) listen() {
 
 		log.Debug("incoming connection")
 		go d.handleConn(c)
+	}
+}
+
+func (d *Daemon) handleSignals() {
+	ch := make(chan os.Signal, 1)
+	signal.Notify(ch, syscall.SIGUSR1)
+	for {
+		select {
+		case s := <-ch:
+			switch s {
+			case syscall.SIGUSR1:
+				d.handleSIGUSR1()
+			default:
+				log.Warningf("unexpected signal %d", s)
+			}
+		case <-d.ctx.Done():
+			return
+		}
+	}
+}
+
+func (d *Daemon) handleSIGUSR1() {
+	// this is the state dump signal; for now just dht routing table if present
+	if d.dht != nil {
+		d.dht.RoutingTable().Print()
 	}
 }
