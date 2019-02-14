@@ -64,6 +64,7 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClie
 	d.listener = l
 
 	go d.listen()
+	go d.trapSignals()
 
 	return d, nil
 }
