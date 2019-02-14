@@ -31,13 +31,17 @@ $ p2pd
 
 Check out the [GoDocs](https://godoc.org/github.com/libp2p/go-libp2p-daemon).
 
-## Implementing Language Bindings
+## Language Bindings
 
-See the [spec](specs/README.md) for the daemon control protocol and API.
+Daemon bindings enable applications written in other languages to interact with the libp2p daemon process programmatically, by exposing an idiomatic API that handles the socket dynamics and control protocol.
 
-Reference implementations:
-- Go bindings in the [p2pclient](p2pclient) package.
-- Gerbil bindings in [gerbil-libp2p](https://github.com/vyzo/gerbil-libp2p).
+The following bindings exist so far (if you want yours added, please send a PR):
+
+- Go _(reference implementation)_: see the [p2pclient](p2pclient) package in this repo.
+- Python: [py-libp2p-daemon-bindings](https://github.com/mhchia/py-libp2p-daemon-bindings).
+- Gerbil: [gerbil-libp2p](https://github.com/vyzo/gerbil-libp2p).
+
+If you wish to implement bindings in a new language, refer to the [spec](specs/README.md) for the daemon control protocol and API.
 
 ## Contribute
 
