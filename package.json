@@ -7,37 +7,37 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmcZUhA1xQo8meuYBFLcTHqQb2ogpDCTZUTfTrko7PUeHs",
+      "hash": "QmWRUZmLb9qEpwuHTtrzbdE5LQxm64qftncw5o8tBVPobL",
       "name": "go-libp2p",
-      "version": "6.0.36"
+      "version": "6.0.38"
     },
     {
-      "hash": "QmbKppYPA1bmEGpqmA4QGZZNRGFcJo2Z4KjYRQWJDzbD8P",
+      "hash": "QmNqZEo6SByQ5zMn8FuWPKo17pGn26D8fruHxpRcog8usL",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.28"
+      "version": "4.4.29"
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmXpsCZEnxRjZwykzvdYiuNwUiNgk1Pox5CaxBUKPUevGs",
+      "hash": "QmSTKY2v62v9RjcfTMCFKMVAWvVjWGixkYWEi68iG7e1TT",
       "name": "go-libp2p-connmgr",
-      "version": "0.3.33"
+      "version": "0.3.34"
     },
     {
       "author": "marten-seemann",
-      "hash": "QmXeKjkGCPKYRqXnDbBhkuVX9jpLnNBok8i2zY5fagCtE8",
+      "hash": "QmQ4hhhYzrEoyPxcVQyBqhf3sshsATKX3D3VJUAGuHzaSD",
       "name": "go-libp2p-quic-transport",
-      "version": "0.2.18"
+      "version": "0.2.19"
     },
     {
       "author": "whyrusleeping",
-      "hash": "QmepvmmYNM6q4RaUiwEikQFhgMFHXg2PLhx2E9iaRd3jmS",
+      "hash": "Qmdmn9FrkJbz6SdmxceJs4nXFRzbM9iAefyQwveGSBejXT",
       "name": "go-libp2p-pubsub",
-      "version": "0.11.13"
+      "version": "0.11.14"
     },
     {
-      "hash": "QmZcLBXKaFe8ND5YHPkJRAwmhJGrVsi1JqDZNyJ4nRK5Mj",
+      "hash": "Qmc85NSvmSG4Frn9Vb2cBc1rMyULH6D3TNVEfCzSKoUpip",
       "name": "go-multiaddr-net",
-      "version": "1.7.1"
+      "version": "1.7.2"
     },
     {
       "author": "magik6k",
@@ -47,9 +47,9 @@
     },
     {
       "author": "vyzo",
-      "hash": "QmQUQF7PYkAiXMoYmbusq8mEtXSokuj3uUgzE6ampYx5Np",
+      "hash": "QmPrMFLkxutgFbutfxK77uWzb8Nj7LGcZqALXPZyTiujFT",
       "name": "go-libp2p-autonat-svc",
-      "version": "1.0.11"
+      "version": "1.0.12"
     }
   ],
   "gxVersion": "0.12.1",
@@ -57,6 +57,6 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.14"
+  "version": "0.0.15"
 }
 
