@@ -7,14 +7,14 @@
   "gxDependencies": [
     {
       "author": "whyrusleeping",
-      "hash": "QmWRUZmLb9qEpwuHTtrzbdE5LQxm64qftncw5o8tBVPobL",
+      "hash": "QmRxk6AUaGaKCfzS1xSNRojiAPd7h2ih8GuCdjJBF3Y6GK",
       "name": "go-libp2p",
-      "version": "6.0.38"
+      "version": "6.0.39"
     },
     {
-      "hash": "QmUTc27ifFbaTWZBCKFxuMfWfB1jy88MtYtB37vZ9saaXo",
+      "hash": "QmdR6WN3TUEAVQ9KWE2UiFJikWTbUvgBJay6mjB4yUJebq",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.30"
+      "version": "4.4.31"
     },
     {
       "author": "whyrusleeping",
@@ -30,9 +30,9 @@
     },
     {
       "author": "whyrusleeping",
-      "hash": "Qmdmn9FrkJbz6SdmxceJs4nXFRzbM9iAefyQwveGSBejXT",
+      "hash": "QmVzLBPPg4gdyX3XFnNaNDkK4V81ptT5X6WZVFzTUECXMa",
       "name": "go-libp2p-pubsub",
-      "version": "0.11.14"
+      "version": "0.11.15"
     },
     {
       "hash": "Qmc85NSvmSG4Frn9Vb2cBc1rMyULH6D3TNVEfCzSKoUpip",
@@ -47,9 +47,9 @@
     },
     {
       "author": "vyzo",
-      "hash": "QmPrMFLkxutgFbutfxK77uWzb8Nj7LGcZqALXPZyTiujFT",
+      "hash": "QmZpe6RmiGLMD7boFBEP9hNkhdPQVkdjNSWPGccYk2GoFy",
       "name": "go-libp2p-autonat-svc",
-      "version": "1.0.12"
+      "version": "1.0.13"
     }
   ],
   "gxVersion": "0.12.1",
@@ -57,6 +57,6 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.16"
+  "version": "0.0.17"
 }
 
