@@ -155,8 +155,8 @@ func (c *Client) streamDispatcher() {
 		}
 
 		c.mhandlers.Lock()
-		defer c.mhandlers.Unlock()
 		handler, ok := c.handlers[streamInfo.Proto]
+		c.mhandlers.Unlock()
 		if !ok {
 			conn.Close()
 			continue
