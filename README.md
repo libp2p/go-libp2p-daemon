@@ -18,14 +18,18 @@ Check out the [ROADMAP](ROADMAP.md) to see what's coming.
 
 ## Install
 
-Note that go1.11 is required.
+This repo uses [Go modules](https://github.com/golang/go/wiki/Modules). Note that go >=1.11 is required.
 
 ```sh
-$ go get github.com/libp2p/go-libp2p-daemon
-$ cd $GOPATH/src/github.com/libp2p/go-libp2p-daemon
-$ make
+$ # outside your GOPATH
+$ git clone https://github.com/libp2p/go-libp2p-daemon
+$ cd go-libp2p-daemon
+$ git checkout <release, e.g. v0.0.1>
+$ go install ./...
 $ p2pd
 ```
+
+See [available releases](https://github.com/libp2p/go-libp2p-daemon/releases).
 
 ## Usage
 
