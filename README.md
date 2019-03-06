@@ -24,7 +24,8 @@ This repo uses [Go modules](https://github.com/golang/go/wiki/Modules). Note tha
 $ # outside your GOPATH
 $ git clone https://github.com/libp2p/go-libp2p-daemon
 $ cd go-libp2p-daemon
-$ git checkout <release, e.g. v0.0.1>
+$ git checkout <release tag, e.g. v0.0.1>
+$ go get ./...
 $ go install ./...
 $ p2pd
 ```
