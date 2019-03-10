@@ -47,9 +47,11 @@ func main() {
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
+	zeroAddr := flag.Bool("zeroAddr", false, "zeroes out the list of addrs the host will listen on")
 	flag.Parse()
 
 	var opts []libp2p.Option
+	var listenAddrs []string
 
 	maddr, err := multiaddr.NewMultiaddr(*maddrString)
 	if err != nil {
@@ -67,7 +69,7 @@ func main() {
 
 	if *hostAddrs != "" {
 		addrs := strings.Split(*hostAddrs, ",")
-		opts = append(opts, libp2p.ListenAddrStrings(addrs...))
+		listenAddrs = append(listenAddrs, addrs...)
 	}
 
 	if *announceAddrs != "" {
@@ -98,13 +100,11 @@ func main() {
 
 		// if we explicitly specify a transport, we must also explicitly specify the listen addrs
 		if *hostAddrs == "" {
-			opts = append(opts,
-				libp2p.ListenAddrStrings(
-					"/ip4/0.0.0.0/tcp/0",
-					"/ip4/0.0.0.0/udp/0/quic",
-					"/ip6/::1/tcp/0",
-					"/ip6/::1/udp/0/quic",
-				))
+			listenAddrs = append(listenAddrs,
+				"/ip4/0.0.0.0/tcp/0",
+				"/ip4/0.0.0.0/udp/0/quic",
+				"/ip6/::1/tcp/0",
+				"/ip6/::1/udp/0/quic")
 		}
 	}
 
@@ -134,6 +134,10 @@ func main() {
 			log.Fatal("Relay must be enabled to enable autorelay")
 		}
 		opts = append(opts, libp2p.EnableAutoRelay())
+	}
+
+	if !*zeroAddr {
+		opts = append(opts, libp2p.ListenAddrStrings(listenAddrs...))
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
