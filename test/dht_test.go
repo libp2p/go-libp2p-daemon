@@ -3,7 +3,6 @@ package test
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"reflect"
 	"testing"
 	"time"
@@ -248,7 +247,6 @@ func TestDHTGetClosestPeers(t *testing.T) {
 	if !bytes.Equal(req.GetKey(), key) {
 		t.Fatal("request key didn't match expected key")
 	}
-	fmt.Println("we good")
 
 	resps := make([]*pb.DHTResponse, 2)
 	for i, id := range ids {
