@@ -137,7 +137,7 @@ func main() {
 		opts = append(opts, libp2p.EnableAutoRelay())
 	}
 
-	if !*noListen {
+	if *noListen {
 		opts = append(opts, libp2p.NoListenAddrs)
 	}
 
