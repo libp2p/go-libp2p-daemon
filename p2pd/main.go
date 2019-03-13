@@ -47,6 +47,7 @@ func main() {
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
+	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -134,6 +135,10 @@ func main() {
 			log.Fatal("Relay must be enabled to enable autorelay")
 		}
 		opts = append(opts, libp2p.EnableAutoRelay())
+	}
+
+	if *noListen {
+		opts = append(opts, libp2p.NoListenAddrs)
 	}
 
 	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
