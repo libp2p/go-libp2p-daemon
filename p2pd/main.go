@@ -47,7 +47,7 @@ func main() {
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
-	noListen := flag.Bool("noListen", false, "sets the host to listen on no addresses")
+	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	flag.Parse()
 
 	var opts []libp2p.Option
