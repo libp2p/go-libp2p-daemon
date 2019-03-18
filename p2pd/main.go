@@ -5,6 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net/http"
 	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
@@ -15,6 +16,7 @@ import (
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
+	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 func main() {
@@ -48,6 +50,7 @@ func main() {
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
+	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
 	flag.Parse()
 
 	var opts []libp2p.Option
@@ -206,6 +209,11 @@ func main() {
 				fmt.Printf("%s\n", p)
 			}
 		}
+	}
+
+	if *metricsAddr != "" {
+		http.Handle("/metrics", promhttp.Handler())
+		go func() { log.Println(http.ListenAndServe(*metricsAddr, nil)) }()
 	}
 
 	select {}
