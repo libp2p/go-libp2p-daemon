@@ -213,7 +213,7 @@ func main() {
 
 	if *metricsAddr != "" {
 		http.Handle("/metrics", promhttp.Handler())
-		go log.Println(http.ListenAndServe(*metricsAddr, nil))
+		go func() { log.Println(http.ListenAndServe(*metricsAddr, nil)) }()
 	}
 
 	select {}
