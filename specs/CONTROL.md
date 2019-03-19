@@ -121,6 +121,26 @@ Response{
 }
 ```
 
+#### `LIST_PEERS`
+Clients can issue a `LIST_PEERS` request to get a list of IDs of peers the node is connected to.
+
+**Client**
+```
+Request{
+  Type: LIST_PEERS
+}
+```
+
+**Daemon**
+*May return an error*
+
+```
+Response{
+  Type: OK,
+  Peers: [<PeerInfo>, ...]
+}
+```
+
 
 #### `StreamOpen`
 
