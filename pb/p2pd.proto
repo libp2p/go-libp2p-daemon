@@ -162,17 +162,38 @@ message PSResponse {
 
 message PeerstoreRequest {
   enum Type {
-    ADD_PROTOCOLS = 1;
-    GET_PROTOCOLS = 2;
-    GET_PEER_INFO = 3;
+    GET_PROTOCOLS = 1;
+    GET_PEER_INFO = 2;
+    GET_PEER_INFOS = 3;
+    GET_PEERS = 4;
+    ADD_ADDRS = 5;
+    SET_ADDRS = 6;
+    UPDATE_ADDRS = 7;
+    ADDRS = 8;
+    ADDR_STREAM = 9;
+    CLEAR_ADDRS = 10;
+    PEERS_WITH_ADDRS = 11;
+    PUB_KEY = 12;
+    ADD_PUB_KEY = 13;
+    PRIV_KEY = 14;
+    ADD_PRIV_KEY = 15;
+    PEERS_WITH_KEYS = 16;
+    RECORD_LATENCY = 17;
+    GET_LATENCY = 18;
   }
 
   required Type type = 1;
   optional bytes id = 2;
   repeated string protos = 3;
+  repeated bytes addrs = 4;
+  optional int64 nextTime = 5;
+  optional int64 oldTime = 6;
 }
 
 message PeerstoreResponse {
   optional PeerInfo peer = 1;
   repeated string protos = 2;
+  repeated bytes peerIDs = 3;
+  repeated PeerInfo peers = 4;
+  optional int64 time = 5;
 }
