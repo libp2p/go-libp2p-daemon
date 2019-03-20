@@ -41,7 +41,7 @@ message Response {
   optional DHTResponse dht = 5;
   repeated PeerInfo peers = 6;
   optional PSResponse pubsub = 7;
-  optional PeerstoreRequest peerStore = 8;
+  optional PeerstoreResponse peerStore = 8;
 }
 
 message IdentifyResponse {
