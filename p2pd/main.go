@@ -97,6 +97,9 @@ func main() {
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
 
+	metricsModulesEnabledHelp := fmt.Sprintf("modules to enable metrics for (comma separated, options: %s)", metricsModuleNames())
+	metricsModulesEnabled := flag.String("metricsModules", "", metricsModulesEnabledHelp)
+
 	flag.Parse()
 
 	var c config.Config

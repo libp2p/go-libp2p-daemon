@@ -24,4 +24,6 @@ require (
 	github.com/multiformats/go-multihash v0.0.1
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829
 	github.com/stretchr/testify v1.3.0
+	go.opencensus.io v0.20.2
+	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
