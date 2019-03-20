@@ -11,7 +11,7 @@ require (
 	github.com/libp2p/go-libp2p-connmgr v0.0.1
 	github.com/libp2p/go-libp2p-crypto v0.0.1
 	github.com/libp2p/go-libp2p-host v0.0.1
-	github.com/libp2p/go-libp2p-kad-dht v0.0.4
+	github.com/libp2p/go-libp2p-kad-dht v0.0.5
 	github.com/libp2p/go-libp2p-net v0.0.1
 	github.com/libp2p/go-libp2p-peer v0.0.1
 	github.com/libp2p/go-libp2p-peerstore v0.0.1
