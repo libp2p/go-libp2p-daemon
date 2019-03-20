@@ -12,9 +12,9 @@
       "version": "6.0.41"
     },
     {
-      "hash": "QmeGCQM8Zo66nwuQFnKzbKwGFgJBAcquVSL3KZMZw85T1L",
+      "hash": "QmXuNFLZc6Nb5akB4sZsxK3doShsFKT1sZFvxLXJvZQwAW",
       "name": "go-libp2p-kad-dht",
-      "version": "4.4.33"
+      "version": "4.4.34"
     },
     {
       "author": "whyrusleeping",
@@ -63,6 +63,6 @@
   "license": "",
   "name": "go-libp2p-daemon",
   "releaseCmd": "git commit -a -m \"gx publish $VERSION\"",
-  "version": "0.0.19"
+  "version": "0.0.20"
 }
 
