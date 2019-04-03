@@ -162,6 +162,6 @@ func NewDefaultConfig() Config {
 		HostAddresses: make(MaddrArray, 0),
 		AnnounceAddresses: make(MaddrArray, 0),
 		NoListen: false,
-		MetricsAddress: nil,
+		MetricsAddress: "",
 	}
 }
