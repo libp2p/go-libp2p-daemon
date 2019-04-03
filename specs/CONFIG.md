@@ -35,7 +35,7 @@ cause all other configuration command line options to be ignored.
     * Type
     * `default`
 
-* `Listen`
+* `ListenAddr`
     * Daemon control listen multiaddr
     * Maddr String
     * `"/unix/tmp/p2pd.sock"`
@@ -58,13 +58,9 @@ cause all other configuration command line options to be ignored.
         * `[]`
 * `DHT`
     * `Enabled`
-        * Enables the DHT in full node mode
-        * Boolean
-        * `false`
-    * `ClientMode`
-        * Enables the DHT in client mode
-        * Boolean
-        * `false`
+        * Enables the DHT in full node mode or client mode
+        * String (`"full"`|`"client"`|`""`)
+        * `""`
 * `ConnectionManager`
     * `Enabled`
         * Enables the Connection Manager
@@ -169,10 +165,7 @@ cause all other configuration command line options to be ignored.
     "Enabled": false,
     "Peers": []
   },
-  "DHT": {
-    "Enabled": false,
-    "ClientMode": false
-  },
+  "DHT": "",
   "ConnectionManager": {
     "Enabled": false,
     "LowWaterMark": 256,
@@ -185,7 +178,7 @@ cause all other configuration command line options to be ignored.
     "Enabled": false,
     "Router": "gossipsub",
     "Sign": true,
-    "SignStrict": true,
+    "SignStrict": false,
     "GossipSubHeartbeat": {
       "Interval": 0,
       "InitialDelay": 0
