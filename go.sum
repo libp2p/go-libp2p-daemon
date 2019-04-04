@@ -110,10 +110,6 @@ github.com/libp2p/go-libp2p-autonat v0.0.2 h1:ilo9QPzNPf1hMkqaPG55yzvhILf5Ztijst
 github.com/libp2p/go-libp2p-autonat v0.0.2/go.mod h1:fs71q5Xk+pdnKU014o2iq1RhMs9/PMaG5zXRFNnIIT4=
 github.com/libp2p/go-libp2p-autonat v0.0.3 h1:PUD+pAx8Qs9hh+Bowzxq8RCkg/Vwrz5oCFC4peixXQk=
 github.com/libp2p/go-libp2p-autonat v0.0.3/go.mod h1:fs71q5Xk+pdnKU014o2iq1RhMs9/PMaG5zXRFNnIIT4=
-github.com/libp2p/go-libp2p-autonat-svc v0.0.2 h1:beAUwqt3wHWlguz1EYdG+bVOKyf5SIQpXfTSnfGoW7k=
-github.com/libp2p/go-libp2p-autonat-svc v0.0.2/go.mod h1:j4iMiw0d3diRm5iB0noXumtb0mPvWrM1qAyh640cp8w=
-github.com/libp2p/go-libp2p-autonat-svc v0.0.3 h1:ake9A052gTcefr1ARcUoh4SBiW10CSs9Z3xLQQj9K4k=
-github.com/libp2p/go-libp2p-autonat-svc v0.0.3/go.mod h1:j4iMiw0d3diRm5iB0noXumtb0mPvWrM1qAyh640cp8w=
 github.com/libp2p/go-libp2p-autonat-svc v0.0.4 h1:MVNWg0Oh6oxmY6FE+ICKIWJKtdWZVPoxkPSE9b9TnMg=
 github.com/libp2p/go-libp2p-autonat-svc v0.0.4/go.mod h1:6aLiQelA0CKEcPR0TvE9bqJ7U8Mc0nVdwCoho3ROdck=
 github.com/libp2p/go-libp2p-blankhost v0.0.1 h1:/mZuuiwntNR8RywnCFlGHLKrKLYne+qciBpQXWqp5fk=
@@ -132,12 +128,6 @@ github.com/libp2p/go-libp2p-interface-connmgr v0.0.1 h1:Q9EkNSLAOF+u90L88qmE9z/f
 github.com/libp2p/go-libp2p-interface-connmgr v0.0.1/go.mod h1:GarlRLH0LdeWcLnYM/SaBykKFl9U5JFnbBGruAk/D5k=
 github.com/libp2p/go-libp2p-interface-pnet v0.0.1 h1:7GnzRrBTJHEsofi1ahFdPN9Si6skwXQE9UqR2S+Pkh8=
 github.com/libp2p/go-libp2p-interface-pnet v0.0.1/go.mod h1:el9jHpQAXK5dnTpKA4yfCNBZXvrzdOU75zz+C6ryp3k=
-github.com/libp2p/go-libp2p-kad-dht v0.0.4 h1:Z+6l5pCD8xXQmqmKKO+OTa4+7Or1uyPTmu49rXNf4oo=
-github.com/libp2p/go-libp2p-kad-dht v0.0.4/go.mod h1:oaBflOQcuC8H+SVV0YN26H6AS+wcUEJyjUGV66vXuSY=
-github.com/libp2p/go-libp2p-kad-dht v0.0.5 h1:jTDMs438T3ng6F7Gtjau40T2vgB8y9E7sbalPjR7fdY=
-github.com/libp2p/go-libp2p-kad-dht v0.0.5/go.mod h1:oaBflOQcuC8H+SVV0YN26H6AS+wcUEJyjUGV66vXuSY=
-github.com/libp2p/go-libp2p-kad-dht v0.0.6 h1:JRY5ClMNCUCKfH8Oba+xPN4tdOZMynyWg9oG831LFNQ=
-github.com/libp2p/go-libp2p-kad-dht v0.0.6/go.mod h1:oaBflOQcuC8H+SVV0YN26H6AS+wcUEJyjUGV66vXuSY=
 github.com/libp2p/go-libp2p-kad-dht v0.0.7 h1:06CbmDaYeQ5Hj+s48WCeev7wJPx3VcpJNOe9NytSXOc=
 github.com/libp2p/go-libp2p-kad-dht v0.0.7/go.mod h1:X90f4pG3MNZN9VeCX0rcH8AY9g3AspA2x5EJ9AvU/gM=
 github.com/libp2p/go-libp2p-kbucket v0.0.1 h1:7H5hM851hkEpLOFjrVNSrrxo6J4bWrUQxxv+z1JW9xk=
