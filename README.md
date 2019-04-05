@@ -18,7 +18,7 @@ Check out the [ROADMAP](ROADMAP.md) to see what's coming.
 
 ## Install
 
-This repo uses [Go modules](https://github.com/golang/go/wiki/Modules). Note that go >=1.11 is required.
+This repo uses [Go modules](https://github.com/golang/go/wiki/Modules). Note that go >=1.12 is required.
 
 ```sh
 $ # outside your GOPATH
