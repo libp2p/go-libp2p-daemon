@@ -103,8 +103,8 @@ github.com/libp2p/go-libp2p v0.0.2 h1:+jvgi0Zy3y4TKXJKApchCk3pCBPZf1T54z3+vKie3g
 github.com/libp2p/go-libp2p v0.0.2/go.mod h1:Qu8bWqFXiocPloabFGUcVG4kk94fLvfC8mWTDdFC9wE=
 github.com/libp2p/go-libp2p v0.0.4 h1:n7a5cjM86noNfeTdPCsJT9WN5uHfPtHIH23vP4zD0AA=
 github.com/libp2p/go-libp2p v0.0.4/go.mod h1:B9yfFVwbsEmGPlyJROAoqrjumbMB2n0YrgNm1intDOY=
-github.com/libp2p/go-libp2p v0.0.5 h1:FMhqcHs20Ca7vnf5+g1Potg8KSTa/9WQxy3Cx0y70ko=
-github.com/libp2p/go-libp2p v0.0.5/go.mod h1:IPMB1Wrj2VboCCJ7KK1FXpuWrXwHPu39QRsrOeoBSSI=
+github.com/libp2p/go-libp2p v0.0.6 h1:68ZUM4Zz7sHSNwXqRzJFAWP6Jz07CdGY+inUr4O/2Xs=
+github.com/libp2p/go-libp2p v0.0.6/go.mod h1:GVha4XFiH3FvfC6QQYoryplldfKcucp0ThtenF+z9oU=
 github.com/libp2p/go-libp2p-autonat v0.0.2 h1:ilo9QPzNPf1hMkqaPG55yzvhILf5ZtijstJhcii+l3s=
 github.com/libp2p/go-libp2p-autonat v0.0.2/go.mod h1:fs71q5Xk+pdnKU014o2iq1RhMs9/PMaG5zXRFNnIIT4=
 github.com/libp2p/go-libp2p-autonat v0.0.3 h1:PUD+pAx8Qs9hh+Bowzxq8RCkg/Vwrz5oCFC4peixXQk=
@@ -115,6 +115,8 @@ github.com/libp2p/go-libp2p-blankhost v0.0.1 h1:/mZuuiwntNR8RywnCFlGHLKrKLYne+qc
 github.com/libp2p/go-libp2p-blankhost v0.0.1/go.mod h1:Ibpbw/7cPPYwFb7PACIWdvxxv0t0XCCI10t7czjAjTc=
 github.com/libp2p/go-libp2p-circuit v0.0.1 h1:DYbjyQ5ZY3QVAVYZWG4uzBQ6Wmcd1C82Bk8Q/pJlM1I=
 github.com/libp2p/go-libp2p-circuit v0.0.1/go.mod h1:Dqm0s/BiV63j8EEAs8hr1H5HudqvCAeXxDyic59lCwE=
+github.com/libp2p/go-libp2p-circuit v0.0.2 h1:wwbYslVw1aW2DAAuJxXRS5gB2clz1s23gv9NOb8iwsE=
+github.com/libp2p/go-libp2p-circuit v0.0.2/go.mod h1:zV136p4UQ76qH/Wj+X/Hivcg6sf6Yb1G7YL8o+GGj38=
 github.com/libp2p/go-libp2p-connmgr v0.0.1 h1:9KP7UbP4a6fauLw954LhTGfovhkmMwvJsIf8G4CCons=
 github.com/libp2p/go-libp2p-connmgr v0.0.1/go.mod h1:eUBBlbuwBBTd/eim7KV5x0fOD2UHDjSwhzmBL6miIx8=
 github.com/libp2p/go-libp2p-crypto v0.0.1 h1:JNQd8CmoGTohO/akqrH16ewsqZpci2CbgYH/LmYl8gw=
