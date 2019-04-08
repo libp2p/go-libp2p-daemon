@@ -28,23 +28,37 @@ func (d *Daemon) trapSignals() {
 }
 
 func (d *Daemon) handleSIGUSR1() {
-	// this is the state dump signal
-	fmt.Println("dht routing table:")
+	// this is our signal to dump diagnostics info.
 	if d.dht != nil {
+		fmt.Println("DHT Routing Table:")
 		d.dht.RoutingTable().Print()
+		fmt.Println()
+		fmt.Println()
 	}
 
-	fmt.Println("---")
-	fmt.Println("connections and streams:")
-	for _, c := range d.host.Network().Conns() {
+	conns := d.host.Network().Conns()
+	fmt.Printf("Connections and streams (%d):\n", len(conns))
+
+	for _, c := range conns {
+		protos, _ := d.host.Peerstore().GetProtocols(c.RemotePeer()) // error value here is useless
+
+		protoVersion, err := d.host.Peerstore().Get(c.RemotePeer(), "ProtocolVersion")
+		if err != nil {
+			protoVersion = "(unknown)"
+		}
+
+		agent, err := d.host.Peerstore().Get(c.RemotePeer(), "AgentVersion")
+		if err != nil {
+			agent = "(unknown)"
+		}
+
 		streams := c.GetStreams()
-		protos, _ := d.host.Peerstore().GetProtocols(c.RemotePeer())
-		protoVersion, _ := d.host.Peerstore().Get(c.RemotePeer(), "ProtocolVersion")
-		agent, _ := d.host.Peerstore().Get(c.RemotePeer(), "AgentVersion")
-		fmt.Printf("to=%s; multiaddr=%s; stream_cnt= %d\n, protocols=%v; protoversion=%s; agent=%s\n",
-			c.RemotePeer().Pretty(), c.RemoteMultiaddr(), len(streams), protos, protoVersion, agent)
+		fmt.Printf("peer: %s, multiaddr: %s\n", c.RemotePeer().Pretty(), c.RemoteMultiaddr())
+		fmt.Printf("\tprotoVersion: %s, agent: %s\n", protoVersion, agent)
+		fmt.Printf("\tprotocols: %v\n", protos)
+		fmt.Printf("\tstreams (%d):\n", len(streams))
 		for _, s := range streams {
-			fmt.Println("\tprotocol: ", s.Protocol())
+			fmt.Println("\t\tprotocol: ", s.Protocol())
 		}
 	}
 }
