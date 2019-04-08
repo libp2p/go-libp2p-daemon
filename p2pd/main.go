@@ -85,8 +85,10 @@ func main() {
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
-	pprof := flag.Bool("pprof", false, "Enables the HTTP pprof handler, listening in the first port available in the range 6060-7800; provide a specific port with -pprofPort")
-	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; has no effect unless the pprof option is enabled")
+	pprof := flag.Bool("pprof", false, "Enables the HTTP pprof handler, listening on the first port "+
+		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
+	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
+		"has no effect unless the pprof option is enabled")
 
 	flag.Parse()
 
