@@ -24,7 +24,7 @@ import (
 func pprofHTTP(port int) {
 	listen := func(p int) error {
 		addr := fmt.Sprintf("localhost:%d", p)
-		fmt.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
+		log.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
 		switch err := http.ListenAndServe(addr, nil); err {
 		case nil:
 			// all good, server is running and exited normally.
@@ -34,7 +34,7 @@ func pprofHTTP(port int) {
 			return nil
 		default:
 			// error, try another port
-			fmt.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
+			log.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
 			return err
 		}
 	}
