@@ -25,7 +25,7 @@ func init() {
 	go func() {
 		for i := 6060; i < 7080; i++ {
 			addr := fmt.Sprintf("localhost:%d", i)
-			fmt.Printf("registering pprof debug http handler: %s\n", addr)
+			fmt.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
 			switch err := http.ListenAndServe(addr, nil); err {
 			case nil:
 				// all good, server is running and exited normally.
@@ -35,7 +35,7 @@ func init() {
 				return
 			default:
 				// error, try another port
-				fmt.Printf("error registering pprof debug http handler on %s: %s\n", addr, err)
+				fmt.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
 				continue
 			}
 		}
