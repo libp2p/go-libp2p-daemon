@@ -1,0 +1,159 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "definitions": {
+    "maddr": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "properties": {
+    "ListenAddr": {
+      "$ref": "#/definitions/maddr",
+      "default": "/unix/tmp/p2pd.sock"
+    },
+    "Quiet": {
+      "type": "boolean",
+      "default": false
+    },
+    "ID": {
+      "type": "string",
+      "default": ""
+    },
+    "Bootstrap": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "Peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/maddr"
+          },
+          "default": []
+        }
+      }
+    },
+    "DHT": {
+      "enum": [
+        "full",
+        "client",
+        ""
+      ],
+      "default": ""
+    },
+    "ConnectionManager": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": false
+        },
+        "LowWaterMark": {
+          "type": "integer",
+          "default": 256
+        },
+        "HighWaterMark": {
+          "type": "integer",
+          "default": 512
+        },
+        "GradePeriod": {
+          "type": "integer",
+          "default": 120
+        }
+      }
+    },
+    "QUIC": {
+      "type": "boolean",
+      "default": false
+    },
+    "NatPortMap": {
+      "type": "boolean",
+      "default": false
+    },
+    "PubSub": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": "false"
+        },
+        "Router": {
+          "type": "string",
+          "default": "gossipsub"
+        },
+        "Sign": {
+          "type": "boolean",
+          "default": true
+        },
+        "SignStrict": {
+          "type": "boolean",
+          "default": false
+        },
+        "GossipSubHeartbeat": {
+          "type": "object",
+          "properties": {
+            "Interval": {
+              "type": "integer",
+              "default": 0
+            },
+            "InitialDelay": {
+              "type": "integer",
+              "default": 0
+            }
+          }
+        }
+      }
+    },
+    "Relay": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "Active": {
+          "type": "boolean",
+          "default": false
+        },
+        "Hop": {
+          "type": "boolean",
+          "default": false
+        },
+        "Discovery": {
+          "type": "boolean",
+          "default": false
+        },
+        "Auto": {
+          "type": "boolean",
+          "default": false
+        }
+      }
+    },
+    "AutoNat": {
+      "type": "boolean",
+      "default": false
+    },
+    "HostAddresses": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/maddr"},
+      "default": []
+    },
+    "AnnounceAddresses": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/maddr"},
+      "default": []
+    },
+    "NoListen": {
+      "type": "boolean",
+      "default": false
+    },
+    "MetricsAddress": {
+      "type": "string",
+      "format": "ipv4",
+      "default": ""
+    }
+  },
+  "additionalProperties": false
+}

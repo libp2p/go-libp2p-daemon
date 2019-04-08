@@ -57,10 +57,9 @@ cause all other configuration command line options to be ignored.
         * Array[Maddr String]
         * `[]`
 * `DHT`
-    * `Enabled`
-        * Enables the DHT in full node mode or client mode
-        * String (`"full"`|`"client"`|`""`)
-        * `""`
+    * Enables the DHT in full node mode or client mode
+    * String (`"full"`|`"client"`|`""`)
+    * `""`
 * `ConnectionManager`
     * `Enabled`
         * Enables the Connection Manager
