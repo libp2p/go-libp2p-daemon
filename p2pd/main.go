@@ -17,7 +17,30 @@ import (
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
+
+	_ "net/http/pprof"
 )
+
+func init() {
+	go func() {
+		for i := 6060; i < 7080; i++ {
+			addr := fmt.Sprintf("localhost:%d", i)
+			fmt.Printf("registering pprof debug http handler: %s\n", addr)
+			switch err := http.ListenAndServe(addr, nil); err {
+			case nil:
+				// all good, server is running and exited normally.
+				return
+			case http.ErrServerClosed:
+				// all good, server was shut down.
+				return
+			default:
+				// error, try another port
+				fmt.Printf("error registering pprof debug http handler on %s: %s\n", addr, err)
+				continue
+			}
+		}
+	}()
+}
 
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
