@@ -17,7 +17,41 @@ import (
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
+
+	_ "net/http/pprof"
 )
+
+func pprofHTTP(port int) {
+	listen := func(p int) error {
+		addr := fmt.Sprintf("localhost:%d", p)
+		log.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
+		switch err := http.ListenAndServe(addr, nil); err {
+		case nil:
+			// all good, server is running and exited normally.
+			return nil
+		case http.ErrServerClosed:
+			// all good, server was shut down.
+			return nil
+		default:
+			// error, try another port
+			log.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
+			return err
+		}
+	}
+
+	if port > 0 {
+		// we have a user-assigned port.
+		_ = listen(port)
+		return
+	}
+
+	// we don't have a user assigned port, try sequentially to bind between [6060-7080]
+	for i := 6060; i <= 7080; i++ {
+		if listen(i) == nil {
+			return
+		}
+	}
+}
 
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
@@ -51,7 +85,17 @@ func main() {
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
+	pprof := flag.Bool("pprof", false, "Enables the HTTP pprof handler, listening on the first port "+
+		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
+	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
+		"has no effect unless the pprof option is enabled")
+
 	flag.Parse()
+
+	if *pprof {
+		// an invalid port number will fail within the function.
+		go pprofHTTP(int(*pprofPort))
+	}
 
 	var opts []libp2p.Option
 
