@@ -21,25 +21,36 @@ import (
 	_ "net/http/pprof"
 )
 
-func init() {
-	go func() {
-		for i := 6060; i < 7080; i++ {
-			addr := fmt.Sprintf("localhost:%d", i)
-			fmt.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
-			switch err := http.ListenAndServe(addr, nil); err {
-			case nil:
-				// all good, server is running and exited normally.
-				return
-			case http.ErrServerClosed:
-				// all good, server was shut down.
-				return
-			default:
-				// error, try another port
-				fmt.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
-				continue
-			}
+func pprofHTTP(port int) {
+	listen := func(p int) error {
+		addr := fmt.Sprintf("localhost:%d", p)
+		fmt.Printf("registering pprof debug http handler at: http://%s/debug/pprof/\n", addr)
+		switch err := http.ListenAndServe(addr, nil); err {
+		case nil:
+			// all good, server is running and exited normally.
+			return nil
+		case http.ErrServerClosed:
+			// all good, server was shut down.
+			return nil
+		default:
+			// error, try another port
+			fmt.Printf("error registering pprof debug http handler at: %s: %s\n", addr, err)
+			return err
 		}
-	}()
+	}
+
+	if port > 0 {
+		// we have a user-assigned port.
+		_ = listen(port)
+		return
+	}
+
+	// we don't have a user assigned port, try sequentially to bind between [6060-7080]
+	for i := 6060; i <= 7080; i++ {
+		if listen(i) == nil {
+			return
+		}
+	}
 }
 
 func main() {
@@ -74,7 +85,15 @@ func main() {
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
+	pprof := flag.Bool("pprof", false, "Enables the HTTP pprof handler, listening in the first port available in the range 6060-7800; provide a specific port with -pprofPort")
+	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; has no effect unless the pprof option is enabled")
+
 	flag.Parse()
+
+	if *pprof {
+		// an invalid port number will fail within the function.
+		go pprofHTTP(int(*pprofPort))
+	}
 
 	var opts []libp2p.Option
 
