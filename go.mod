@@ -25,5 +25,6 @@ require (
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829
 	github.com/stretchr/testify v1.3.0
 	go.opencensus.io v0.20.2
-	gopkg.in/yaml.v2 v2.2.2 // indirect
 )
+
+replace github.com/libp2p/go-libp2p-pubsub => ../go-libp2p-pubsub
