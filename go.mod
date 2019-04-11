@@ -26,5 +26,3 @@ require (
 	github.com/stretchr/testify v1.3.0
 	go.opencensus.io v0.20.2
 )
-
-replace github.com/libp2p/go-libp2p-pubsub => ../go-libp2p-pubsub
