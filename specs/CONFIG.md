@@ -57,9 +57,10 @@ cause all other configuration command line options to be ignored.
         * Array[Maddr String]
         * `[]`
 * `DHT`
-    * Enables the DHT in full node mode or client mode
-    * String (`"full"`|`"client"`|`""`)
-    * `""`
+    * `Mode`
+        * Enables the DHT in full node mode or client mode
+        * Enum, String (`"full"`|`"client"`|`""`)
+        * `""`
 * `ConnectionManager`
     * `Enabled`
         * Enables the Connection Manager
@@ -164,7 +165,9 @@ cause all other configuration command line options to be ignored.
     "Enabled": false,
     "Peers": []
   },
-  "DHT": "",
+  "DHT": {
+    "Mode": ""
+  },
   "ConnectionManager": {
     "Enabled": false,
     "LowWaterMark": 256,

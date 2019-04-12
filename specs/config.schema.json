@@ -36,12 +36,17 @@
       }
     },
     "DHT": {
-      "enum": [
-        "full",
-        "client",
-        ""
-      ],
-      "default": ""
+      "type": "object",
+      "properties": {
+        "Mode": {
+          "enum": [
+            "full",
+            "client",
+            ""
+          ],
+          "default": ""
+        }
+      }
     },
     "ConnectionManager": {
       "type": "object",
