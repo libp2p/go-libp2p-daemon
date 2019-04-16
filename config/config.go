@@ -72,6 +72,15 @@ type relay struct {
 	Auto      bool
 }
 
+type dht struct {
+	Mode string
+}
+
+type pprof struct {
+	Enabled bool
+	Port    uint
+}
+
 const DHTFullMode = "full"
 const DHTClientMode = "client"
 
@@ -80,7 +89,7 @@ type Config struct {
 	Quiet             bool
 	ID                string
 	Bootstrap         bootstrap
-	DHT               string
+	DHT               dht
 	ConnectionManager connectionManager
 	QUIC              bool
 	NatPortMap        bool
@@ -91,6 +100,7 @@ type Config struct {
 	AnnounceAddresses MaddrArray
 	NoListen          bool
 	MetricsAddress    string
+	PProf             pprof
 }
 
 func (c *Config) UnmarshalJSON(b []byte) error {
@@ -112,10 +122,10 @@ func (c *Config) UnmarshalJSON(b []byte) error {
 }
 
 func (c *Config) Validate() error {
-	if c.DHT != DHTClientMode && c.DHT != DHTFullMode && c.DHT != "" {
+	if c.DHT.Mode != DHTClientMode && c.DHT.Mode != DHTFullMode && c.DHT.Mode != "" {
 		return errors.New(fmt.Sprintf("unknown DHT mode %s", c.DHT))
 	}
-	if c.Relay.Auto == true && (c.Relay.Enabled == false || c.DHT == "") {
+	if c.Relay.Auto == true && (c.Relay.Enabled == false || c.DHT.Mode == "") {
 		return errors.New("can't have autorelay enabled without relay enabled and dht enabled")
 	}
 	return nil
@@ -131,7 +141,9 @@ func NewDefaultConfig() Config {
 			Enabled: false,
 			Peers:   make(MaddrArray, 0),
 		},
-		DHT: "",
+		DHT: dht{
+			Mode: "",
+		},
 		ConnectionManager: connectionManager{
 			Enabled:       false,
 			LowWaterMark:  256,
@@ -161,5 +173,9 @@ func NewDefaultConfig() Config {
 		AnnounceAddresses: make(MaddrArray, 0),
 		NoListen:          false,
 		MetricsAddress:    "",
+		PProf: pprof{
+			Enabled: false,
+			Port:    0,
+		},
 	}
 }

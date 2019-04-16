@@ -29,131 +29,8 @@ cause all other configuration command line options to be ignored.
 
 
 ## Schema
+Please see the json [schema file](config.schema.json).
 
-* `Field Name`
-    * Description
-    * Type
-    * `default`
-
-* `ListenAddr`
-    * Daemon control listen multiaddr
-    * Maddr String
-    * `"/unix/tmp/p2pd.sock"`
-* `Quiet`
-    * Be Quiet
-    * Boolean
-    * `false`
-* `ID`
-    * Peer identity; private key file
-    * String
-    * `""`
-* `Bootstrap`
-    * `Enabled`
-        * Connects to bootstrap peers and bootstraps the dht if enabled
-        * Boolean
-        * `false`
-    * `Peers`
-        * List of bootstrap peers; defaults to the IPFS DHT peers
-        * Array[Maddr String]
-        * `[]`
-* `DHT`
-    * `Mode`
-        * Enables the DHT in full node mode or client mode
-        * Enum, String (`"full"`|`"client"`|`""`)
-        * `""`
-* `ConnectionManager`
-    * `Enabled`
-        * Enables the Connection Manager
-        * Boolean
-        * `false`
-    * `LowWaterMark`
-        * Connection Manager Low Water mark
-        * Integer
-        * `256`
-    * `HighWaterMark`
-        * Connection Manager High Water mark
-        * Integer
-        * `512`
-    * `GracePeriod`
-        * Connection Manager grace period (in seconds)
-        * Integer
-        * `120`
-* `QUIC` 
-    * Enables the QUIC transport
-    * Boolean
-    * `false`
-* `NatPortMap`
-    * Enables NAT port mapping
-    * Boolean
-    * `false`
-* `PubSub`
-    * `Enabled`
-        * Enables pubsub
-        * Boolean
-        * `false`
-    * `Router`
-        * Specifies the pubsub router implementation
-        * String
-        * `"gossipsub"`
-    * `Sign`
-        * Enables pubsub message signing
-        * Boolean
-        * `true`
-    * `SignStrict`
-        * Enables pubsub strict signature verification
-        * Boolean
-        * `false`
-    * `GossipSubHeartbeat`
-        * `Interval`
-            * Specifies the gossipsub heartbeat interval
-            * Integer
-            * `0`
-        * `InitialDelay`
-            * Specifies the gossipsub initial heartbeat delay
-            * Integer
-            * `0`
-* `Relay`
-    * `Enabled`
-        * Enables circuit relay
-        * Boolean
-        * `true`
-    * `Active`
-        * Enables active mode for relay
-        * Boolean
-        * `false`
-    * `Hop`
-        * Enables hop for relay
-        * Boolean
-        * `false`
-    * `Discovery`
-        * Enables passive discovery for relay
-        * Boolean
-        * `false`
-    * `Auto`
-        * Enables autorelay
-        * Boolean
-        * `false`
-* `AutoNat`
-    * Enables the AutoNAT service
-    * Boolean
-    * `false`
-* `HostAddresses`
-    * List of multiaddrs the host should listen on
-    * Array[Maddr String]
-    * `[]`
-* `AnnounceAddresses`
-    * List of multiaddrs the host should announce to the network
-    * Array[Maddr String]
-    * `[]`
-* `NoListen`
-    * Sets the host to listen on no addresses
-    * Boolean
-    * `false`
-* `MetricsAddress`
-    * An address to bind the metrics handler to
-    * Maddr String
-    * `"""`
-    
 ### Default Example
 
 ```json
@@ -197,6 +74,9 @@ cause all other configuration command line options to be ignored.
   "HostAddresses": [],
   "AnnounceAddresses": [],
   "NoListen": false,
-  "MetricsAddress": ""
+  "MetricsAddress": "",
+  "PProf": {
+    "Enabled": false
+  }
 }
 ```

@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"github.com/libp2p/go-libp2p-daemon/config"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -17,6 +16,7 @@ import (
 	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	"github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
@@ -100,11 +100,6 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	if *pprof {
-		// an invalid port number will fail within the function.
-		go pprofHTTP(int(*pprofPort))
-	}
-
 	var opts []libp2p.Option
 
 	if *configStdin {
@@ -225,14 +220,25 @@ func main() {
 			c.MetricsAddress = *metricsAddr
 		}
 		if *dht {
-			c.DHT = config.DHTFullMode
+			c.DHT.Mode = config.DHTFullMode
 		} else if *dhtClient {
-			c.DHT = config.DHTClientMode
+			c.DHT.Mode = config.DHTClientMode
+		}
+		if *pprof {
+			c.PProf.Enabled = true
+			if pprofPort != nil {
+				c.PProf.Port = *pprofPort
+			}
 		}
 
 		if err := c.Validate(); err != nil {
 			log.Fatal(err)
 		}
+	}
+	
+	if c.PProf.Enabled {
+		// an invalid port number will fail within the function.
+		go pprofHTTP(int(c.PProf.Port))
 	}
 
 	// collect opts
@@ -292,7 +298,7 @@ func main() {
 	}
 
 	// start daemon
-	d, err := p2pd.NewDaemon(context.Background(), c.ListenAddr, c.DHT, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), c.ListenAddr, c.DHT.Mode, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
