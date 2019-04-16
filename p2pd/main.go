@@ -235,7 +235,7 @@ func main() {
 			log.Fatal(err)
 		}
 	}
-	
+
 	if c.PProf.Enabled {
 		// an invalid port number will fail within the function.
 		go pprofHTTP(int(c.PProf.Port))
