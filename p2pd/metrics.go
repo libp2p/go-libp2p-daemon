@@ -16,7 +16,7 @@ func enableMetrics() (*prometheus.Exporter, error) {
 	}
 	view.RegisterExporter(pe)
 
-	if err = psmetrics.Register(); err != nil {
+	if err = view.Register(psmetrics.Views...); err != nil {
 		return nil, err
 	}
 
