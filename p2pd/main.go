@@ -108,7 +108,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := json.Unmarshal(body, c); err != nil {
+		if err := json.Unmarshal(body, &c); err != nil {
 			log.Fatal(err)
 		}
 	} else if *configFilename != "" {
@@ -116,7 +116,7 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
-		if err := json.Unmarshal(body, c); err != nil {
+		if err := json.Unmarshal(body, &c); err != nil {
 			log.Fatal(err)
 		}
 	} else {

@@ -31,7 +31,7 @@ cause all other configuration command line options to be ignored.
 ## Schema
 Please see the json [schema file](config.schema.json).
 
-### Default Example
+### Complete (Default Options) Example
 
 ```json
 {

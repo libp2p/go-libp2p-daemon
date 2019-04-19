@@ -19,8 +19,7 @@ func (jm *JSONMaddr) UnmarshalJSON(b []byte) error {
 	if err != nil {
 		return err
 	}
-	jma := JSONMaddr{ma}
-	jm = &jma
+	jm = &JSONMaddr{ma}
 	return nil
 }
 
