@@ -10,7 +10,9 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	relay "github.com/libp2p/go-libp2p-circuit"
@@ -303,6 +305,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	sigChan := make(chan os.Signal, 1)
+	signal.Notify(sigChan, os.Interrupt)
+	go func(){
+		for _ = range sigChan {
+			d.Close()
+			os.Exit(int(syscall.SIGINT))
+		}
+	}()
 
 	if c.AutoNat {
 		var opts []libp2p.Option

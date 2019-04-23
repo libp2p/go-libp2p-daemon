@@ -169,6 +169,6 @@ func (d *Daemon) Close() error {
 			}
 		}
 	}
-	
+
 	return nil
 }
