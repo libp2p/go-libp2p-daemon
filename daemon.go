@@ -148,6 +148,21 @@ func (d *Daemon) listen() {
 	}
 }
 
+func clearUnixSockets(maddr ma.Multiaddr) error {
+	for _, subMaddr := range ma.Split(maddr) {
+		if subMaddr.Protocols()[0].Code == ma.P_UNIX {
+			socket, err := subMaddr.ValueForProtocol(ma.P_UNIX)
+			if err != nil {
+				return err
+			}
+			if err := os.Remove(socket); err != nil {
+				return err
+			}
+		}
+	}
+	return nil
+}
+
 func (d *Daemon) Close() error {
 	if err := d.host.Close(); err != nil {
 		return err
@@ -158,16 +173,14 @@ func (d *Daemon) Close() error {
 		return err
 	}
 
-	for _, subMaddr := range ma.Split(listenMaddr) {
-		if subMaddr.Protocols()[0].Code == ma.P_UNIX {
-			socket, err := subMaddr.ValueForProtocol(ma.P_UNIX)
-			if err != nil {
-				return err
-			}
-			if err := os.Remove(socket); err != nil {
-				return err
-			}
+	for _, maddr := range d.handlers {
+		if err := clearUnixSockets(maddr); err != nil {
+			return err
 		}
+	}
+
+	if err := clearUnixSockets(listenMaddr); err != nil {
+		return err
 	}
 
 	return nil
