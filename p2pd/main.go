@@ -10,9 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/signal"
 	"strings"
-	"syscall"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	relay "github.com/libp2p/go-libp2p-circuit"
