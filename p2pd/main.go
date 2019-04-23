@@ -306,15 +306,6 @@ func main() {
 		log.Fatal(err)
 	}
 
-	sigChan := make(chan os.Signal, 1)
-	signal.Notify(sigChan, os.Interrupt)
-	go func() {
-		for _ = range sigChan {
-			d.Close()
-			os.Exit(int(syscall.SIGINT))
-		}
-	}()
-
 	if c.AutoNat {
 		var opts []libp2p.Option
 		// allow the AutoNAT service to dial back quic addrs.
