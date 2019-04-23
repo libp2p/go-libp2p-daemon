@@ -121,119 +121,120 @@ func main() {
 		}
 	} else {
 		c = config.NewDefaultConfig()
-		maddr, err := multiaddr.NewMultiaddr(*maddrString)
-		if err != nil {
-			log.Fatal(err)
-		}
-		c.ListenAddr = config.JSONMaddr{maddr}
-		if *id != "" {
-			c.ID = *id
-		}
-		if *hostAddrs != "" {
-			addrStrings := strings.Split(*hostAddrs, ",")
-			ha := make([]multiaddr.Multiaddr, len(addrStrings))
-			for i, s := range addrStrings {
-				ma, err := multiaddr.NewMultiaddr(s)
-				if err != nil {
-					log.Fatal(err)
-				}
-				(ha)[i] = ma
-			}
-			c.HostAddresses = ha
-		}
-		if *announceAddrs != "" {
-			addrStrings := strings.Split(*announceAddrs, ",")
-			ha := make([]multiaddr.Multiaddr, len(addrStrings))
-			for i, s := range addrStrings {
-				ma, err := multiaddr.NewMultiaddr(s)
-				if err != nil {
-					log.Fatal(err)
-				}
-				(ha)[i] = ma
-			}
-			c.AnnounceAddresses = ha
-		}
-		if *connMgr {
-			c.ConnectionManager.Enabled = true
-			c.ConnectionManager.GracePeriod = *connMgrGrace
-			c.ConnectionManager.HighWaterMark = *connMgrHi
-			c.ConnectionManager.LowWaterMark = *connMgrLo
-		}
-		if *QUIC {
-			c.QUIC = true
-		}
-		if *natPortMap {
-			c.NatPortMap = true
-		}
-		if *relayEnabled {
-			c.Relay.Enabled = true
-			if *relayActive {
-				c.Relay.Active = true
-			}
-			if *relayHop {
-				c.Relay.Hop = true
-			}
-			if *relayDiscovery {
-				c.Relay.Discovery = true
-			}
-		}
-		if *autoRelay {
-			c.Relay.Auto = true
-		}
-		if *noListen {
-			c.NoListen = true
-		}
-		if *autonat {
-			c.AutoNat = true
-		}
-		if *pubsub {
-			c.PubSub.Enabled = true
-			c.PubSub.Router = *pubsubRouter
-			c.PubSub.Sign = *pubsubSign
-			c.PubSub.SignStrict = *pubsubSignStrict
-			if *gossipsubHeartbeatInterval > 0 {
-				c.PubSub.GossipSubHeartbeat.Interval = *gossipsubHeartbeatInterval
-			}
-			if *gossipsubHeartbeatInitialDelay > 0 {
-				c.PubSub.GossipSubHeartbeat.InitialDelay = *gossipsubHeartbeatInitialDelay
-			}
-		}
-		if *bootstrapPeers != "" {
-			addrStrings := strings.Split(*bootstrapPeers, ",")
-			bps := make([]multiaddr.Multiaddr, len(addrStrings))
-			for i, s := range addrStrings {
-				ma, err := multiaddr.NewMultiaddr(s)
-				if err != nil {
-					log.Fatal(err)
-				}
-				(bps)[i] = ma
-			}
-			c.Bootstrap.Peers = bps
-		}
-		if *bootstrap {
-			c.Bootstrap.Enabled = true
-		}
-		if *quiet {
-			c.Quiet = true
-		}
-		if *metricsAddr != "" {
-			c.MetricsAddress = *metricsAddr
-		}
-		if *dht {
-			c.DHT.Mode = config.DHTFullMode
-		} else if *dhtClient {
-			c.DHT.Mode = config.DHTClientMode
-		}
-		if *pprof {
-			c.PProf.Enabled = true
-			if pprofPort != nil {
-				c.PProf.Port = *pprofPort
-			}
-		}
+	}
 
-		if err := c.Validate(); err != nil {
-			log.Fatal(err)
+	maddr, err := multiaddr.NewMultiaddr(*maddrString)
+	if err != nil {
+		log.Fatal(err)
+	}
+	c.ListenAddr = config.JSONMaddr{maddr}
+	if *id != "" {
+		c.ID = *id
+	}
+	if *hostAddrs != "" {
+		addrStrings := strings.Split(*hostAddrs, ",")
+		ha := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(ha)[i] = ma
 		}
+		c.HostAddresses = ha
+	}
+	if *announceAddrs != "" {
+		addrStrings := strings.Split(*announceAddrs, ",")
+		ha := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(ha)[i] = ma
+		}
+		c.AnnounceAddresses = ha
+	}
+	if *connMgr {
+		c.ConnectionManager.Enabled = true
+		c.ConnectionManager.GracePeriod = *connMgrGrace
+		c.ConnectionManager.HighWaterMark = *connMgrHi
+		c.ConnectionManager.LowWaterMark = *connMgrLo
+	}
+	if *QUIC {
+		c.QUIC = true
+	}
+	if *natPortMap {
+		c.NatPortMap = true
+	}
+	if *relayEnabled {
+		c.Relay.Enabled = true
+		if *relayActive {
+			c.Relay.Active = true
+		}
+		if *relayHop {
+			c.Relay.Hop = true
+		}
+		if *relayDiscovery {
+			c.Relay.Discovery = true
+		}
+	}
+	if *autoRelay {
+		c.Relay.Auto = true
+	}
+	if *noListen {
+		c.NoListen = true
+	}
+	if *autonat {
+		c.AutoNat = true
+	}
+	if *pubsub {
+		c.PubSub.Enabled = true
+		c.PubSub.Router = *pubsubRouter
+		c.PubSub.Sign = *pubsubSign
+		c.PubSub.SignStrict = *pubsubSignStrict
+		if *gossipsubHeartbeatInterval > 0 {
+			c.PubSub.GossipSubHeartbeat.Interval = *gossipsubHeartbeatInterval
+		}
+		if *gossipsubHeartbeatInitialDelay > 0 {
+			c.PubSub.GossipSubHeartbeat.InitialDelay = *gossipsubHeartbeatInitialDelay
+		}
+	}
+	if *bootstrapPeers != "" {
+		addrStrings := strings.Split(*bootstrapPeers, ",")
+		bps := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(bps)[i] = ma
+		}
+		c.Bootstrap.Peers = bps
+	}
+	if *bootstrap {
+		c.Bootstrap.Enabled = true
+	}
+	if *quiet {
+		c.Quiet = true
+	}
+	if *metricsAddr != "" {
+		c.MetricsAddress = *metricsAddr
+	}
+	if *dht {
+		c.DHT.Mode = config.DHTFullMode
+	} else if *dhtClient {
+		c.DHT.Mode = config.DHTClientMode
+	}
+	if *pprof {
+		c.PProf.Enabled = true
+		if pprofPort != nil {
+			c.PProf.Port = *pprofPort
+		}
+	}
+
+	if err := c.Validate(); err != nil {
+		log.Fatal(err)
 	}
 
 	if c.PProf.Enabled {
