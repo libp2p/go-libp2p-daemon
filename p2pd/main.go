@@ -308,7 +308,7 @@ func main() {
 
 	sigChan := make(chan os.Signal, 1)
 	signal.Notify(sigChan, os.Interrupt)
-	go func(){
+	go func() {
 		for _ = range sigChan {
 			d.Close()
 			os.Exit(int(syscall.SIGINT))
