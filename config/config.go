@@ -38,32 +38,32 @@ func (maa *MaddrArray) UnmarshalJSON(b []byte) error {
 	return nil
 }
 
-type bootstrap struct {
+type Bootstrap struct {
 	Enabled bool
 	Peers   MaddrArray
 }
 
-type connectionManager struct {
+type ConnectionManager struct {
 	Enabled       bool
 	LowWaterMark  int
 	HighWaterMark int
 	GracePeriod   time.Duration
 }
 
-type gossipSubHeartbeat struct {
+type GossipSubHeartbeat struct {
 	Interval     time.Duration
 	InitialDelay time.Duration
 }
 
-type pubSub struct {
+type PubSub struct {
 	Enabled            bool
 	Router             string
 	Sign               bool
 	SignStrict         bool
-	GossipSubHeartbeat gossipSubHeartbeat
+	GossipSubHeartbeat GossipSubHeartbeat
 }
 
-type relay struct {
+type Relay struct {
 	Enabled   bool
 	Active    bool
 	Hop       bool
@@ -71,11 +71,11 @@ type relay struct {
 	Auto      bool
 }
 
-type dht struct {
+type DHT struct {
 	Mode string
 }
 
-type pprof struct {
+type PProf struct {
 	Enabled bool
 	Port    uint
 }
@@ -87,19 +87,19 @@ type Config struct {
 	ListenAddr        JSONMaddr
 	Quiet             bool
 	ID                string
-	Bootstrap         bootstrap
-	DHT               dht
-	ConnectionManager connectionManager
+	Bootstrap         Bootstrap
+	DHT               DHT
+	ConnectionManager ConnectionManager
 	QUIC              bool
 	NatPortMap        bool
-	PubSub            pubSub
-	Relay             relay
+	PubSub            PubSub
+	Relay             Relay
 	AutoNat           bool
 	HostAddresses     MaddrArray
 	AnnounceAddresses MaddrArray
 	NoListen          bool
 	MetricsAddress    string
-	PProf             pprof
+	PProf             PProf
 }
 
 func (c *Config) UnmarshalJSON(b []byte) error {
@@ -125,7 +125,7 @@ func (c *Config) Validate() error {
 		return errors.New(fmt.Sprintf("unknown DHT mode %s", c.DHT))
 	}
 	if c.Relay.Auto == true && (c.Relay.Enabled == false || c.DHT.Mode == "") {
-		return errors.New("can't have autorelay enabled without relay enabled and dht enabled")
+		return errors.New("can't have autorelay enabled without Relay enabled and DHT enabled")
 	}
 	return nil
 }
@@ -136,14 +136,14 @@ func NewDefaultConfig() Config {
 		ListenAddr: JSONMaddr{defaultListen},
 		Quiet:      false,
 		ID:         "",
-		Bootstrap: bootstrap{
+		Bootstrap: Bootstrap{
 			Enabled: false,
 			Peers:   make(MaddrArray, 0),
 		},
-		DHT: dht{
+		DHT: DHT{
 			Mode: "",
 		},
-		ConnectionManager: connectionManager{
+		ConnectionManager: ConnectionManager{
 			Enabled:       false,
 			LowWaterMark:  256,
 			HighWaterMark: 512,
@@ -151,17 +151,17 @@ func NewDefaultConfig() Config {
 		},
 		QUIC:       false,
 		NatPortMap: false,
-		PubSub: pubSub{
+		PubSub: PubSub{
 			Enabled:    false,
 			Router:     "gossipsub",
 			Sign:       true,
 			SignStrict: false,
-			GossipSubHeartbeat: gossipSubHeartbeat{
+			GossipSubHeartbeat: GossipSubHeartbeat{
 				Interval:     0,
 				InitialDelay: 0,
 			},
 		},
-		Relay: relay{
+		Relay: Relay{
 			Enabled:   true,
 			Hop:       false,
 			Discovery: false,
@@ -172,7 +172,7 @@ func NewDefaultConfig() Config {
 		AnnounceAddresses: make(MaddrArray, 0),
 		NoListen:          false,
 		MetricsAddress:    "",
-		PProf: pprof{
+		PProf: PProf{
 			Enabled: false,
 			Port:    0,
 		},
