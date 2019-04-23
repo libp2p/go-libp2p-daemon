@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/libp2p/go-libp2p-daemon/config"
+	"os"
 	"sync"
 
 	logging "github.com/ipfs/go-log"
@@ -145,4 +146,29 @@ func (d *Daemon) listen() {
 		log.Debug("incoming connection")
 		go d.handleConn(c)
 	}
+}
+
+func (d *Daemon) Close() error {
+	if err := d.host.Close(); err != nil {
+		return err
+	}
+
+	listenMaddr := d.listener.Multiaddr()
+	if err := d.listener.Close(); err != nil {
+		return err
+	}
+
+	for _, subMaddr := range ma.Split(listenMaddr) {
+		if subMaddr.Protocols()[0].Code == ma.P_UNIX {
+			socket, err := subMaddr.ValueForProtocol(ma.P_UNIX)
+			if err != nil {
+				return err
+			}
+			if err := os.Remove(socket); err != nil {
+				return err
+			}
+		}
+	}
+	
+	return nil
 }
