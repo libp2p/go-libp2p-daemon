@@ -3,6 +3,7 @@ package p2pd
 import (
 	"context"
 	"fmt"
+	"github.com/libp2p/go-libp2p-daemon/config"
 	"sync"
 
 	logging "github.com/ipfs/go-log"
@@ -35,15 +36,15 @@ type Daemon struct {
 	handlers map[proto.ID]ma.Multiaddr
 }
 
-func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtEnabled bool, dhtClient bool, opts ...libp2p.Option) (*Daemon, error) {
+func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...libp2p.Option) (*Daemon, error) {
 	d := &Daemon{
 		ctx:      ctx,
 		handlers: make(map[proto.ID]ma.Multiaddr),
 	}
 
-	if dhtEnabled || dhtClient {
+	if dhtMode != "" {
 		var dhtOpts []dhtopts.Option
-		if dhtClient {
+		if dhtMode == config.DHTClientMode {
 			dhtOpts = append(dhtOpts, dhtopts.Client(true))
 		}
 

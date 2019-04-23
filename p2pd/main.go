@@ -1,17 +1,22 @@
 package main
 
 import (
+	"bufio"
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	"github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
@@ -85,6 +90,8 @@ func main() {
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
+	configFilename := flag.String("f", "", "a file from which to read a json representation of the deamon config")
+	configStdin := flag.Bool("i", false, "have the daemon read the json config from stdin")
 	pprof := flag.Bool("pprof", false, "Enables the HTTP pprof handler, listening on the first port "+
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
@@ -92,111 +99,215 @@ func main() {
 
 	flag.Parse()
 
-	if *pprof {
-		// an invalid port number will fail within the function.
-		go pprofHTTP(int(*pprofPort))
-	}
-
+	var c config.Config
 	var opts []libp2p.Option
+
+	if *configStdin {
+		stdin := bufio.NewReader(os.Stdin)
+		body, err := ioutil.ReadAll(stdin)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := json.Unmarshal(body, &c); err != nil {
+			log.Fatal(err)
+		}
+	} else if *configFilename != "" {
+		body, err := ioutil.ReadFile(*configFilename)
+		if err != nil {
+			log.Fatal(err)
+		}
+		if err := json.Unmarshal(body, &c); err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		c = config.NewDefaultConfig()
+	}
 
 	maddr, err := multiaddr.NewMultiaddr(*maddrString)
 	if err != nil {
 		log.Fatal(err)
 	}
-
+	c.ListenAddr = config.JSONMaddr{maddr}
 	if *id != "" {
-		key, err := p2pd.ReadIdentity(*id)
+		c.ID = *id
+	}
+	if *hostAddrs != "" {
+		addrStrings := strings.Split(*hostAddrs, ",")
+		ha := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(ha)[i] = ma
+		}
+		c.HostAddresses = ha
+	}
+	if *announceAddrs != "" {
+		addrStrings := strings.Split(*announceAddrs, ",")
+		ha := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(ha)[i] = ma
+		}
+		c.AnnounceAddresses = ha
+	}
+	if *connMgr {
+		c.ConnectionManager.Enabled = true
+		c.ConnectionManager.GracePeriod = *connMgrGrace
+		c.ConnectionManager.HighWaterMark = *connMgrHi
+		c.ConnectionManager.LowWaterMark = *connMgrLo
+	}
+	if *QUIC {
+		c.QUIC = true
+	}
+	if *natPortMap {
+		c.NatPortMap = true
+	}
+	if *relayEnabled {
+		c.Relay.Enabled = true
+		if *relayActive {
+			c.Relay.Active = true
+		}
+		if *relayHop {
+			c.Relay.Hop = true
+		}
+		if *relayDiscovery {
+			c.Relay.Discovery = true
+		}
+	}
+	if *autoRelay {
+		c.Relay.Auto = true
+	}
+	if *noListen {
+		c.NoListen = true
+	}
+	if *autonat {
+		c.AutoNat = true
+	}
+	if *pubsub {
+		c.PubSub.Enabled = true
+		c.PubSub.Router = *pubsubRouter
+		c.PubSub.Sign = *pubsubSign
+		c.PubSub.SignStrict = *pubsubSignStrict
+		if *gossipsubHeartbeatInterval > 0 {
+			c.PubSub.GossipSubHeartbeat.Interval = *gossipsubHeartbeatInterval
+		}
+		if *gossipsubHeartbeatInitialDelay > 0 {
+			c.PubSub.GossipSubHeartbeat.InitialDelay = *gossipsubHeartbeatInitialDelay
+		}
+	}
+	if *bootstrapPeers != "" {
+		addrStrings := strings.Split(*bootstrapPeers, ",")
+		bps := make([]multiaddr.Multiaddr, len(addrStrings))
+		for i, s := range addrStrings {
+			ma, err := multiaddr.NewMultiaddr(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			(bps)[i] = ma
+		}
+		c.Bootstrap.Peers = bps
+	}
+	if *bootstrap {
+		c.Bootstrap.Enabled = true
+	}
+	if *quiet {
+		c.Quiet = true
+	}
+	if *metricsAddr != "" {
+		c.MetricsAddress = *metricsAddr
+	}
+	if *dht {
+		c.DHT.Mode = config.DHTFullMode
+	} else if *dhtClient {
+		c.DHT.Mode = config.DHTClientMode
+	}
+	if *pprof {
+		c.PProf.Enabled = true
+		if pprofPort != nil {
+			c.PProf.Port = *pprofPort
+		}
+	}
+
+	if err := c.Validate(); err != nil {
+		log.Fatal(err)
+	}
+
+	if c.PProf.Enabled {
+		// an invalid port number will fail within the function.
+		go pprofHTTP(int(c.PProf.Port))
+	}
+
+	// collect opts
+	if c.ID != "" {
+		key, err := p2pd.ReadIdentity(c.ID)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		opts = append(opts, libp2p.Identity(key))
 	}
-
-	if *hostAddrs != "" {
-		addrs := strings.Split(*hostAddrs, ",")
-		opts = append(opts, libp2p.ListenAddrStrings(addrs...))
+	if len(c.HostAddresses) > 0 {
+		opts = append(opts, libp2p.ListenAddrs(c.HostAddresses...))
 	}
-
-	if *announceAddrs != "" {
-		addrs := strings.Split(*announceAddrs, ",")
-		maddrs := make([]multiaddr.Multiaddr, 0, len(addrs))
-		for _, a := range addrs {
-			maddr, err := multiaddr.NewMultiaddr(a)
-			if err != nil {
-				log.Fatal(err)
-			}
-			maddrs = append(maddrs, maddr)
-		}
+	if len(c.AnnounceAddresses) > 0 {
 		opts = append(opts, libp2p.AddrsFactory(func([]multiaddr.Multiaddr) []multiaddr.Multiaddr {
-			return maddrs
+			return c.AnnounceAddresses
 		}))
 	}
-
-	if *connMgr {
-		cm := connmgr.NewConnManager(*connMgrLo, *connMgrHi, *connMgrGrace)
+	if c.ConnectionManager.Enabled {
+		cm := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
+			c.ConnectionManager.HighWaterMark,
+			c.ConnectionManager.GracePeriod)
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
-
-	if *QUIC {
+	if c.QUIC {
 		opts = append(opts,
 			libp2p.DefaultTransports,
 			libp2p.Transport(quic.NewTransport),
 		)
-
-		// if we explicitly specify a transport, we must also explicitly specify the listen addrs
-		if *hostAddrs == "" {
-			opts = append(opts,
-				libp2p.ListenAddrStrings(
-					"/ip4/0.0.0.0/tcp/0",
-					"/ip4/0.0.0.0/udp/0/quic",
-					"/ip6/::1/tcp/0",
-					"/ip6/::1/udp/0/quic",
-				))
+		if len(c.HostAddresses) == 0 {
+			log.Fatal("if we explicitly specify a transport, we must also explicitly specify the listen addrs")
 		}
 	}
-
-	if *natPortMap {
+	if c.NatPortMap {
 		opts = append(opts, libp2p.NATPortMap())
 	}
-
-	if *relayEnabled {
+	if c.Relay.Enabled {
 		var relayOpts []relay.RelayOpt
-		if *relayActive {
+		if c.Relay.Active {
 			relayOpts = append(relayOpts, relay.OptActive)
 		}
-		if *relayHop {
+		if c.Relay.Hop {
 			relayOpts = append(relayOpts, relay.OptHop)
 		}
-		if *relayDiscovery {
+		if c.Relay.Discovery {
 			relayOpts = append(relayOpts, relay.OptDiscovery)
 		}
 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
-	}
 
-	if *autoRelay {
-		if !(*dht || *dhtClient) {
-			log.Fatal("DHT must be enabled in order to enable autorelay")
+		if c.Relay.Auto {
+			opts = append(opts, libp2p.EnableAutoRelay())
 		}
-		if !*relayEnabled {
-			log.Fatal("Relay must be enabled to enable autorelay")
-		}
-		opts = append(opts, libp2p.EnableAutoRelay())
 	}
-
-	if *noListen {
+	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
 	}
 
-	d, err := p2pd.NewDaemon(context.Background(), maddr, *dht, *dhtClient, opts...)
+	// start daemon
+	d, err := p2pd.NewDaemon(context.Background(), c.ListenAddr, c.DHT.Mode, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if *autonat {
+	if c.AutoNat {
 		var opts []libp2p.Option
 		// allow the AutoNAT service to dial back quic addrs.
-		if *QUIC {
+		if c.QUIC {
 			opts = append(opts,
 				libp2p.DefaultTransports,
 				libp2p.Transport(quic.NewTransport),
@@ -208,46 +319,35 @@ func main() {
 		}
 	}
 
-	if *pubsub {
-		if *gossipsubHeartbeatInterval > 0 {
-			ps.GossipSubHeartbeatInterval = *gossipsubHeartbeatInterval
-		}
+	if c.PubSub.Enabled {
+		ps.GossipSubHeartbeatInterval = c.PubSub.GossipSubHeartbeat.Interval
+		ps.GossipSubHeartbeatInitialDelay = c.PubSub.GossipSubHeartbeat.InitialDelay
 
-		if *gossipsubHeartbeatInitialDelay > 0 {
-			ps.GossipSubHeartbeatInitialDelay = *gossipsubHeartbeatInitialDelay
-		}
-
-		err = d.EnablePubsub(*pubsubRouter, *pubsubSign, *pubsubSignStrict)
+		err = d.EnablePubsub(c.PubSub.Router, c.PubSub.Sign, c.PubSub.SignStrict)
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	if *bootstrapPeers != "" {
-		for _, s := range strings.Split(*bootstrapPeers, ",") {
-			ma, err := multiaddr.NewMultiaddr(s)
-			if err != nil {
-				log.Fatalf("error parsing bootstrap peer %q: %v", s, err)
-			}
-			p2pd.BootstrapPeers = append(p2pd.BootstrapPeers, ma)
-		}
+	if len(c.Bootstrap.Peers) > 0 {
+		p2pd.BootstrapPeers = c.Bootstrap.Peers
 	}
 
-	if *bootstrap {
+	if c.Bootstrap.Enabled {
 		err = d.Bootstrap()
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	if !*quiet {
-		fmt.Printf("Control socket: %s\n", maddr.String())
+	if !c.Quiet {
+		fmt.Printf("Control socket: %s\n", c.ListenAddr.String())
 		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
 			fmt.Printf("%s\n", addr.String())
 		}
-		if *bootstrap && *bootstrapPeers != "" {
+		if c.Bootstrap.Enabled && len(c.Bootstrap.Peers) > 0 {
 			fmt.Printf("Bootstrap peers:\n")
 			for _, p := range p2pd.BootstrapPeers {
 				fmt.Printf("%s\n", p)
@@ -255,9 +355,9 @@ func main() {
 		}
 	}
 
-	if *metricsAddr != "" {
+	if c.MetricsAddress != "" {
 		http.Handle("/metrics", promhttp.Handler())
-		go func() { log.Println(http.ListenAndServe(*metricsAddr, nil)) }()
+		go func() { log.Println(http.ListenAndServe(c.MetricsAddress, nil)) }()
 	}
 
 	select {}

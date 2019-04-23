@@ -1,0 +1,207 @@
+{
+  "$schema": "http://json-schema.org/schema#",
+  "definitions": {
+    "maddr": {
+      "type": "string"
+    }
+  },
+  "type": "object",
+  "properties": {
+    "ListenAddr": {
+      "$ref": "#/definitions/maddr",
+      "default": "/unix/tmp/p2pd.sock",
+      "$comment": "Daemon control listen multiaddr"
+    },
+    "Quiet": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Be Quiet"
+    },
+    "ID": {
+      "type": "string",
+      "default": "",
+      "$comment": "Peer identity; private key file"
+    },
+    "Bootstrap": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Connects to bootstrap peers and bootstraps the dht if enabled"
+        },
+        "Peers": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/maddr"
+          },
+          "default": [],
+          "$comment": "List of bootstrap peers; defaults to the IPFS DHT peers"
+        }
+      }
+    },
+    "DHT": {
+      "type": "object",
+      "properties": {
+        "Mode": {
+          "enum": [
+            "full",
+            "client",
+            ""
+          ],
+          "default": "",
+          "$comment": "Enables the DHT in full node mode or client mode"
+        }
+      }
+    },
+    "ConnectionManager": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables the Connection Manager"
+        },
+        "LowWaterMark": {
+          "type": "integer",
+          "default": 256,
+          "$comment": "Connection Manager Low Water mark"
+        },
+        "HighWaterMark": {
+          "type": "integer",
+          "default": 512,
+          "$comment": "Connection Manager High Water mark"
+        },
+        "GradePeriod": {
+          "type": "integer",
+          "default": 120,
+          "$comment": "Connection Manager grace period (in seconds)"
+        }
+      }
+    },
+    "QUIC": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Enables the QUIC transport"
+    },
+    "NatPortMap": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Enables NAT port mapping"
+    },
+    "PubSub": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": "false",
+          "$comment": "Enables pubsub"
+        },
+        "Router": {
+          "type": "string",
+          "default": "gossipsub",
+          "$comment": "Specifies the pubsub router implementation"
+        },
+        "Sign": {
+          "type": "boolean",
+          "default": true,
+          "$comment": "Enables pubsub message signing"
+        },
+        "SignStrict": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables pubsub strict signature verification"
+        },
+        "GossipSubHeartbeat": {
+          "type": "object",
+          "properties": {
+            "Interval": {
+              "type": "integer",
+              "default": 0,
+              "$comment": "Specifies the gossipsub heartbeat interval"
+            },
+            "InitialDelay": {
+              "type": "integer",
+              "default": 0,
+              "$comment": "Specifies the gossipsub initial heartbeat delay"
+            }
+          }
+        }
+      }
+    },
+    "Relay": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": true,
+          "$comment": "Enables circuit relay"
+        },
+        "Active": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables active mode for relay"
+        },
+        "Hop": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables hop for relay"
+        },
+        "Discovery": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables passive discovery for relay"
+        },
+        "Auto": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables autorelay"
+        }
+      }
+    },
+    "AutoNat": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Enables the AutoNAT service"
+    },
+    "HostAddresses": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/maddr"},
+      "default": [],
+      "$comment": "List of multiaddrs the host should listen on"
+    },
+    "AnnounceAddresses": {
+      "type": "array",
+      "items": {"$ref": "#/definitions/maddr"},
+      "default": [],
+      "$comment": "List of multiaddrs the host should announce to the network"
+    },
+    "NoListen": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Sets the host to listen on no addresses"
+    },
+    "MetricsAddress": {
+      "type": "string",
+      "format": "ipv4",
+      "default": "",
+      "$comment": "An address to bind the metrics handler to"
+    },
+    "PProf": {
+      "type": "object",
+      "properties": {
+        "Enabled": {
+          "type": "boolean",
+          "default": false,
+          "$comment": "Enables the HTTP pprof handler, listening on the first port available in the range [6060-7800], or on the user-provided port via PProfPort"
+        },
+        "Port": {
+          "type": "integer",
+          "default": 0,
+          "$comment": "Binds the HTTP pprof handler to a specific port; has no effect unless PProf is enabled"
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}
