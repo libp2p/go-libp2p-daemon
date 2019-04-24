@@ -3,6 +3,7 @@ package p2pd
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/go-multierror"
 	"github.com/libp2p/go-libp2p-daemon/config"
 	"os"
 	"sync"
@@ -157,23 +158,24 @@ func clearUnixSockets(path ma.Multiaddr) error {
 	if err := os.Remove(c.Value()); err != nil {
 		return err
 	}
-	
+
 	return nil
 }
 
 func (d *Daemon) Close() error {
+	var merr multierror.Error
 	if err := d.host.Close(); err != nil {
-		return err
+		merr = *multierror.Append(err)
 	}
 
 	listenAddr := d.listener.Multiaddr()
 	if err := d.listener.Close(); err != nil {
-		return err
+		merr = *multierror.Append(&merr, err)
 	}
 
 	if err := clearUnixSockets(listenAddr); err != nil {
-		return err
+		merr = *multierror.Append(&merr, err)
 	}
 
-	return nil
+	return multierror.Flatten(&merr)
 }

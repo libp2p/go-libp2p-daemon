@@ -11,16 +11,16 @@ import (
 
 func (d *Daemon) trapSignals() {
 	ch := make(chan os.Signal, 1)
-	signal.Notify(ch, syscall.SIGUSR1, syscall.SIGINT, syscall.SIGTERM, syscall.SIGABRT)
+	signal.Notify(ch, syscall.SIGUSR1, syscall.SIGINT, syscall.SIGTERM)
 	for {
 		select {
 		case s := <-ch:
 			switch s {
 			case syscall.SIGUSR1:
 				d.handleSIGUSR1()
-			case syscall.SIGINT, syscall.SIGTERM, syscall.SIGABRT:
+			case syscall.SIGINT, syscall.SIGTERM:
 				d.Close()
-				os.Exit(int(s.(syscall.Signal)))
+				os.Exit(0x80 + int(s.(syscall.Signal)))
 			default:
 				log.Warningf("uncaught signal %d", s)
 			}
