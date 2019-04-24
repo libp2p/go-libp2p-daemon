@@ -178,5 +178,4 @@ func (d *Daemon) Close() error {
 	}
 
 	return merr.ErrorOrNil()
-
 }
