@@ -177,5 +177,8 @@ func (d *Daemon) Close() error {
 		merr = multierror.Append(merr, err)
 	}
 
-	return multierror.Flatten(merr)
+	if merr != nil {
+		return merr.ErrorOrNil()
+	}
+	return nil
 }
