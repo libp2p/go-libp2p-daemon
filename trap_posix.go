@@ -18,17 +18,11 @@ func (d *Daemon) trapSignals() {
 			switch s {
 			case syscall.SIGUSR1:
 				d.handleSIGUSR1()
-			case syscall.SIGINT:
+			case syscall.SIGINT, syscall.SIGTERM, syscall.SIGABRT:
 				d.Close()
-				os.Exit(int(syscall.SIGINT))
-			case syscall.SIGTERM:
-				d.Close()
-				os.Exit(int(syscall.SIGTERM))
-			case syscall.SIGABRT:
-				d.Close()
-				os.Exit(int(syscall.SIGABRT))
+				os.Exit(int(s.(syscall.Signal)))
 			default:
-				log.Warningf("unexpected signal %d", s)
+				log.Warningf("uncaught signal %d", s)
 			}
 		case <-d.ctx.Done():
 			return
