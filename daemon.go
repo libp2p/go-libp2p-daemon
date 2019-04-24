@@ -150,14 +150,15 @@ func (d *Daemon) listen() {
 
 func clearUnixSockets(path ma.Multiaddr) error {
 	for _, subMaddr := range ma.Split(path) {
-		if subMaddr.Protocols()[0].Code == ma.P_UNIX {
-			socket, err := subMaddr.ValueForProtocol(ma.P_UNIX)
-			if err != nil {
-				return err
-			}
-			if err := os.Remove(socket); err != nil {
-				return err
-			}
+		if subMaddr.Protocols()[0].Code != ma.P_UNIX {
+			continue
+		}
+		socket, err := subMaddr.ValueForProtocol(ma.P_UNIX)
+		if err != nil {
+			return err
+		}
+		if err := os.Remove(socket); err != nil {
+			return err
 		}
 	}
 	return nil
