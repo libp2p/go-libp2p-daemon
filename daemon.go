@@ -163,19 +163,19 @@ func clearUnixSockets(path ma.Multiaddr) error {
 }
 
 func (d *Daemon) Close() error {
-	var merr multierror.Error
+	var merr *multierror.Error
 	if err := d.host.Close(); err != nil {
-		merr = *multierror.Append(err)
+		merr = multierror.Append(err)
 	}
 
 	listenAddr := d.listener.Multiaddr()
 	if err := d.listener.Close(); err != nil {
-		merr = *multierror.Append(&merr, err)
+		merr = multierror.Append(merr, err)
 	}
 
 	if err := clearUnixSockets(listenAddr); err != nil {
-		merr = *multierror.Append(&merr, err)
+		merr = multierror.Append(merr, err)
 	}
 
-	return multierror.Flatten(&merr)
+	return multierror.Flatten(merr)
 }
