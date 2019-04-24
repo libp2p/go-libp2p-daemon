@@ -3,7 +3,9 @@ package p2pd
 import (
 	"context"
 	"fmt"
+	"github.com/hashicorp/go-multierror"
 	"github.com/libp2p/go-libp2p-daemon/config"
+	"os"
 	"sync"
 
 	logging "github.com/ipfs/go-log"
@@ -145,4 +147,35 @@ func (d *Daemon) listen() {
 		log.Debug("incoming connection")
 		go d.handleConn(c)
 	}
+}
+
+func clearUnixSockets(path ma.Multiaddr) error {
+	c, _ := ma.SplitFirst(path)
+	if c.Protocol().Code != ma.P_UNIX {
+		return nil
+	}
+
+	if err := os.Remove(c.Value()); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (d *Daemon) Close() error {
+	var merr *multierror.Error
+	if err := d.host.Close(); err != nil {
+		merr = multierror.Append(err)
+	}
+
+	listenAddr := d.listener.Multiaddr()
+	if err := d.listener.Close(); err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	if err := clearUnixSockets(listenAddr); err != nil {
+		merr = multierror.Append(merr, err)
+	}
+
+	return merr.ErrorOrNil()
 }
