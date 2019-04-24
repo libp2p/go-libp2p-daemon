@@ -16,7 +16,7 @@ import (
 	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
-	"github.com/libp2p/go-libp2p-daemon/config"
+	config "github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
@@ -128,9 +128,11 @@ func main() {
 		log.Fatal(err)
 	}
 	c.ListenAddr = config.JSONMaddr{maddr}
+
 	if *id != "" {
 		c.ID = *id
 	}
+
 	if *hostAddrs != "" {
 		addrStrings := strings.Split(*hostAddrs, ",")
 		ha := make([]multiaddr.Multiaddr, len(addrStrings))
@@ -143,6 +145,7 @@ func main() {
 		}
 		c.HostAddresses = ha
 	}
+
 	if *announceAddrs != "" {
 		addrStrings := strings.Split(*announceAddrs, ",")
 		ha := make([]multiaddr.Multiaddr, len(addrStrings))
@@ -155,18 +158,22 @@ func main() {
 		}
 		c.AnnounceAddresses = ha
 	}
+
 	if *connMgr {
 		c.ConnectionManager.Enabled = true
 		c.ConnectionManager.GracePeriod = *connMgrGrace
 		c.ConnectionManager.HighWaterMark = *connMgrHi
 		c.ConnectionManager.LowWaterMark = *connMgrLo
 	}
+
 	if *QUIC {
 		c.QUIC = true
 	}
+
 	if *natPortMap {
 		c.NatPortMap = true
 	}
+
 	if *relayEnabled {
 		c.Relay.Enabled = true
 		if *relayActive {
@@ -179,15 +186,19 @@ func main() {
 			c.Relay.Discovery = true
 		}
 	}
+
 	if *autoRelay {
 		c.Relay.Auto = true
 	}
+
 	if *noListen {
 		c.NoListen = true
 	}
+
 	if *autonat {
 		c.AutoNat = true
 	}
+
 	if *pubsub {
 		c.PubSub.Enabled = true
 		c.PubSub.Router = *pubsubRouter
@@ -200,6 +211,7 @@ func main() {
 			c.PubSub.GossipSubHeartbeat.InitialDelay = *gossipsubHeartbeatInitialDelay
 		}
 	}
+
 	if *bootstrapPeers != "" {
 		addrStrings := strings.Split(*bootstrapPeers, ",")
 		bps := make([]multiaddr.Multiaddr, len(addrStrings))
@@ -212,20 +224,25 @@ func main() {
 		}
 		c.Bootstrap.Peers = bps
 	}
+
 	if *bootstrap {
 		c.Bootstrap.Enabled = true
 	}
+
 	if *quiet {
 		c.Quiet = true
 	}
+
 	if *metricsAddr != "" {
 		c.MetricsAddress = *metricsAddr
 	}
+
 	if *dht {
 		c.DHT.Mode = config.DHTFullMode
 	} else if *dhtClient {
 		c.DHT.Mode = config.DHTClientMode
 	}
+
 	if *pprof {
 		c.PProf.Enabled = true
 		if pprofPort != nil {
@@ -251,20 +268,24 @@ func main() {
 
 		opts = append(opts, libp2p.Identity(key))
 	}
+
 	if len(c.HostAddresses) > 0 {
 		opts = append(opts, libp2p.ListenAddrs(c.HostAddresses...))
 	}
+
 	if len(c.AnnounceAddresses) > 0 {
 		opts = append(opts, libp2p.AddrsFactory(func([]multiaddr.Multiaddr) []multiaddr.Multiaddr {
 			return c.AnnounceAddresses
 		}))
 	}
+
 	if c.ConnectionManager.Enabled {
 		cm := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
 			c.ConnectionManager.HighWaterMark,
 			c.ConnectionManager.GracePeriod)
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
+
 	if c.QUIC {
 		opts = append(opts,
 			libp2p.DefaultTransports,
@@ -274,9 +295,11 @@ func main() {
 			log.Fatal("if we explicitly specify a transport, we must also explicitly specify the listen addrs")
 		}
 	}
+
 	if c.NatPortMap {
 		opts = append(opts, libp2p.NATPortMap())
 	}
+
 	if c.Relay.Enabled {
 		var relayOpts []relay.RelayOpt
 		if c.Relay.Active {
@@ -294,6 +317,7 @@ func main() {
 			opts = append(opts, libp2p.EnableAutoRelay())
 		}
 	}
+
 	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
 	}
