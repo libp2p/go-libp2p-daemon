@@ -380,8 +380,18 @@ func main() {
 	}
 
 	if c.MetricsAddress != "" {
-		http.Handle("/metrics", promhttp.Handler())
-		go func() { log.Println(http.ListenAndServe(c.MetricsAddress, nil)) }()
+		pe, err := enableMetrics()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		go func() {
+			mux := http.NewServeMux()
+			mux.Handle("/metrics", pe)
+			if err := http.ListenAndServe(c.MetricsAddress, mux); err != nil {
+				log.Printf("setting up metrics endpoint (%s): %s", *metricsAddr, err)
+			}
+		}()
 	}
 
 	select {}
