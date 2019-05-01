@@ -344,8 +344,12 @@ func main() {
 	}
 
 	if c.PubSub.Enabled {
-		ps.GossipSubHeartbeatInterval = c.PubSub.GossipSubHeartbeat.Interval
-		ps.GossipSubHeartbeatInitialDelay = c.PubSub.GossipSubHeartbeat.InitialDelay
+		if c.PubSub.GossipSubHeartbeat.Interval > 0 {
+			ps.GossipSubHeartbeatInterval = c.PubSub.GossipSubHeartbeat.Interval
+		}
+		if c.PubSub.GossipSubHeartbeat.InitialDelay > 0 {
+			ps.GossipSubHeartbeatInitialDelay = c.PubSub.GossipSubHeartbeat.InitialDelay
+		}
 
 		err = d.EnablePubsub(c.PubSub.Router, c.PubSub.Sign, c.PubSub.SignStrict)
 		if err != nil {
