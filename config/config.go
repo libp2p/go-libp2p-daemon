@@ -155,7 +155,7 @@ func NewDefaultConfig() Config {
 			Enabled:    false,
 			Router:     "gossipsub",
 			Sign:       true,
-			SignStrict: false,
+			SignStrict: true,
 			GossipSubHeartbeat: GossipSubHeartbeat{
 				Interval:     0,
 				InitialDelay: 0,
