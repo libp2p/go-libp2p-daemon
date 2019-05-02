@@ -206,8 +206,8 @@ github.com/libp2p/go-libp2p-peerstore v0.0.5 h1:/qc3asc93924TaqVulOnY/+c4tpzomSE
 github.com/libp2p/go-libp2p-peerstore v0.0.5/go.mod h1:RabLyPVJLuNQ+GFyoEkfi8H4Ti6k/HtZJ7YKgtSq+20=
 github.com/libp2p/go-libp2p-protocol v0.0.1 h1:+zkEmZ2yFDi5adpVE3t9dqh/N9TbpFWywowzeEzBbLM=
 github.com/libp2p/go-libp2p-protocol v0.0.1/go.mod h1:Af9n4PiruirSDjHycM1QuiMi/1VZNHYcK8cLgFJLZ4s=
-github.com/libp2p/go-libp2p-pubsub v0.0.1 h1:iJWpvBDZiZOoRBGqEifu9yUHti9ptnSODHt6tgrBC6c=
-github.com/libp2p/go-libp2p-pubsub v0.0.1/go.mod h1:fYKlZBOF2yrJzYlgeEVFSbYWfbS+E8Zix6gMZ0A6WgE=
+github.com/libp2p/go-libp2p-pubsub v0.0.2 h1:oEXd4EF8HJYAsjEpDy2emZVAnmG3/RRIjKxZgWkkJus=
+github.com/libp2p/go-libp2p-pubsub v0.0.2/go.mod h1:fYKlZBOF2yrJzYlgeEVFSbYWfbS+E8Zix6gMZ0A6WgE=
 github.com/libp2p/go-libp2p-quic-transport v0.0.3 h1:FGEPXsjpY9K6P3iMtJQPKGl45eXickBY1+xSJ84lVVI=
 github.com/libp2p/go-libp2p-quic-transport v0.0.3/go.mod h1:v2oVuaFLkxlFpkFbXUty3dfEYSlNb0sCzvf8cRi1m/k=
 github.com/libp2p/go-libp2p-record v0.0.1 h1:zN7AS3X46qmwsw5JLxdDuI43cH5UYwovKxHPjKBYQxw=
