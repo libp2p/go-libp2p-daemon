@@ -92,12 +92,10 @@ func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routi
 func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 	var opts []ps.Option
 
-	if sign {
-		opts = append(opts, ps.WithMessageSigning(sign))
-
-		if strict {
-			opts = append(opts, ps.WithStrictSignatureVerification(strict))
-		}
+	if !sign {
+		opts = append(opts, ps.WithMessageSigning(false))
+	} else if !strict {
+		opts = append(opts, ps.WithStrictSignatureVerification(false))
 	}
 
 	switch router {
