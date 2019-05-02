@@ -77,7 +77,7 @@ func main() {
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
 	pubsubSign := flag.Bool("pubsubSign", true, "Enables pubsub message signing")
-	pubsubSignStrict := flag.Bool("pubsubSignStrict", false, "Enables pubsub strict signature verification")
+	pubsubSignStrict := flag.Bool("pubsubSignStrict", true, "Enables or disables pubsub strict signature verification")
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
