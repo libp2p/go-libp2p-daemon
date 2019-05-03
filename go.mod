@@ -9,7 +9,7 @@ require (
 	github.com/libp2p/go-libp2p-autonat-svc v0.0.5
 	github.com/libp2p/go-libp2p-circuit v0.0.5
 	github.com/libp2p/go-libp2p-connmgr v0.0.1
-	github.com/libp2p/go-libp2p-crypto v0.0.1
+	github.com/libp2p/go-libp2p-crypto v0.0.2
 	github.com/libp2p/go-libp2p-host v0.0.1
 	github.com/libp2p/go-libp2p-kad-dht v0.0.10
 	github.com/libp2p/go-libp2p-net v0.0.2
