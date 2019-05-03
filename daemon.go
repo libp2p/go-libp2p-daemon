@@ -36,6 +36,8 @@ type Daemon struct {
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
 	handlers map[proto.ID]ma.Multiaddr
+	// closed is set when the daemon is shutting down
+	closed bool
 }
 
 func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...libp2p.Option) (*Daemon, error) {
@@ -137,14 +139,25 @@ func (d *Daemon) Addrs() []ma.Multiaddr {
 
 func (d *Daemon) listen() {
 	for {
+		if d.isClosed() {
+			return
+		}
+
 		c, err := d.listener.Accept()
 		if err != nil {
 			log.Errorf("error accepting connection: %s", err.Error())
+			continue
 		}
 
 		log.Debug("incoming connection")
 		go d.handleConn(c)
 	}
+}
+
+func (d *Daemon) isClosed() bool {
+	d.mx.Lock()
+	defer d.mx.Unlock()
+	return d.closed
 }
 
 func clearUnixSockets(path ma.Multiaddr) error {
@@ -161,6 +174,10 @@ func clearUnixSockets(path ma.Multiaddr) error {
 }
 
 func (d *Daemon) Close() error {
+	d.mx.Lock()
+	d.closed = true
+	d.mx.Unlock()
+
 	var merr *multierror.Error
 	if err := d.host.Close(); err != nil {
 		merr = multierror.Append(err)
