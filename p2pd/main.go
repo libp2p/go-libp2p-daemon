@@ -11,17 +11,21 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
+	inet "github.com/libp2p/go-libp2p-net"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
+	mplex "github.com/whyrusleeping/go-smux-multiplex"
+	yamux "github.com/whyrusleeping/go-smux-yamux"
 
 	_ "net/http/pprof"
 )
@@ -58,6 +62,10 @@ func pprofHTTP(port int) {
 	}
 }
 
+func init() {
+	inet.EOFTimeout = 10 * time.Second
+}
+
 func main() {
 	identify.ClientVersion = "p2pd/0.1"
 
@@ -83,6 +91,7 @@ func main() {
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
 	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
 	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays")
 	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
@@ -96,6 +105,8 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
+	useMplex := flag.Bool("mplex", false, "use the mplex multiplexer")
+	useYamux := flag.Bool("yamux", false, "use the yamux multiplexer")
 
 	flag.Parse()
 
@@ -185,6 +196,9 @@ func main() {
 		if *relayDiscovery {
 			c.Relay.Discovery = true
 		}
+		if *relayHopLimit > 0 {
+			c.Relay.HopLimit = *relayHopLimit
+		}
 	}
 
 	if *autoRelay {
@@ -248,6 +262,14 @@ func main() {
 		if pprofPort != nil {
 			c.PProf.Port = *pprofPort
 		}
+	}
+
+	if *useMplex {
+		c.Mux.Mplex = true
+	}
+
+	if *useYamux {
+		c.Mux.Yamux = true
 	}
 
 	if err := c.Validate(); err != nil {
@@ -316,10 +338,22 @@ func main() {
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())
 		}
+
+		if c.Relay.HopLimit > 0 {
+			relay.HopStreamLimit = c.Relay.HopLimit
+		}
 	}
 
 	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
+	}
+
+	if c.Mux.Mplex {
+		opts = append(opts, libp2p.Muxer("/mplex/6.7.0", mplex.DefaultTransport))
+	}
+
+	if c.Mux.Yamux {
+		opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
 	}
 
 	// start daemon

@@ -69,6 +69,7 @@ type Relay struct {
 	Hop       bool
 	Discovery bool
 	Auto      bool
+	HopLimit  int
 }
 
 type DHT struct {
@@ -78,6 +79,11 @@ type DHT struct {
 type PProf struct {
 	Enabled bool
 	Port    uint
+}
+
+type Mux struct {
+	Mplex bool
+	Yamux bool
 }
 
 const DHTFullMode = "full"
@@ -100,6 +106,7 @@ type Config struct {
 	NoListen          bool
 	MetricsAddress    string
 	PProf             PProf
+	Mux               Mux
 }
 
 func (c *Config) UnmarshalJSON(b []byte) error {
@@ -166,6 +173,7 @@ func NewDefaultConfig() Config {
 			Hop:       false,
 			Discovery: false,
 			Auto:      false,
+			HopLimit:  0,
 		},
 		AutoNat:           false,
 		HostAddresses:     make(MaddrArray, 0),
@@ -175,6 +183,10 @@ func NewDefaultConfig() Config {
 		PProf: PProf{
 			Enabled: false,
 			Port:    0,
+		},
+		Mux: Mux{
+			Mplex: false,
+			Yamux: false,
 		},
 	}
 }
