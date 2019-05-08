@@ -28,4 +28,4 @@ require (
 	github.com/whyrusleeping/go-smux-yamux v2.0.9+incompatible
 )
 
-replace github.com/libp2p/go-mplex => github.com/vyzo/go-mplex v0.0.0-20190508140925-89a4a4825b0c
+replace github.com/libp2p/go-mplex => github.com/vyzo/go-mplex v0.0.0-20190508141724-5c9248933091
