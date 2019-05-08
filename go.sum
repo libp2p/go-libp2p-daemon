@@ -339,8 +339,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
 github.com/stretchr/testify v1.3.0 h1:TivCn/peBQ7UY8ooIcPgZFpTNSz0Q2U6UrFlUfqbe0Q=
 github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
 github.com/syndtr/goleveldb v1.0.0/go.mod h1:ZVVdQEZoIme9iO1Ch2Jdy24qqXrMMOU6lpPAyBWyWuQ=
-github.com/vyzo/go-mplex v0.0.0-20190508114236-6ae643c17407 h1:ll7RFlywBY8o9HRXMAD66BlYB0EaiFK2z5pdP43UTh4=
-github.com/vyzo/go-mplex v0.0.0-20190508114236-6ae643c17407/go.mod h1:/ezRwnAINfey8a2WMmI20OkfOlpH5jsAJCpp5ul/KiY=
+github.com/vyzo/go-mplex v0.0.0-20190508131229-b842aaa310c9 h1:rVG4tVsIiwrMT+k/HLswrUOM/onKFR/DEzq9dWLAu0c=
+github.com/vyzo/go-mplex v0.0.0-20190508131229-b842aaa310c9/go.mod h1:/ezRwnAINfey8a2WMmI20OkfOlpH5jsAJCpp5ul/KiY=
 github.com/whyrusleeping/base32 v0.0.0-20170828182744-c30ac30633cc h1:BCPnHtcboadS0DvysUuJXZ4lWVv5Bh5i7+tbIyi+ck4=
 github.com/whyrusleeping/base32 v0.0.0-20170828182744-c30ac30633cc/go.mod h1:r45hJU7yEoA81k6MWNhpMj/kms0n14dkzkxYHoB96UM=
 github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 h1:EKhdznlJHPMoKr0XTrX+IlJs1LH3lyx2nfr1dOlZ79k=
