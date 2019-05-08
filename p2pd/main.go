@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"runtime"
 	"strings"
 	"time"
 
@@ -107,6 +108,8 @@ func main() {
 		"has no effect unless the pprof option is enabled")
 	useMplex := flag.Bool("mplex", false, "use the mplex multiplexer")
 	useYamux := flag.Bool("yamux", false, "use the yamux multiplexer")
+	blockProfileRate := flag.Int("blockProfileRate", 0, "set the block profile rate for debugging purposes")
+	mutexProfileFraction := flag.Int("mutexProfileFraction", 0, "set the mutex profile fraction for debugging purposes")
 
 	flag.Parse()
 
@@ -270,6 +273,14 @@ func main() {
 
 	if *useYamux {
 		c.Mux.Yamux = true
+	}
+
+	if *blockProfileRate > 0 {
+		runtime.SetBlockProfileRate(*blockProfileRate)
+	}
+
+	if *mutexProfileFraction > 0 {
+		runtime.SetMutexProfileFraction(*mutexProfileFraction)
 	}
 
 	if err := c.Validate(); err != nil {
