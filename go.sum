@@ -216,6 +216,8 @@ github.com/libp2p/go-libp2p-peerstore v0.0.2 h1:Lirt3A1Oq11jszJ4SPNBo8chNv61UWXE
 github.com/libp2p/go-libp2p-peerstore v0.0.2/go.mod h1:RabLyPVJLuNQ+GFyoEkfi8H4Ti6k/HtZJ7YKgtSq+20=
 github.com/libp2p/go-libp2p-peerstore v0.0.5 h1:/qc3asc93924TaqVulOnY/+c4tpzomSE/ijT7LWF09M=
 github.com/libp2p/go-libp2p-peerstore v0.0.5/go.mod h1:RabLyPVJLuNQ+GFyoEkfi8H4Ti6k/HtZJ7YKgtSq+20=
+github.com/libp2p/go-libp2p-peerstore v0.0.6-0.20190509091403-ea23986270ad h1:MOgsgHhh1tnMIaFE6eXNIqOywFndW9cmdKKXh9nhcdI=
+github.com/libp2p/go-libp2p-peerstore v0.0.6-0.20190509091403-ea23986270ad/go.mod h1:RabLyPVJLuNQ+GFyoEkfi8H4Ti6k/HtZJ7YKgtSq+20=
 github.com/libp2p/go-libp2p-protocol v0.0.1 h1:+zkEmZ2yFDi5adpVE3t9dqh/N9TbpFWywowzeEzBbLM=
 github.com/libp2p/go-libp2p-protocol v0.0.1/go.mod h1:Af9n4PiruirSDjHycM1QuiMi/1VZNHYcK8cLgFJLZ4s=
 github.com/libp2p/go-libp2p-pubsub v0.0.2 h1:oEXd4EF8HJYAsjEpDy2emZVAnmG3/RRIjKxZgWkkJus=
