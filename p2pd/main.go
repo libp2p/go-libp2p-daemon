@@ -65,8 +65,6 @@ func pprofHTTP(port int) {
 
 func init() {
 	inet.EOFTimeout = 10 * time.Second
-	// XXX temporary hack for testing, it should be an option
-	relay.HopStreamBufferSize = 8192
 }
 
 func main() {
