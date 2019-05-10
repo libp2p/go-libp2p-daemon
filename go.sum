@@ -236,6 +236,8 @@ github.com/libp2p/go-libp2p-secio v0.0.1 h1:CqE/RdsizOwItdgLe632iyft/w0tshDLmZGA
 github.com/libp2p/go-libp2p-secio v0.0.1/go.mod h1:IdG6iQybdcYmbTzxp4J5dwtUEDTOvZrT0opIDVNPrJs=
 github.com/libp2p/go-libp2p-secio v0.0.3 h1:h3fPeDrej7bvvARnC2oSjAfcLZOaS4REZKgWCRQNpE4=
 github.com/libp2p/go-libp2p-secio v0.0.3/go.mod h1:hS7HQ00MgLhRO/Wyu1bTX6ctJKhVpm+j2/S2A5UqYb0=
+github.com/libp2p/go-libp2p-secio v0.0.4-0.20190510133500-28676dc9efe0 h1:Nvg/AHf2YqqEkpWryHXmblDee3ZZGWh+VUnIT0WHKm4=
+github.com/libp2p/go-libp2p-secio v0.0.4-0.20190510133500-28676dc9efe0/go.mod h1:hS7HQ00MgLhRO/Wyu1bTX6ctJKhVpm+j2/S2A5UqYb0=
 github.com/libp2p/go-libp2p-swarm v0.0.1 h1:Vne+hjaDwXqzgNwQ2vb2YKbnbOTyXjtS47stT66Apc4=
 github.com/libp2p/go-libp2p-swarm v0.0.1/go.mod h1:mh+KZxkbd3lQnveQ3j2q60BM1Cw2mX36XXQqwfPOShs=
 github.com/libp2p/go-libp2p-swarm v0.0.2 h1:cpHHXTeU2IgUu8LPemF7vaLPGtVC6VxMoll2EwqlC+E=
