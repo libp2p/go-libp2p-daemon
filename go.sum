@@ -269,6 +269,8 @@ github.com/libp2p/go-stream-muxer v0.0.1/go.mod h1:bAo8x7YkSpadMTbtTaxGVHWUQsR/l
 github.com/libp2p/go-tcp-transport v0.0.1/go.mod h1:mnjg0o0O5TmXUaUIanYPUqkW4+u6mK0en8rlpA6BBTs=
 github.com/libp2p/go-tcp-transport v0.0.2 h1:EzOSRaHpyrGpJ5qe+9SaxJM1mrWlkSLFfNTufUkq0lg=
 github.com/libp2p/go-tcp-transport v0.0.2/go.mod h1:VjZFHasNJ0QiJQNNwiFDy25qyGWTXQWs8GM5DR4/L1k=
+github.com/libp2p/go-tcp-transport v0.0.3-0.20190510142431-54f5c3f95403 h1:5oCHMJx82h2CCjUoNUgJcIRASxaMMbmfnpN6y5sslgU=
+github.com/libp2p/go-tcp-transport v0.0.3-0.20190510142431-54f5c3f95403/go.mod h1:VjZFHasNJ0QiJQNNwiFDy25qyGWTXQWs8GM5DR4/L1k=
 github.com/libp2p/go-testutil v0.0.1 h1:Xg+O0G2HIMfHqBOBDcMS1iSZJ3GEcId4qOxCQvsGZHk=
 github.com/libp2p/go-testutil v0.0.1/go.mod h1:iAcJc/DKJQanJ5ws2V+u5ywdL2n12X1WbbEG+Jjy69I=
 github.com/libp2p/go-ws-transport v0.0.1/go.mod h1:p3bKjDWHEgtuKKj+2OdPYs5dAPIjtpQGHF2tJfGz7Ww=
