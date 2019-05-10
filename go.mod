@@ -1,6 +1,7 @@
 module github.com/libp2p/go-libp2p-daemon
 
 require (
+	github.com/Stebalien/go-dbuf v0.0.0-20190510212609-2f5ad118afa8
 	github.com/gogo/protobuf v1.2.1
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/ipfs/go-cid v0.0.1
