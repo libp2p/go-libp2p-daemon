@@ -19,7 +19,6 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.0.2
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
-	github.com/libp2p/go-tcp-transport v0.0.3-0.20190510142431-54f5c3f95403 // indirect
 	github.com/multiformats/go-multiaddr v0.0.2
 	github.com/multiformats/go-multiaddr-net v0.0.1
 	github.com/multiformats/go-multihash v0.0.5
