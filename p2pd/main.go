@@ -368,7 +368,7 @@ func main() {
 	}
 
 	// start daemon
-	d, err := p2pd.NewDaemon(context.Background(), c.ListenAddr, c.DHT.Mode, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), c.ListenAddr.Multiaddr, c.DHT.Mode, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}
