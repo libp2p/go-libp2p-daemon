@@ -1,7 +1,6 @@
 module github.com/libp2p/go-libp2p-daemon
 
 require (
-	github.com/Stebalien/go-dbuf v0.0.0-20190510212609-2f5ad118afa8
 	github.com/gogo/protobuf v1.2.1
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/ipfs/go-cid v0.0.1
@@ -20,7 +19,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.0.2
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
-	github.com/libp2p/go-libp2p-transport-upgrader v0.0.3-0.20190510213954-a2073005fe2e // indirect
+	github.com/libp2p/go-mplex v0.0.3-0.20190511113537-95dcec5bdbf2 // indirect
 	github.com/multiformats/go-multiaddr v0.0.2
 	github.com/multiformats/go-multiaddr-net v0.0.1
 	github.com/multiformats/go-multihash v0.0.5
@@ -29,5 +28,3 @@ require (
 	github.com/whyrusleeping/go-smux-multiplex v3.0.16+incompatible
 	github.com/whyrusleeping/go-smux-yamux v2.0.9+incompatible
 )
-
-replace github.com/libp2p/go-mplex => github.com/vyzo/go-mplex v0.0.0-20190510193106-8a61583dbcc9
