@@ -28,8 +28,6 @@ import (
 	mplex "github.com/whyrusleeping/go-smux-multiplex"
 	yamux "github.com/whyrusleeping/go-smux-yamux"
 
-	dbuf "github.com/Stebalien/go-dbuf"
-
 	_ "net/http/pprof"
 )
 
@@ -67,9 +65,6 @@ func pprofHTTP(port int) {
 
 func init() {
 	inet.EOFTimeout = 10 * time.Second
-
-	dbuf.SmallWriteSleepTime = time.Millisecond
-	dbuf.SmallWriteTicks = 100
 }
 
 func main() {
