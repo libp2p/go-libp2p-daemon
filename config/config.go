@@ -154,7 +154,7 @@ func NewDefaultConfig() Config {
 			Enabled:       false,
 			LowWaterMark:  256,
 			HighWaterMark: 512,
-			GracePeriod:   120,
+			GracePeriod:   120 * time.Second,
 		},
 		QUIC:       false,
 		NatPortMap: false,
