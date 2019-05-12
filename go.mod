@@ -8,7 +8,7 @@ require (
 	github.com/libp2p/go-libp2p v0.0.24-0.20190509222156-aedbb9caa4dc
 	github.com/libp2p/go-libp2p-autonat-svc v0.0.5
 	github.com/libp2p/go-libp2p-circuit v0.0.6
-	github.com/libp2p/go-libp2p-connmgr v0.0.5-0.20190512110138-45668c3781d3
+	github.com/libp2p/go-libp2p-connmgr v0.0.5-0.20190512112410-8fd29201784f
 	github.com/libp2p/go-libp2p-crypto v0.0.2
 	github.com/libp2p/go-libp2p-host v0.0.3
 	github.com/libp2p/go-libp2p-kad-dht v0.0.10
