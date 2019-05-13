@@ -65,6 +65,7 @@ func pprofHTTP(port int) {
 
 func init() {
 	inet.EOFTimeout = 10 * time.Second
+	connmgr.SilencePeriod = 2 * time.Minute
 }
 
 func main() {
