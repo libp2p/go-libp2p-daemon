@@ -258,6 +258,8 @@ github.com/libp2p/go-mplex v0.0.3-0.20190511113537-95dcec5bdbf2 h1:O8qMfHvjMoAWu
 github.com/libp2p/go-mplex v0.0.3-0.20190511113537-95dcec5bdbf2/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
 github.com/libp2p/go-mplex v0.0.3-0.20190511124044-9c074ae16862 h1:bT4+E9Pj5NJJbr0onyZ1FbNZ6UpiD6Mzg823i76nNh0=
 github.com/libp2p/go-mplex v0.0.3-0.20190511124044-9c074ae16862/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
+github.com/libp2p/go-mplex v0.0.3-0.20190513084352-0ecbf5913abc h1:FzOWg8hdoY6XEJ4ipTXrfsNsjvUcuYgmZW/zhKvmmCw=
+github.com/libp2p/go-mplex v0.0.3-0.20190513084352-0ecbf5913abc/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
 github.com/libp2p/go-msgio v0.0.1 h1:znj97n5FtXGCLDwe9x8jpHmY770SW4WStBGcCDh6GJw=
 github.com/libp2p/go-msgio v0.0.1/go.mod h1:63lBBgOTDKQL6EWazRMCwXsEeEeK9O2Cd+0+6OOuipQ=
 github.com/libp2p/go-msgio v0.0.2 h1:ivPvEKHxmVkTClHzg6RXTYHqaJQ0V9cDbq+6lKb3UV0=
