@@ -27,6 +27,7 @@ import (
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 	mplex "github.com/whyrusleeping/go-smux-multiplex"
 	yamux "github.com/whyrusleeping/go-smux-yamux"
+	yyamux "github.com/whyrusleeping/yamux"
 
 	_ "net/http/pprof"
 )
@@ -66,6 +67,14 @@ func pprofHTTP(port int) {
 func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
+	yamux.DefaultTransport = (*yamux.Transport)(&yyamux.Config{
+		AcceptBacklog:          256,
+		EnableKeepAlive:        true,
+		KeepAliveInterval:      120 * time.Second, // was 30s
+		ConnectionWriteTimeout: 60 * time.Second,  // was 10s
+		MaxStreamWindowSize:    uint32(16 * 1024 * 1024),
+		LogOutput:              ioutil.Discard,
+	})
 }
 
 func main() {

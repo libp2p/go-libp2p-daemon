@@ -27,4 +27,5 @@ require (
 	github.com/stretchr/testify v1.3.0
 	github.com/whyrusleeping/go-smux-multiplex v3.0.16+incompatible
 	github.com/whyrusleeping/go-smux-yamux v2.0.9+incompatible
+	github.com/whyrusleeping/yamux v1.1.5
 )
