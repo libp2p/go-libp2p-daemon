@@ -28,6 +28,8 @@ import (
 	mplex "github.com/whyrusleeping/go-smux-multiplex"
 	yamux "github.com/whyrusleeping/go-smux-yamux"
 
+	transport "github.com/libp2p/go-libp2p-transport"
+
 	_ "net/http/pprof"
 )
 
@@ -66,6 +68,7 @@ func pprofHTTP(port int) {
 func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
+	transport.AcceptTimeout = 2 * time.Minute
 }
 
 func main() {
