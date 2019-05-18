@@ -69,6 +69,9 @@ func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
 	transport.AcceptTimeout = 3 * time.Minute
+	ycfg := yamux.DefaultTransport.Config()
+	ycfg.ReadBufSize = 4096
+	ycfg.ConnectionWriteTimeout = 30 * time.Second
 }
 
 func main() {
