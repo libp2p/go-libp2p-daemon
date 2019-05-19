@@ -20,6 +20,7 @@ require (
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
 	github.com/libp2p/go-libp2p-transport v0.0.4
+	github.com/libp2p/go-libp2p-transport-upgrader v0.0.3-0.20190519083746-906ff7bfaf99 // indirect
 	github.com/libp2p/go-mplex v0.0.3-0.20190511124044-9c074ae16862 // indirect
 	github.com/multiformats/go-multiaddr v0.0.2
 	github.com/multiformats/go-multiaddr-net v0.0.1
