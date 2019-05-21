@@ -23,6 +23,7 @@ import (
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	mpleximpl "github.com/libp2p/go-mplex"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 	mplex "github.com/whyrusleeping/go-smux-multiplex"
@@ -66,6 +67,7 @@ func pprofHTTP(port int) {
 func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
+	mpleximpl.WriteCoalesceDelay = 100 * time.Millisecond
 }
 
 func main() {
