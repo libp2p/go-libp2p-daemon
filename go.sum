@@ -251,8 +251,8 @@ github.com/libp2p/go-maddr-filter v0.0.1 h1:apvYTg0aIxxQyBX+XHKOR+0+lYhGs1Yv+JmT
 github.com/libp2p/go-maddr-filter v0.0.1/go.mod h1:6eT12kSQMA9x2pvFQa+xesMKUBlj9VImZbj3B9FBH/Q=
 github.com/libp2p/go-mplex v0.0.1/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
 github.com/libp2p/go-mplex v0.0.2/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
-github.com/libp2p/go-mplex v0.0.3-0.20190519180138-0465341eaa9a h1:SufzXfZIE8CTcYoVZ2RvnnfZeBent0QKSMKkWjrMKGc=
-github.com/libp2p/go-mplex v0.0.3-0.20190519180138-0465341eaa9a/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
+github.com/libp2p/go-mplex v0.0.3-0.20190521091136-6cf6509b9025 h1:hYpUJsUCj2J4XylYbAmCNBag341kw9nNxqFjSoFNsW8=
+github.com/libp2p/go-mplex v0.0.3-0.20190521091136-6cf6509b9025/go.mod h1:pK5yMLmOoBR1pNCqDlA2GQrdAVTMkqFalaTWe7l4Yd0=
 github.com/libp2p/go-msgio v0.0.1 h1:znj97n5FtXGCLDwe9x8jpHmY770SW4WStBGcCDh6GJw=
 github.com/libp2p/go-msgio v0.0.1/go.mod h1:63lBBgOTDKQL6EWazRMCwXsEeEeK9O2Cd+0+6OOuipQ=
 github.com/libp2p/go-msgio v0.0.2 h1:ivPvEKHxmVkTClHzg6RXTYHqaJQ0V9cDbq+6lKb3UV0=
