@@ -68,6 +68,7 @@ func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
 	mpleximpl.WriteCoalesceDelay = 100 * time.Millisecond
+	mpleximpl.ReceiveTimeout = 10 * time.Second
 }
 
 func main() {
