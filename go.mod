@@ -5,7 +5,7 @@ require (
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/ipfs/go-cid v0.0.1
 	github.com/ipfs/go-log v0.0.1
-	github.com/libp2p/go-libp2p v0.0.26-0.20190521111510-2cd90b84b315
+	github.com/libp2p/go-libp2p v0.0.26-0.20190521212009-946aa0e70d13
 	github.com/libp2p/go-libp2p-autonat-svc v0.0.5
 	github.com/libp2p/go-libp2p-circuit v0.0.6
 	github.com/libp2p/go-libp2p-connmgr v0.0.5
@@ -19,7 +19,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.0.2
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
-	github.com/libp2p/go-mplex v0.0.3-0.20190521091136-6cf6509b9025
+	github.com/libp2p/go-mplex v0.0.3
 	github.com/multiformats/go-multiaddr v0.0.2
 	github.com/multiformats/go-multiaddr-net v0.0.1
 	github.com/multiformats/go-multihash v0.0.5
