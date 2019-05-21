@@ -5,10 +5,10 @@ require (
 	github.com/hashicorp/go-multierror v1.0.0
 	github.com/ipfs/go-cid v0.0.1
 	github.com/ipfs/go-log v0.0.1
-	github.com/libp2p/go-libp2p v0.0.25-0.20190517191707-61de4e80fed4
+	github.com/libp2p/go-libp2p v0.0.26-0.20190521111510-2cd90b84b315
 	github.com/libp2p/go-libp2p-autonat-svc v0.0.5
 	github.com/libp2p/go-libp2p-circuit v0.0.6
-	github.com/libp2p/go-libp2p-connmgr v0.0.5-0.20190517204727-dc9966467fce
+	github.com/libp2p/go-libp2p-connmgr v0.0.5
 	github.com/libp2p/go-libp2p-crypto v0.0.2
 	github.com/libp2p/go-libp2p-host v0.0.3
 	github.com/libp2p/go-libp2p-kad-dht v0.0.10
