@@ -67,7 +67,7 @@ func pprofHTTP(port int) {
 func init() {
 	inet.EOFTimeout = 10 * time.Second
 	connmgr.SilencePeriod = 2 * time.Minute
-	mpleximpl.WriteCoalesceDelay = 100 * time.Millisecond
+	mpleximpl.WriteCoalesceDelay = 10 * time.Millisecond
 	mpleximpl.ReceiveTimeout = 10 * time.Second
 }
 
