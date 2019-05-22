@@ -12,6 +12,7 @@ require (
 	github.com/libp2p/go-libp2p-crypto v0.0.2
 	github.com/libp2p/go-libp2p-host v0.0.3
 	github.com/libp2p/go-libp2p-kad-dht v0.0.13
+	github.com/libp2p/go-libp2p-mplex v0.1.1
 	github.com/libp2p/go-libp2p-net v0.0.2
 	github.com/libp2p/go-libp2p-peer v0.1.1
 	github.com/libp2p/go-libp2p-peerstore v0.0.6
@@ -19,13 +20,11 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.0.2
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
+	github.com/libp2p/go-libp2p-yamux v0.1.2
 	github.com/libp2p/go-mplex v0.0.3
 	github.com/multiformats/go-multiaddr v0.0.4
 	github.com/multiformats/go-multiaddr-net v0.0.1
 	github.com/multiformats/go-multihash v0.0.5
 	github.com/prometheus/client_golang v0.9.3-0.20190127221311-3c4408c8b829
 	github.com/stretchr/testify v1.3.0
-	github.com/whyrusleeping/go-smux-multiplex v3.0.16+incompatible
-	github.com/whyrusleeping/go-smux-yamux v2.0.9+incompatible
-	github.com/whyrusleeping/yamux v1.2.0 // indirect
 )

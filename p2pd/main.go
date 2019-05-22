@@ -19,15 +19,15 @@ import (
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
+	mplex "github.com/libp2p/go-libp2p-mplex"
 	inet "github.com/libp2p/go-libp2p-net"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
+	yamux "github.com/libp2p/go-libp2p-yamux"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	mpleximpl "github.com/libp2p/go-mplex"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
-	mplex "github.com/whyrusleeping/go-smux-multiplex"
-	yamux "github.com/whyrusleeping/go-smux-yamux"
 
 	_ "net/http/pprof"
 )
