@@ -21,7 +21,7 @@ require (
 	github.com/libp2p/go-libp2p-quic-transport v0.0.3
 	github.com/libp2p/go-libp2p-routing v0.0.1
 	github.com/libp2p/go-libp2p-yamux v0.1.2
-	github.com/libp2p/go-mplex v0.0.4-0.20190522223356-c24659c57a70
+	github.com/libp2p/go-mplex v0.0.4-0.20190523101503-88e4b22ff253
 	github.com/multiformats/go-multiaddr v0.0.4
 	github.com/multiformats/go-multiaddr-net v0.0.1
 	github.com/multiformats/go-multihash v0.0.5
