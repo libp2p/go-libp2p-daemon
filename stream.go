@@ -5,12 +5,13 @@ import (
 	"net"
 	"sync"
 
+	"github.com/libp2p/go-libp2p-core/network"
+
 	ggio "github.com/gogo/protobuf/io"
-	inet "github.com/libp2p/go-libp2p-net"
 	manet "github.com/multiformats/go-multiaddr-net"
 )
 
-func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
+func (d *Daemon) doStreamPipe(c net.Conn, s network.Stream) {
 	var wg sync.WaitGroup
 	wg.Add(2)
 
@@ -30,7 +31,7 @@ func (d *Daemon) doStreamPipe(c net.Conn, s inet.Stream) {
 	wg.Wait()
 }
 
-func (d *Daemon) handleStream(s inet.Stream) {
+func (d *Daemon) handleStream(s network.Stream) {
 	p := s.Protocol()
 
 	d.mx.Lock()

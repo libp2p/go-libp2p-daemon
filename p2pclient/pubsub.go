@@ -4,9 +4,10 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/libp2p/go-libp2p-core/peer"
+
 	ggio "github.com/gogo/protobuf/io"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	peer "github.com/libp2p/go-libp2p-peer"
 )
 
 func newPubsubReq(req *pb.PSRequest) *pb.Request {

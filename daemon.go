@@ -3,21 +3,24 @@ package p2pd
 import (
 	"context"
 	"fmt"
-	"github.com/hashicorp/go-multierror"
-	"github.com/libp2p/go-libp2p-daemon/config"
+
 	"os"
 	"sync"
 
+	"github.com/libp2p/go-libp2p-daemon/config"
+
+	"github.com/libp2p/go-libp2p"
+	"github.com/libp2p/go-libp2p-core/host"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/protocol"
+	"github.com/libp2p/go-libp2p-core/routing"
+
+	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
-	libp2p "github.com/libp2p/go-libp2p"
 	autonat "github.com/libp2p/go-libp2p-autonat-svc"
-	host "github.com/libp2p/go-libp2p-host"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
-	peer "github.com/libp2p/go-libp2p-peer"
-	proto "github.com/libp2p/go-libp2p-protocol"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	routing "github.com/libp2p/go-libp2p-routing"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr-net"
 )
@@ -35,7 +38,7 @@ type Daemon struct {
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
-	handlers map[proto.ID]ma.Multiaddr
+	handlers map[protocol.ID]ma.Multiaddr
 	// closed is set when the daemon is shutting down
 	closed bool
 }
@@ -43,7 +46,7 @@ type Daemon struct {
 func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...libp2p.Option) (*Daemon, error) {
 	d := &Daemon{
 		ctx:      ctx,
-		handlers: make(map[proto.ID]ma.Multiaddr),
+		handlers: make(map[protocol.ID]ma.Multiaddr),
 	}
 
 	if dhtMode != "" {
