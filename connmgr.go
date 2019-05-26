@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	"github.com/libp2p/go-libp2p-core/peer"
 
-	peer "github.com/libp2p/go-libp2p-peer"
+	pb "github.com/libp2p/go-libp2p-daemon/pb"
 )
 
 func (d *Daemon) doConnManager(req *pb.Request) *pb.Response {

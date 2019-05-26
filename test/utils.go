@@ -11,15 +11,16 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/test"
+
 	"github.com/stretchr/testify/require"
 
 	cid "github.com/ipfs/go-cid"
-	crypto "github.com/libp2p/go-libp2p-crypto"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
-	peer "github.com/libp2p/go-libp2p-peer"
-	peertest "github.com/libp2p/go-libp2p-peer/test"
 	ma "github.com/multiformats/go-multiaddr"
 	mh "github.com/multiformats/go-multihash"
 )
@@ -113,7 +114,7 @@ func createMockDaemonClientPair(t *testing.T) (*mockDaemon, *p2pclient.Client, f
 }
 
 func randPeerID(t *testing.T) peer.ID {
-	id, err := peertest.RandPeerID()
+	id, err := test.RandPeerID()
 	if err != nil {
 		t.Fatalf("peer id: %s", err)
 	}

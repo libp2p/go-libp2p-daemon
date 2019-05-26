@@ -6,8 +6,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/libp2p/go-libp2p-core/network"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
-	inet "github.com/libp2p/go-libp2p-net"
 	pstore "github.com/libp2p/go-libp2p-peerstore"
 )
 
@@ -67,7 +67,7 @@ func (d *Daemon) connectBootstrapPeers(pis []*pstore.PeerInfo, toconnect int) in
 	defer cancel()
 
 	for _, pi := range pis {
-		if d.host.Network().Connectedness(pi.ID) == inet.Connected {
+		if d.host.Network().Connectedness(pi.ID) == network.Connected {
 			continue
 		}
 		err := d.host.Connect(ctx, *pi)

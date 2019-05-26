@@ -6,13 +6,13 @@ import (
 	"net"
 	"time"
 
+	"github.com/libp2p/go-libp2p-core/network"
+	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p-core/protocol"
+
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
 	ggio "github.com/gogo/protobuf/io"
-	inet "github.com/libp2p/go-libp2p-net"
-	peer "github.com/libp2p/go-libp2p-peer"
-	pstore "github.com/libp2p/go-libp2p-peerstore"
-	proto "github.com/libp2p/go-libp2p-protocol"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -21,7 +21,7 @@ const DefaultTimeout = 60 * time.Second
 func (d *Daemon) handleConn(c net.Conn) {
 	defer c.Close()
 
-	r := ggio.NewDelimitedReader(c, inet.MessageSizeMax)
+	r := ggio.NewDelimitedReader(c, network.MessageSizeMax)
 	w := ggio.NewDelimitedWriter(c)
 
 	for {
@@ -191,7 +191,7 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 		addrs[x] = addr
 	}
 
-	pi := pstore.PeerInfo{ID: pid, Addrs: addrs}
+	pi := peer.AddrInfo{ID: pid, Addrs: addrs}
 
 	log.Debugf("connecting to %s", pid.Pretty())
 	err = d.host.Connect(ctx, pi)
@@ -221,7 +221,7 @@ func (d *Daemon) doDisconnect(req *pb.Request) *pb.Response {
 	return okResponse()
 }
 
-func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
+func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, network.Stream) {
 	if req.StreamOpen == nil {
 		return errorResponseString("Malformed request; missing parameters"), nil
 	}
@@ -235,9 +235,9 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, inet.Stream) {
 		return errorResponse(err), nil
 	}
 
-	protos := make([]proto.ID, len(req.StreamOpen.Proto))
+	protos := make([]protocol.ID, len(req.StreamOpen.Proto))
 	for x, str := range req.StreamOpen.Proto {
-		protos[x] = proto.ID(str)
+		protos[x] = protocol.ID(str)
 	}
 
 	log.Debugf("opening stream to %s", pid.Pretty())
@@ -265,7 +265,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		return errorResponse(err)
 	}
 	for _, sp := range req.StreamHandler.Proto {
-		p := proto.ID(sp)
+		p := protocol.ID(sp)
 		_, ok := d.handlers[p]
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
@@ -322,7 +322,7 @@ func errorResponseString(err string) *pb.Response {
 	}
 }
 
-func makeStreamInfo(s inet.Stream) *pb.StreamInfo {
+func makeStreamInfo(s network.Stream) *pb.StreamInfo {
 	proto := string(s.Protocol())
 	return &pb.StreamInfo{
 		Peer:  []byte(s.Conn().RemotePeer()),

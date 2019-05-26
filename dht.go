@@ -5,11 +5,11 @@ import (
 
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
+	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/libp2p/go-libp2p-core/peer"
+
 	cid "github.com/ipfs/go-cid"
-	crypto "github.com/libp2p/go-libp2p-crypto"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
-	peer "github.com/libp2p/go-libp2p-peer"
-	pstore "github.com/libp2p/go-libp2p-peerstore"
 )
 
 func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, func()) {
@@ -305,7 +305,7 @@ func dhtResponseEnd() *pb.DHTResponse {
 	}
 }
 
-func dhtResponsePeerInfo(pi pstore.PeerInfo) *pb.DHTResponse {
+func dhtResponsePeerInfo(pi peer.AddrInfo) *pb.DHTResponse {
 	return &pb.DHTResponse{
 		Type: pb.DHTResponse_VALUE.Enum(),
 		Peer: peerInfo2pb(pi),
@@ -337,7 +337,7 @@ func dhtOkResponse(r *pb.DHTResponse) *pb.Response {
 	return res
 }
 
-func peerInfo2pb(pi pstore.PeerInfo) *pb.PeerInfo {
+func peerInfo2pb(pi peer.AddrInfo) *pb.PeerInfo {
 	addrs := make([][]byte, len(pi.Addrs))
 	for x, addr := range pi.Addrs {
 		addrs[x] = addr.Bytes()
