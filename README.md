@@ -45,6 +45,7 @@ The following bindings exist so far (if you want yours added, please send a PR):
 - Python: [py-libp2p-daemon-bindings](https://github.com/mhchia/py-libp2p-daemon-bindings).
 - Gerbil: [gerbil-libp2p](https://github.com/vyzo/gerbil-libp2p).
 - Nim: [nim-libp2p](https://github.com/status-im/nim-libp2p)
+- Elixir: [elixir-libp2p](https://github.com/timjp87/elixir-libp2p)
 
 If you wish to implement bindings in a new language, refer to the [spec](specs/README.md) for the daemon control protocol and API.
 
