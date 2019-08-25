@@ -13,16 +13,16 @@ import (
 	"strings"
 
 	"github.com/libp2p/go-libp2p"
-
 	relay "github.com/libp2p/go-libp2p-circuit"
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
+	"github.com/libp2p/go-libp2p-core/peer"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
-	config "github.com/libp2p/go-libp2p-daemon/config"
+	"github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
-	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
-	multiaddr "github.com/multiformats/go-multiaddr"
-	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/multiformats/go-multiaddr"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 
 	_ "net/http/pprof"
 )
@@ -97,8 +97,13 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
+	noInlinePeerID := flag.Bool("noInlinePeerID", false, "Disables inlining of peer ID")
 
 	flag.Parse()
+
+	if *noInlinePeerID {
+		peer.AdvancedEnableInlining = false
+	}
 
 	var c config.Config
 	var opts []libp2p.Option
