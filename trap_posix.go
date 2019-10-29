@@ -22,7 +22,7 @@ func (d *Daemon) trapSignals() {
 				d.Close()
 				os.Exit(0x80 + int(s.(syscall.Signal)))
 			default:
-				log.Warningf("uncaught signal %d", s)
+				log.Warnf("uncaught signal %d", s)
 			}
 		case <-d.ctx.Done():
 			return

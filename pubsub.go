@@ -89,14 +89,14 @@ func (d *Daemon) doPubsubPipe(sub *ps.Subscription, r ggio.ReadCloser, w ggio.Wr
 				return
 			}
 
-			log.Warningf("unexpected message (%s)", req.GetType().String())
+			log.Warnf("unexpected message (%s)", req.GetType().String())
 		}
 	}()
 
 	for {
 		msg, err := sub.Next(d.ctx)
 		if err != nil {
-			log.Warningf("subscription error: %s", err.Error())
+			log.Warnf("subscription error: %s", err.Error())
 			// goroutine will cancel the subscription once the connection is closed on return
 			return
 		}
@@ -104,7 +104,7 @@ func (d *Daemon) doPubsubPipe(sub *ps.Subscription, r ggio.ReadCloser, w ggio.Wr
 		psmsg := psMessage(msg)
 		err = w.WriteMsg(psmsg)
 		if err != nil {
-			log.Warningf("error writing pubsub message: %s", err.Error())
+			log.Warnf("error writing pubsub message: %s", err.Error())
 			// goroutine will cancel the subscription once the connection is closed on return
 			return
 		}
