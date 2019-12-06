@@ -17,7 +17,7 @@ require (
 	github.com/libp2p/go-libp2p-pubsub v0.1.1
 	github.com/libp2p/go-libp2p-quic-transport v0.1.1
 	github.com/multiformats/go-multiaddr v0.1.1
-	github.com/multiformats/go-multiaddr-net v0.1.0
+	github.com/multiformats/go-multiaddr-net v0.1.1
 	github.com/multiformats/go-multihash v0.0.8
 	github.com/prometheus/client_golang v1.1.0
 	github.com/stretchr/testify v1.4.0
