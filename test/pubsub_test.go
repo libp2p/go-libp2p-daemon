@@ -10,15 +10,12 @@ func TestPubsubGetTopicsAndSubscribe(t *testing.T) {
 	_, client, closer := createDaemonClientPair(t)
 	defer closer()
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	done := make(chan struct{})
-	go func() {
-		_, err := client.Subscribe(ctx, "test")
-		if err != nil {
-			t.Fatal(err)
-		}
-		done <- struct{}{}
-	}()
-	<-done
+
+	_, err := client.Subscribe(ctx, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
+
 	topics, err := client.GetTopics()
 	if err != nil {
 		t.Fatal(err)
@@ -47,35 +44,30 @@ func TestPubsubMessages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	progress := make(chan struct{})
-	done := make(chan struct{})
-	go func() {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		msgs, err := receiver.Subscribe(ctx, "test")
-		if err != nil {
-			t.Fatal(err)
-		}
-		progress <- struct{}{}
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
 
-		select {
-		case msg := <-msgs:
-			msgstr := string(msg.Data)
-			if msgstr != "foobar" {
-				t.Fatalf("expected \"foobar\", got %s", msgstr)
-			}
-			done <- struct{}{}
-		case <-time.After(5 * time.Second):
-			t.Fatal("timed out waiting for message")
-		}
-	}()
+	msgs, err := receiver.Subscribe(ctx, "test")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	go func() {
-		<-progress
 		if err := sender.Publish("test", []byte("foobar")); err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 	}()
 
-	<-done
+	select {
+	case msg, ok := <-msgs:
+		if !ok {
+			t.Fatal("expected a message but was unsubscribed first")
+		}
+		msgstr := string(msg.Data)
+		if msgstr != "foobar" {
+			t.Fatalf("expected \"foobar\", got %s", msgstr)
+		}
+	case <-ctx.Done():
+		t.Fatal("timed out waiting for message")
+	}
 }

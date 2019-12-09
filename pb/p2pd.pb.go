@@ -9,6 +9,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_bits "math/bits"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -20,7 +21,7 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion2 // please upgrade the proto package
+const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type Request_Type int32
 
@@ -344,7 +345,7 @@ func (m *Request) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Request.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -446,7 +447,7 @@ func (m *Response) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_Response.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -536,7 +537,7 @@ func (m *IdentifyResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, er
 		return xxx_messageInfo_IdentifyResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -592,7 +593,7 @@ func (m *ConnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, erro
 		return xxx_messageInfo_ConnectRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -655,7 +656,7 @@ func (m *StreamOpenRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_StreamOpenRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -717,7 +718,7 @@ func (m *StreamHandlerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte
 		return xxx_messageInfo_StreamHandlerRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -771,7 +772,7 @@ func (m *ErrorResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error
 		return xxx_messageInfo_ErrorResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -820,7 +821,7 @@ func (m *StreamInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_StreamInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -887,7 +888,7 @@ func (m *DHTRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_DHTRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -978,7 +979,7 @@ func (m *DHTResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 		return xxx_messageInfo_DHTResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1040,7 +1041,7 @@ func (m *PeerInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PeerInfo.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1097,7 +1098,7 @@ func (m *ConnManagerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, 
 		return xxx_messageInfo_ConnManagerRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1165,7 +1166,7 @@ func (m *DisconnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, e
 		return xxx_messageInfo_DisconnectRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1214,7 +1215,7 @@ func (m *PSRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSRequest.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1280,7 +1281,7 @@ func (m *PSMessage) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSMessage.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1363,7 +1364,7 @@ func (m *PSResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 		return xxx_messageInfo_PSResponse.Marshal(b, m, deterministic)
 	} else {
 		b = b[:cap(b)]
-		n, err := m.MarshalTo(b)
+		n, err := m.MarshalToSizedBuffer(b)
 		if err != nil {
 			return nil, err
 		}
@@ -1501,7 +1502,7 @@ var fileDescriptor_7333f0e9b622f7df = []byte{
 func (m *Request) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1509,97 +1510,117 @@ func (m *Request) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Request) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Request) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Pubsub != nil {
+		{
+			size, err := m.Pubsub.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.Disconnect != nil {
+		{
+			size, err := m.Disconnect.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x3a
+	}
+	if m.ConnManager != nil {
+		{
+			size, err := m.ConnManager.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.Dht != nil {
+		{
+			size, err := m.Dht.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.StreamHandler != nil {
+		{
+			size, err := m.StreamHandler.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.StreamOpen != nil {
+		{
+			size, err := m.StreamOpen.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Connect != nil {
+		{
+			size, err := m.Connect.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	if m.Connect != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Connect.Size()))
-		n1, err := m.Connect.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n1
-	}
-	if m.StreamOpen != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamOpen.Size()))
-		n2, err := m.StreamOpen.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n2
-	}
-	if m.StreamHandler != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamHandler.Size()))
-		n3, err := m.StreamHandler.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n3
-	}
-	if m.Dht != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
-		n4, err := m.Dht.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n4
-	}
-	if m.ConnManager != nil {
-		dAtA[i] = 0x32
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.ConnManager.Size()))
-		n5, err := m.ConnManager.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n5
-	}
-	if m.Disconnect != nil {
-		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Disconnect.Size()))
-		n6, err := m.Disconnect.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n6
-	}
-	if m.Pubsub != nil {
-		dAtA[i] = 0x42
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Pubsub.Size()))
-		n7, err := m.Pubsub.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n7
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *Response) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1607,89 +1628,107 @@ func (m *Response) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *Response) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *Response) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
-	} else {
-		dAtA[i] = 0x8
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
-	if m.Error != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Error.Size()))
-		n8, err := m.Error.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n8
-	}
-	if m.StreamInfo != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.StreamInfo.Size()))
-		n9, err := m.StreamInfo.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n9
-	}
-	if m.Identify != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Identify.Size()))
-		n10, err := m.Identify.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n10
-	}
-	if m.Dht != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Dht.Size()))
-		n11, err := m.Dht.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n11
-	}
-	if len(m.Peers) > 0 {
-		for _, msg := range m.Peers {
-			dAtA[i] = 0x32
-			i++
-			i = encodeVarintP2Pd(dAtA, i, uint64(msg.Size()))
-			n, err := msg.MarshalTo(dAtA[i:])
+	if m.Pubsub != nil {
+		{
+			size, err := m.Pubsub.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
-			i += n
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
 		}
-	}
-	if m.Pubsub != nil {
+		i--
 		dAtA[i] = 0x3a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Pubsub.Size()))
-		n12, err := m.Pubsub.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
+	}
+	if len(m.Peers) > 0 {
+		for iNdEx := len(m.Peers) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Peers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintP2Pd(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0x32
 		}
-		i += n12
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
+	if m.Dht != nil {
+		{
+			size, err := m.Dht.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	if m.Identify != nil {
+		{
+			size, err := m.Identify.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.StreamInfo != nil {
+		{
+			size, err := m.StreamInfo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Error != nil {
+		{
+			size, err := m.Error.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Type == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+	} else {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *IdentifyResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1697,36 +1736,44 @@ func (m *IdentifyResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *IdentifyResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *IdentifyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Addrs) > 0 {
+		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Addrs[iNdEx])
+			copy(dAtA[i:], m.Addrs[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	if m.Id == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.Addrs) > 0 {
-		for _, b := range m.Addrs {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ConnectRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1734,41 +1781,49 @@ func (m *ConnectRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ConnectRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ConnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timeout != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Addrs) > 0 {
+		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Addrs[iNdEx])
+			copy(dAtA[i:], m.Addrs[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.Addrs) > 0 {
-		for _, b := range m.Addrs {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
-		}
-	}
-	if m.Timeout != nil {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *StreamOpenRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1776,48 +1831,49 @@ func (m *StreamOpenRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamOpenRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StreamOpenRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timeout != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+		i--
+		dAtA[i] = 0x18
+	}
+	if len(m.Proto) > 0 {
+		for iNdEx := len(m.Proto) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Proto[iNdEx])
+			copy(dAtA[i:], m.Proto[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Proto[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.Proto) > 0 {
-		for _, s := range m.Proto {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if m.Timeout != nil {
-		dAtA[i] = 0x18
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *StreamHandlerRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1825,43 +1881,44 @@ func (m *StreamHandlerRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamHandlerRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StreamHandlerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Proto) > 0 {
+		for iNdEx := len(m.Proto) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Proto[iNdEx])
+			copy(dAtA[i:], m.Proto[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Proto[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	if m.Addr == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Addr)
+		copy(dAtA[i:], m.Addr)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
-		i += copy(dAtA[i:], m.Addr)
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.Proto) > 0 {
-		for _, s := range m.Proto {
-			dAtA[i] = 0x12
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ErrorResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1869,28 +1926,35 @@ func (m *ErrorResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ErrorResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ErrorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.Msg == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("msg")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(*m.Msg)
+		copy(dAtA[i:], *m.Msg)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Msg)))
-		i += copy(dAtA[i:], *m.Msg)
+		i--
+		dAtA[i] = 0xa
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *StreamInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1898,44 +1962,53 @@ func (m *StreamInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *StreamInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *StreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
-	} else {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
-	}
-	if m.Addr == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
-	} else {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
-		i += copy(dAtA[i:], m.Addr)
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if m.Proto == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
 	} else {
-		dAtA[i] = 0x1a
-		i++
+		i -= len(*m.Proto)
+		copy(dAtA[i:], *m.Proto)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
-		i += copy(dAtA[i:], *m.Proto)
+		i--
+		dAtA[i] = 0x1a
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
+	if m.Addr == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+	} else {
+		i -= len(m.Addr)
+		copy(dAtA[i:], m.Addr)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addr)))
+		i--
+		dAtA[i] = 0x12
 	}
-	return i, nil
+	if m.Peer == nil {
+		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+	} else {
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *DHTRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -1943,61 +2016,71 @@ func (m *DHTRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DHTRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DHTRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timeout != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.Count != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Count))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.Value != nil {
+		i -= len(m.Value)
+		copy(dAtA[i:], m.Value)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Key != nil {
+		i -= len(m.Key)
+		copy(dAtA[i:], m.Key)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Cid != nil {
+		i -= len(m.Cid)
+		copy(dAtA[i:], m.Cid)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Cid)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Peer != nil {
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	if m.Peer != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
-	}
-	if m.Cid != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Cid)))
-		i += copy(dAtA[i:], m.Cid)
-	}
-	if m.Key != nil {
-		dAtA[i] = 0x22
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
-		i += copy(dAtA[i:], m.Key)
-	}
-	if m.Value != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
-		i += copy(dAtA[i:], m.Value)
-	}
-	if m.Count != nil {
-		dAtA[i] = 0x30
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Count))
-	}
-	if m.Timeout != nil {
-		dAtA[i] = 0x38
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DHTResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2005,43 +2088,52 @@ func (m *DHTResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DHTResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DHTResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Value != nil {
+		i -= len(m.Value)
+		copy(dAtA[i:], m.Value)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Peer != nil {
+		{
+			size, err := m.Peer.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	if m.Peer != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(m.Peer.Size()))
-		n13, err := m.Peer.MarshalTo(dAtA[i:])
-		if err != nil {
-			return 0, err
-		}
-		i += n13
-	}
-	if m.Value != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Value)))
-		i += copy(dAtA[i:], m.Value)
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PeerInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2049,36 +2141,44 @@ func (m *PeerInfo) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PeerInfo) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PeerInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if len(m.Addrs) > 0 {
+		for iNdEx := len(m.Addrs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Addrs[iNdEx])
+			copy(dAtA[i:], m.Addrs[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Addrs[iNdEx])))
+			i--
+			dAtA[i] = 0x12
+		}
+	}
 	if m.Id == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Id)
+		copy(dAtA[i:], m.Id)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Id)))
-		i += copy(dAtA[i:], m.Id)
+		i--
+		dAtA[i] = 0xa
 	}
-	if len(m.Addrs) > 0 {
-		for _, b := range m.Addrs {
-			dAtA[i] = 0x12
-			i++
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
-		}
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *ConnManagerRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2086,44 +2186,52 @@ func (m *ConnManagerRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *ConnManagerRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ConnManagerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Weight != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Weight))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.Tag != nil {
+		i -= len(*m.Tag)
+		copy(dAtA[i:], *m.Tag)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Tag)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Peer != nil {
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	if m.Peer != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
-	}
-	if m.Tag != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Tag)))
-		i += copy(dAtA[i:], *m.Tag)
-	}
-	if m.Weight != nil {
-		dAtA[i] = 0x20
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Weight))
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *DisconnectRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2131,28 +2239,35 @@ func (m *DisconnectRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *DisconnectRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *DisconnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
 	if m.Peer == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
 	} else {
-		dAtA[i] = 0xa
-		i++
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
-		i += copy(dAtA[i:], m.Peer)
+		i--
+		dAtA[i] = 0xa
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PSRequest) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2160,39 +2275,47 @@ func (m *PSRequest) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSRequest) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PSRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Data != nil {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Topic != nil {
+		i -= len(*m.Topic)
+		copy(dAtA[i:], *m.Topic)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Topic)))
+		i--
+		dAtA[i] = 0x12
+	}
 	if m.Type == nil {
 		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
 	} else {
-		dAtA[i] = 0x8
-		i++
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
+		i--
+		dAtA[i] = 0x8
 	}
-	if m.Topic != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Topic)))
-		i += copy(dAtA[i:], *m.Topic)
-	}
-	if m.Data != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
-		i += copy(dAtA[i:], m.Data)
-	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
-	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func (m *PSMessage) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2200,65 +2323,70 @@ func (m *PSMessage) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSMessage) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PSMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if m.From != nil {
-		dAtA[i] = 0xa
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.From)))
-		i += copy(dAtA[i:], m.From)
-	}
-	if m.Data != nil {
-		dAtA[i] = 0x12
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
-		i += copy(dAtA[i:], m.Data)
-	}
-	if m.Seqno != nil {
-		dAtA[i] = 0x1a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Seqno)))
-		i += copy(dAtA[i:], m.Seqno)
-	}
-	if len(m.TopicIDs) > 0 {
-		for _, s := range m.TopicIDs {
-			dAtA[i] = 0x22
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
-	}
-	if m.Signature != nil {
-		dAtA[i] = 0x2a
-		i++
-		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Signature)))
-		i += copy(dAtA[i:], m.Signature)
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if m.Key != nil {
-		dAtA[i] = 0x32
-		i++
+		i -= len(m.Key)
+		copy(dAtA[i:], m.Key)
 		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Key)))
-		i += copy(dAtA[i:], m.Key)
+		i--
+		dAtA[i] = 0x32
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
+	if m.Signature != nil {
+		i -= len(m.Signature)
+		copy(dAtA[i:], m.Signature)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Signature)))
+		i--
+		dAtA[i] = 0x2a
 	}
-	return i, nil
+	if len(m.TopicIDs) > 0 {
+		for iNdEx := len(m.TopicIDs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.TopicIDs[iNdEx])
+			copy(dAtA[i:], m.TopicIDs[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.TopicIDs[iNdEx])))
+			i--
+			dAtA[i] = 0x22
+		}
+	}
+	if m.Seqno != nil {
+		i -= len(m.Seqno)
+		copy(dAtA[i:], m.Seqno)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Seqno)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Data != nil {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.From != nil {
+		i -= len(m.From)
+		copy(dAtA[i:], m.From)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.From)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
 }
 
 func (m *PSResponse) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
-	n, err := m.MarshalTo(dAtA)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
 	if err != nil {
 		return nil, err
 	}
@@ -2266,47 +2394,50 @@ func (m *PSResponse) Marshal() (dAtA []byte, err error) {
 }
 
 func (m *PSResponse) MarshalTo(dAtA []byte) (int, error) {
-	var i int
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PSResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.Topics) > 0 {
-		for _, s := range m.Topics {
-			dAtA[i] = 0xa
-			i++
-			l = len(s)
-			for l >= 1<<7 {
-				dAtA[i] = uint8(uint64(l)&0x7f | 0x80)
-				l >>= 7
-				i++
-			}
-			dAtA[i] = uint8(l)
-			i++
-			i += copy(dAtA[i:], s)
-		}
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if len(m.PeerIDs) > 0 {
-		for _, b := range m.PeerIDs {
+		for iNdEx := len(m.PeerIDs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.PeerIDs[iNdEx])
+			copy(dAtA[i:], m.PeerIDs[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.PeerIDs[iNdEx])))
+			i--
 			dAtA[i] = 0x12
-			i++
-			i = encodeVarintP2Pd(dAtA, i, uint64(len(b)))
-			i += copy(dAtA[i:], b)
 		}
 	}
-	if m.XXX_unrecognized != nil {
-		i += copy(dAtA[i:], m.XXX_unrecognized)
+	if len(m.Topics) > 0 {
+		for iNdEx := len(m.Topics) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Topics[iNdEx])
+			copy(dAtA[i:], m.Topics[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Topics[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+		}
 	}
-	return i, nil
+	return len(dAtA) - i, nil
 }
 
 func encodeVarintP2Pd(dAtA []byte, offset int, v uint64) int {
+	offset -= sovP2Pd(v)
+	base := offset
 	for v >= 1<<7 {
 		dAtA[offset] = uint8(v&0x7f | 0x80)
 		v >>= 7
 		offset++
 	}
 	dAtA[offset] = uint8(v)
-	return offset + 1
+	return base
 }
 func (m *Request) Size() (n int) {
 	if m == nil {
@@ -2736,14 +2867,7 @@ func (m *PSResponse) Size() (n int) {
 }
 
 func sovP2Pd(x uint64) (n int) {
-	for {
-		n++
-		x >>= 7
-		if x == 0 {
-			break
-		}
-	}
-	return n
+	return (math_bits.Len64(x|1) + 6) / 7
 }
 func sozP2Pd(x uint64) (n int) {
 	return sovP2Pd(uint64((x << 1) ^ uint64((int64(x) >> 63))))
@@ -5483,6 +5607,7 @@ func (m *PSResponse) Unmarshal(dAtA []byte) error {
 func skipP2Pd(dAtA []byte) (n int, err error) {
 	l := len(dAtA)
 	iNdEx := 0
+	depth := 0
 	for iNdEx < l {
 		var wire uint64
 		for shift := uint(0); ; shift += 7 {
@@ -5514,10 +5639,8 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 					break
 				}
 			}
-			return iNdEx, nil
 		case 1:
 			iNdEx += 8
-			return iNdEx, nil
 		case 2:
 			var length int
 			for shift := uint(0); ; shift += 7 {
@@ -5541,52 +5664,27 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 			if iNdEx < 0 {
 				return 0, ErrInvalidLengthP2Pd
 			}
-			return iNdEx, nil
 		case 3:
-			for {
-				var innerWire uint64
-				var start int = iNdEx
-				for shift := uint(0); ; shift += 7 {
-					if shift >= 64 {
-						return 0, ErrIntOverflowP2Pd
-					}
-					if iNdEx >= l {
-						return 0, io.ErrUnexpectedEOF
-					}
-					b := dAtA[iNdEx]
-					iNdEx++
-					innerWire |= (uint64(b) & 0x7F) << shift
-					if b < 0x80 {
-						break
-					}
-				}
-				innerWireType := int(innerWire & 0x7)
-				if innerWireType == 4 {
-					break
-				}
-				next, err := skipP2Pd(dAtA[start:])
-				if err != nil {
-					return 0, err
-				}
-				iNdEx = start + next
-				if iNdEx < 0 {
-					return 0, ErrInvalidLengthP2Pd
-				}
-			}
-			return iNdEx, nil
+			depth++
 		case 4:
-			return iNdEx, nil
+			if depth == 0 {
+				return 0, ErrUnexpectedEndOfGroupP2Pd
+			}
+			depth--
 		case 5:
 			iNdEx += 4
-			return iNdEx, nil
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
 		}
+		if depth == 0 {
+			return iNdEx, nil
+		}
 	}
-	panic("unreachable")
+	return 0, io.ErrUnexpectedEOF
 }
 
 var (
-	ErrInvalidLengthP2Pd = fmt.Errorf("proto: negative length found during unmarshaling")
-	ErrIntOverflowP2Pd   = fmt.Errorf("proto: integer overflow")
+	ErrInvalidLengthP2Pd        = fmt.Errorf("proto: negative length found during unmarshaling")
+	ErrIntOverflowP2Pd          = fmt.Errorf("proto: integer overflow")
+	ErrUnexpectedEndOfGroupP2Pd = fmt.Errorf("proto: unexpected end of group")
 )
