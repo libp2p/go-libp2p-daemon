@@ -18,8 +18,11 @@ import (
 	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
+	noise "github.com/libp2p/go-libp2p-noise"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
+	secio "github.com/libp2p/go-libp2p-secio"
+	tls "github.com/libp2p/go-libp2p-tls"
 	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
@@ -97,6 +100,9 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
+	useSecio := flag.Bool("secio", true, "Enables SECIO channel security protocol")
+	useNoise := flag.Bool("noise", false, "Enables Noise channel security protocol")
+	useTls := flag.Bool("tls", false, "Enables TLS1.3 channel security protocol")
 
 	flag.Parse()
 
@@ -251,6 +257,10 @@ func main() {
 		}
 	}
 
+	c.Security.SECIO = *useSecio
+	c.Security.TLS = *useTls
+	c.Security.Noise = *useNoise
+
 	if err := c.Validate(); err != nil {
 		log.Fatal(err)
 	}
@@ -322,6 +332,21 @@ func main() {
 	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
 	}
+
+	var securityOpts []libp2p.Option
+	if c.Security.SECIO {
+		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
+	}
+	if c.Security.TLS {
+		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
+	}
+	if c.Security.Noise {
+		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.Maker()))
+	}
+	if len(securityOpts) == 0 {
+		log.Fatal("at least one channel security protocol must be enabled")
+	}
+	opts = append(opts, securityOpts...)
 
 	// start daemon
 	d, err := p2pd.NewDaemon(context.Background(), &c.ListenAddr, c.DHT.Mode, opts...)
