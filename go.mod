@@ -5,7 +5,7 @@ go 1.12
 require (
 	github.com/gogo/protobuf v1.3.1
 	github.com/hashicorp/go-multierror v1.0.0
-	github.com/ipfs/go-cid v0.0.3
+	github.com/ipfs/go-cid v0.0.4
 	github.com/ipfs/go-log v0.0.1
 	github.com/libp2p/go-libp2p v0.4.2
 	github.com/libp2p/go-libp2p-autonat-svc v0.1.0
