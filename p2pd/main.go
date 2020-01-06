@@ -257,9 +257,15 @@ func main() {
 		}
 	}
 
-	c.Security.SECIO = *useSecio
-	c.Security.TLS = *useTls
-	c.Security.Noise = *useNoise
+	if useSecio != nil {
+		c.Security.SECIO = *useSecio
+	}
+	if useTls != nil {
+		c.Security.TLS = *useTls
+	}
+	if useNoise != nil {
+		c.Security.Noise = *useNoise
+	}
 
 	if err := c.Validate(); err != nil {
 		log.Fatal(err)
