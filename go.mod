@@ -12,7 +12,7 @@ require (
 	github.com/libp2p/go-libp2p-autonat-svc v0.1.0
 	github.com/libp2p/go-libp2p-circuit v0.2.1
 	github.com/libp2p/go-libp2p-connmgr v0.1.1
-	github.com/libp2p/go-libp2p-core v0.5.1
+	github.com/libp2p/go-libp2p-core v0.5.3
 	github.com/libp2p/go-libp2p-kad-dht v0.3.2
 	github.com/libp2p/go-libp2p-noise v0.1.1-0.20200507064022-02dc2ad5c414
 	github.com/libp2p/go-libp2p-peerstore v0.2.2
