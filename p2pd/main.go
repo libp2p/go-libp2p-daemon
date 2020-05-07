@@ -347,7 +347,7 @@ func main() {
 		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
 	}
 	if c.Security.Noise {
-		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.Maker()))
+		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.New))
 	}
 	if len(securityOpts) == 0 {
 		log.Fatal("at least one channel security protocol must be enabled")
