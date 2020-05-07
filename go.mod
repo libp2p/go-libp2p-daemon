@@ -13,7 +13,7 @@ require (
 	github.com/libp2p/go-libp2p-circuit v0.2.1
 	github.com/libp2p/go-libp2p-connmgr v0.1.1
 	github.com/libp2p/go-libp2p-core v0.5.1
-	github.com/libp2p/go-libp2p-kad-dht v0.3.2
+	github.com/libp2p/go-libp2p-kad-dht v0.7.11
 	github.com/libp2p/go-libp2p-noise v0.1.1-0.20200507064022-02dc2ad5c414
 	github.com/libp2p/go-libp2p-peerstore v0.2.2
 	github.com/libp2p/go-libp2p-pubsub v0.2.4
