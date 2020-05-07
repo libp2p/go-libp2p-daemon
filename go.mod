@@ -25,7 +25,7 @@ require (
 	github.com/multiformats/go-multiaddr v0.2.1
 	github.com/multiformats/go-multiaddr-net v0.1.4
 	github.com/multiformats/go-multihash v0.0.13
-	github.com/prometheus/client_golang v1.2.1
+	github.com/prometheus/client_golang v1.6.0
 	github.com/stretchr/testify v1.5.1
 	github.com/whyrusleeping/go-logging v0.0.1 // indirect
 	go.uber.org/atomic v1.5.1 // indirect
