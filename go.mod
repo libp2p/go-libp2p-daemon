@@ -16,7 +16,7 @@ require (
 	github.com/libp2p/go-libp2p-kad-dht v0.3.2
 	github.com/libp2p/go-libp2p-noise v0.1.1-0.20200507064022-02dc2ad5c414
 	github.com/libp2p/go-libp2p-peerstore v0.2.2
-	github.com/libp2p/go-libp2p-pubsub v0.2.4
+	github.com/libp2p/go-libp2p-pubsub v0.2.7
 	github.com/libp2p/go-libp2p-quic-transport v0.2.2
 	github.com/libp2p/go-libp2p-secio v0.2.2
 	github.com/libp2p/go-libp2p-tls v0.1.3
