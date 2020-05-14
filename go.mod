@@ -12,7 +12,7 @@ require (
 	github.com/libp2p/go-libp2p-autonat-svc v0.1.0
 	github.com/libp2p/go-libp2p-circuit v0.2.1
 	github.com/libp2p/go-libp2p-connmgr v0.1.1
-	github.com/libp2p/go-libp2p-core v0.5.1
+	github.com/libp2p/go-libp2p-core v0.5.4
 	github.com/libp2p/go-libp2p-kad-dht v0.3.2
 	github.com/libp2p/go-libp2p-noise v0.1.1-0.20200507064022-02dc2ad5c414
 	github.com/libp2p/go-libp2p-peerstore v0.2.2
@@ -27,7 +27,6 @@ require (
 	github.com/multiformats/go-multihash v0.0.13
 	github.com/prometheus/client_golang v1.2.1
 	github.com/stretchr/testify v1.5.1
-	github.com/whyrusleeping/go-logging v0.0.1 // indirect
 	go.uber.org/atomic v1.5.1 // indirect
 	go.uber.org/multierr v1.4.0 // indirect
 	go.uber.org/zap v1.13.0 // indirect
