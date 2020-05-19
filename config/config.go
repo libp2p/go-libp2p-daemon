@@ -80,6 +80,12 @@ type PProf struct {
 	Port    uint
 }
 
+type Security struct {
+	SECIO bool
+	Noise bool
+	TLS   bool
+}
+
 const DHTFullMode = "full"
 const DHTClientMode = "client"
 
@@ -100,6 +106,7 @@ type Config struct {
 	NoListen          bool
 	MetricsAddress    string
 	PProf             PProf
+	Security          Security
 }
 
 func (c *Config) UnmarshalJSON(b []byte) error {
@@ -175,6 +182,11 @@ func NewDefaultConfig() Config {
 		PProf: PProf{
 			Enabled: false,
 			Port:    0,
+		},
+		Security: Security{
+			SECIO: true,
+			Noise: false,
+			TLS:   false,
 		},
 	}
 }
