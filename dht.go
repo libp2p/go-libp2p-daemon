@@ -9,8 +9,9 @@ import (
 	"github.com/libp2p/go-libp2p-core/peer"
 
 	cid "github.com/ipfs/go-cid"
-	dht "github.com/libp2p/go-libp2p-kad-dht"
 )
+
+const defaultProviderCount = 20
 
 func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, func()) {
 	if d.dht == nil {
@@ -120,7 +121,7 @@ func (d *Daemon) doDHTFindProviders(req *pb.DHTRequest) (*pb.Response, <-chan *p
 		return errorResponse(err), nil, nil
 	}
 
-	count := dht.KValue
+	count := defaultProviderCount
 	if req.GetCount() > 0 {
 		count = int(*req.Count)
 	}
