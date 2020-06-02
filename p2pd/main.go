@@ -134,7 +134,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	c.ListenAddr = config.JSONMaddr{maddr}
+	c.ListenAddr = config.JSONMaddr{Multiaddr: maddr}
 
 	if *id != "" {
 		c.ID = *id
