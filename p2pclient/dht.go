@@ -37,7 +37,7 @@ func convertPbPeerInfo(pbi *pb.PeerInfo) (PeerInfo, error) {
 	for _, addrbytes := range pbi.Addrs {
 		addr, err := ma.NewMultiaddrBytes(addrbytes)
 		if err != nil {
-			log.Errorf("error parsing multiaddr in peerinfo: %s", err)
+			log.Errorw("error parsing multiaddr in peerinfo", "error", err)
 			continue
 		}
 		addrs = append(addrs, addr)
@@ -83,7 +83,7 @@ func readDhtResponseStream(ctx context.Context, control net.Conn) (<-chan *pb.DH
 			default:
 				msg := &pb.DHTResponse{}
 				if err := r.ReadMsg(msg); err != nil {
-					log.Errorf("reading daemon response: %s", err)
+					log.Errorw("reading daemon response", "error", err)
 					return
 				}
 
@@ -226,7 +226,7 @@ func convertResponseToPeerInfo(respc <-chan *pb.DHTResponse) <-chan PeerInfo {
 		for resp := range respc {
 			info, err := convertPbPeerInfo(resp.GetPeer())
 			if err != nil {
-				log.Errorf("error converting peerinfo: %s", err.Error())
+				log.Errorw("error converting peerinfo", "error", err)
 				continue
 			}
 
@@ -246,7 +246,7 @@ func convertResponseToPeerID(respc <-chan *pb.DHTResponse) <-chan peer.ID {
 		for resp := range respc {
 			id, err := peer.IDFromBytes(resp.GetValue())
 			if err != nil {
-				log.Errorf("error parsing peer id: %s", err.Error())
+				log.Errorw("error parsing peer id", "error", err)
 				continue
 			}
 

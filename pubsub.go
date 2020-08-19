@@ -18,7 +18,7 @@ func (d *Daemon) doPubsub(req *pb.Request) (*pb.Response, *ps.Subscription) {
 		return errorResponseString("Malformed request; missing parameters"), nil
 	}
 
-	switch *req.Pubsub.Type {
+	switch req.Pubsub.GetType() {
 	case pb.PSRequest_GET_TOPICS:
 		return d.doPubsubGetTopics(req.Pubsub)
 
@@ -32,7 +32,7 @@ func (d *Daemon) doPubsub(req *pb.Request) (*pb.Response, *ps.Subscription) {
 		return d.doPubsubSubscribe(req.Pubsub)
 
 	default:
-		log.Debugf("Unexpected pubsub request type: %d", *req.Pubsub.Type)
+		log.Debugw("unexpected pubsub request type", "type", req.Pubsub.GetType())
 		return errorResponseString("Unexpected request"), nil
 	}
 }
@@ -89,14 +89,14 @@ func (d *Daemon) doPubsubPipe(sub *ps.Subscription, r ggio.ReadCloser, w ggio.Wr
 				return
 			}
 
-			log.Warnf("unexpected message (%s)", req.GetType().String())
+			log.Warnw("unexpected message", "type", req.GetType())
 		}
 	}()
 
 	for {
 		msg, err := sub.Next(d.ctx)
 		if err != nil {
-			log.Warnf("subscription error: %s", err.Error())
+			log.Warnw("subscription error", "error", err)
 			// goroutine will cancel the subscription once the connection is closed on return
 			return
 		}
@@ -104,7 +104,7 @@ func (d *Daemon) doPubsubPipe(sub *ps.Subscription, r ggio.ReadCloser, w ggio.Wr
 		psmsg := psMessage(msg)
 		err = w.WriteMsg(psmsg)
 		if err != nil {
-			log.Warnf("error writing pubsub message: %s", err.Error())
+			log.Warnw("error writing pubsub message", "error", err)
 			// goroutine will cancel the subscription once the connection is closed on return
 			return
 		}

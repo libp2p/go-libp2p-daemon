@@ -140,7 +140,7 @@ func (d *Daemon) listen() {
 
 		c, err := d.listener.Accept()
 		if err != nil {
-			log.Errorf("error accepting connection: %s", err.Error())
+			log.Errorw("error accepting connection", "error", err)
 			continue
 		}
 

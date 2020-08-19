@@ -22,7 +22,7 @@ func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, f
 		return errorResponseString("Malformed request; missing parameters"), nil, nil
 	}
 
-	switch *req.Dht.Type {
+	switch req.Dht.GetType() {
 	case pb.DHTRequest_FIND_PEER:
 		return d.doDHTFindPeer(req.Dht)
 
@@ -51,7 +51,7 @@ func (d *Daemon) doDHT(req *pb.Request) (*pb.Response, <-chan *pb.DHTResponse, f
 		return d.doDHTProvide(req.Dht)
 
 	default:
-		log.Debugf("Unexpected DHT request type: %d", *req.Dht.Type)
+		log.Debugw("unexpected DHT request type", "type", req.Dht.GetType())
 		return errorResponseString("Unexpected request"), nil, nil
 	}
 }
