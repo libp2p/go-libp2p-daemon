@@ -13,7 +13,7 @@ import (
 	proto "github.com/gogo/protobuf/proto"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	ma "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 // StreamInfo wraps the protobuf structure with friendlier types.

@@ -8,7 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/network"
 
 	ggio "github.com/gogo/protobuf/io"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 func (d *Daemon) doStreamPipe(c net.Conn, s network.Stream) {

@@ -10,7 +10,7 @@ import (
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	ma "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 type mockDaemon struct {

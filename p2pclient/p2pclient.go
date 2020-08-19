@@ -10,7 +10,7 @@ import (
 	logging "github.com/ipfs/go-log"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 	multiaddr "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 var log = logging.Logger("p2pclient")
