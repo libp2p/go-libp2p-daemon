@@ -156,7 +156,7 @@ func NewDefaultConfig() Config {
 			HighWaterMark: 512,
 			GracePeriod:   120,
 		},
-		QUIC:       false,
+		QUIC:       true,
 		NatPortMap: false,
 		PubSub: PubSub{
 			Enabled:    false,
@@ -184,9 +184,9 @@ func NewDefaultConfig() Config {
 			Port:    0,
 		},
 		Security: Security{
-			SECIO: true,
-			Noise: false,
-			TLS:   false,
+			SECIO: false,
+			Noise: true,
+			TLS:   true,
 		},
 	}
 }
