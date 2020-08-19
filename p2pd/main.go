@@ -317,6 +317,10 @@ func main() {
 		opts = append(opts, libp2p.NATPortMap())
 	}
 
+	if c.AutoNat {
+		opts = append(opts, libp2p.EnableNATService())
+	}
+
 	if c.Relay.Enabled {
 		var relayOpts []relay.RelayOpt
 		if c.Relay.Active {
@@ -358,21 +362,6 @@ func main() {
 	d, err := p2pd.NewDaemon(context.Background(), &c.ListenAddr, c.DHT.Mode, opts...)
 	if err != nil {
 		log.Fatal(err)
-	}
-
-	if c.AutoNat {
-		var opts []libp2p.Option
-		// allow the AutoNAT service to dial back quic addrs.
-		if c.QUIC {
-			opts = append(opts,
-				libp2p.DefaultTransports,
-				libp2p.Transport(quic.NewTransport),
-			)
-		}
-		err := d.EnableAutoNAT(opts...)
-		if err != nil {
-			log.Fatal(err)
-		}
 	}
 
 	if c.PubSub.Enabled {
