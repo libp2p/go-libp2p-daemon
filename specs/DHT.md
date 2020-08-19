@@ -82,53 +82,8 @@ Response{
 ```
 
 #### `FIND_PEERS_CONNECTED_TO_PEER`
-Clients can issue a `FIND_PEERS_CONNECTED_TO_PEER` request to query the DHT for
-peers directly connected to a given peer in the DHT.
 
-**Client**
-```
-Request{
-  Type: DHT,
-  DHTRequest: DHTRequest{
-    Type: FIND_PEERS_CONNECTED_TO_PEER,
-    Peer: <peer id>,
-  },
-}
-```
-
-**Daemon**
-*Can return an error*
-
-```
-Response{
-  Type: OK,
-  DHTResponse: DHTResponse{
-    Type: BEGIN,
-  }
-}
-```
-
-**Daemon**
-*Can return any number of responses like this, including 0*
-
-```
-DHTResponse{
-  Type: VALUE,
-  Peer: PeerInfo{
-    Id: <peer id>,
-    Addrs: [<addr>, ...],
-  },
-}
-```
-
-**Daemon**
-*Marks the end of the result stream*
-
-```
-DHTResponse{
-  Type: END,
-}
-```
+This operation has been removed.
 
 #### `FIND_PROVIDERS`
 Clients can issue a `FIND_PROVIDERS` request to query the DHT for peers

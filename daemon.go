@@ -17,12 +17,11 @@ import (
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
-	autonat "github.com/libp2p/go-libp2p-autonat-svc"
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	dhtopts "github.com/libp2p/go-libp2p-kad-dht/opts"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	ma "github.com/multiformats/go-multiaddr"
-	manet "github.com/multiformats/go-multiaddr-net"
+	manet "github.com/multiformats/go-multiaddr/net"
 )
 
 var log = logging.Logger("p2pd")
@@ -32,9 +31,8 @@ type Daemon struct {
 	host     host.Host
 	listener manet.Listener
 
-	dht     *dht.IpfsDHT
-	pubsub  *ps.PubSub
-	autonat *autonat.AutoNATService
+	dht    *dht.IpfsDHT
+	pubsub *ps.PubSub
 
 	mx sync.Mutex
 	// stream handlers: map of protocol.ID to multi-address
@@ -124,12 +122,6 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 		return fmt.Errorf("unknown pubsub router: %s", router)
 	}
 
-}
-
-func (d *Daemon) EnableAutoNAT(opts ...libp2p.Option) error {
-	svc, err := autonat.NewAutoNATService(d.ctx, d.host, opts...)
-	d.autonat = svc
-	return err
 }
 
 func (d *Daemon) ID() peer.ID {

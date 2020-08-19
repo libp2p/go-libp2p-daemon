@@ -315,17 +315,6 @@ func (c *Client) streamRequestValue(ctx context.Context, req *pb.Request) (<-cha
 	return out, nil
 }
 
-// FindPeersConnectedToPeer queries the DHT for peers that have an active
-// connection to a given peer.
-func (c *Client) FindPeersConnectedToPeer(ctx context.Context, peer peer.ID) (<-chan PeerInfo, error) {
-	req := newDHTReq(&pb.DHTRequest{
-		Type: pb.DHTRequest_FIND_PEERS_CONNECTED_TO_PEER.Enum(),
-		Peer: []byte(peer),
-	})
-
-	return c.streamRequestPeerInfo(ctx, req)
-}
-
 // FindProviders queries the DHT for peers that provide a piece of content
 // identified by a CID.
 func (c *Client) FindProviders(ctx context.Context, cid cid.Cid) (<-chan PeerInfo, error) {

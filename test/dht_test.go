@@ -178,34 +178,6 @@ func TestDHTProvide(t *testing.T) {
 	}
 }
 
-func TestDHTFindPeersConnectedToPeer(t *testing.T) {
-	daemon, client, closer := createMockDaemonClientPair(t)
-	defer closer()
-	ids := randPeerIDs(t, 3)
-
-	infoc := clientRequestAsync(t, client, "FindPeersConnectedToPeer", ids[0]).(chan p2pclient.PeerInfo)
-
-	conn := daemon.ExpectConn(t)
-	req := conn.ExpectDHTRequestType(t, pb.DHTRequest_FIND_PEERS_CONNECTED_TO_PEER)
-	if !bytes.Equal(req.GetPeer(), []byte(ids[0])) {
-		t.Fatal("request id didn't match expected id")
-	}
-
-	resps := make([]*pb.DHTResponse, 2)
-	for i := 1; i < 3; i++ {
-		resps[i-1] = peerInfoResponse(t, ids[i])
-	}
-	conn.SendStreamAsync(t, resps)
-
-	i := 0
-	for range infoc {
-		i++
-	}
-	if i != 2 {
-		t.Fatalf("expected 2 responses, got %d", i)
-	}
-}
-
 func TestDHTFindProviders(t *testing.T) {
 	daemon, client, closer := createMockDaemonClientPair(t)
 	defer closer()
