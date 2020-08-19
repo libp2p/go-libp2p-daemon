@@ -14,7 +14,7 @@ func (d *Daemon) doConnManager(req *pb.Request) *pb.Response {
 		return errorResponseString("Malformed request; missing parameters")
 	}
 
-	switch *req.ConnManager.Type {
+	switch req.ConnManager.GetType() {
 	case pb.ConnManagerRequest_TAG_PEER:
 		p, err := peer.IDFromBytes(req.ConnManager.GetPeer())
 		if err != nil {
@@ -52,7 +52,7 @@ func (d *Daemon) doConnManager(req *pb.Request) *pb.Response {
 		return okResponse()
 
 	default:
-		log.Debugf("Unexpected ConnManager request type: %d", *req.ConnManager.Type)
+		log.Debugf("unexpected ConnManager request type", "type", req.ConnManager.GetType())
 		return errorResponseString("Unexpected request")
 	}
 }

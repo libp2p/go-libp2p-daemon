@@ -136,7 +136,7 @@ func (c *Client) streamDispatcher() {
 	for {
 		rawconn, err := c.listener.Accept()
 		if err != nil {
-			log.Warningf("accepting incoming connection: %s", err)
+			log.Warnw("accepting incoming connection", "error", err)
 			return
 		}
 		conn := &byteReaderConn{rawconn}
@@ -144,13 +144,13 @@ func (c *Client) streamDispatcher() {
 		info := &pb.StreamInfo{}
 		err = readMsgSafe(conn, info)
 		if err != nil {
-			log.Errorf("error reading stream info: %s", err)
+			log.Errorw("error reading stream info", "error", err)
 			conn.Close()
 			continue
 		}
 		streamInfo, err := convertStreamInfo(info)
 		if err != nil {
-			log.Errorf("error parsing stream info: %s", err)
+			log.Errorw("error parsing stream info", "error", err)
 			conn.Close()
 			continue
 		}

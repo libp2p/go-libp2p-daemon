@@ -85,7 +85,7 @@ func (c *Client) streamPubsubRequest(ctx context.Context, psReq *pb.PSRequest) (
 		for {
 			msg := &pb.PSMessage{}
 			if err := r.ReadMsg(msg); err != nil {
-				log.Errorf("reading pubsub message: %s", err)
+				log.Errorw("reading pubsub message", "error", err)
 				return
 			}
 			out <- msg

@@ -30,19 +30,19 @@ func (d *Daemon) handleConn(c net.Conn) {
 		err := r.ReadMsg(&req)
 		if err != nil {
 			if err != io.EOF {
-				log.Debugf("Error reading message: %s", err.Error())
+				log.Debugw("error reading message", "error", err)
 			}
 			return
 		}
 
-		log.Debugf("request: %d [%s]", *req.Type, req.Type.String())
+		log.Debugw("request", "type", req.GetType())
 
-		switch *req.Type {
+		switch req.GetType() {
 		case pb.Request_IDENTIFY:
 			res := d.doIdentify(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -50,7 +50,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res := d.doConnect(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -58,7 +58,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res, s := d.doStreamOpen(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				if s != nil {
 					s.Reset()
 				}
@@ -74,7 +74,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res := d.doStreamHandler(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -82,7 +82,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res, ch, cancel := d.doDHT(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				if ch != nil {
 					cancel()
 				}
@@ -93,7 +93,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 				for res := range ch {
 					err = w.WriteMsg(res)
 					if err != nil {
-						log.Debugf("Error writing response: %s", err.Error())
+						log.Debugw("error writing response", "error", err)
 						cancel()
 						return
 					}
@@ -101,7 +101,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 
 				err = w.WriteMsg(dhtResponseEnd())
 				if err != nil {
-					log.Debugf("Error writing response: %s", err.Error())
+					log.Debugw("error writing response", "error", err)
 					return
 				}
 			}
@@ -110,7 +110,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res := d.doListPeers(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -118,7 +118,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res := d.doConnManager(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -126,7 +126,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res := d.doDisconnect(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				return
 			}
 
@@ -134,7 +134,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			res, sub := d.doPubsub(&req)
 			err := w.WriteMsg(res)
 			if err != nil {
-				log.Debugf("Error writing response: %s", err.Error())
+				log.Debugw("error writing response", "error", err)
 				if sub != nil {
 					sub.Cancel()
 				}
@@ -147,7 +147,7 @@ func (d *Daemon) handleConn(c net.Conn) {
 			}
 
 		default:
-			log.Debugf("Unexpected request type: %d", *req.Type)
+			log.Debugw("unexpected request type", "type", req.GetType())
 			return
 		}
 	}
@@ -176,7 +176,7 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 
 	pid, err := peer.IDFromBytes(req.Connect.Peer)
 	if err != nil {
-		log.Debugf("Error parsing peer ID: %s", err.Error())
+		log.Debugw("error parsing peer ID", "error", err)
 		return errorResponse(err)
 	}
 
@@ -185,7 +185,7 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 	for x, bs := range req.Connect.Addrs {
 		addr, err := ma.NewMultiaddrBytes(bs)
 		if err != nil {
-			log.Debugf("Error parsing multiaddr: %s", err.Error())
+			log.Debugw("Error parsing multiaddr", "error", err)
 			return errorResponse(err)
 		}
 		addrs[x] = addr
@@ -193,10 +193,10 @@ func (d *Daemon) doConnect(req *pb.Request) *pb.Response {
 
 	pi := peer.AddrInfo{ID: pid, Addrs: addrs}
 
-	log.Debugf("connecting to %s", pid.Pretty())
+	log.Debug("connecting", "to", pid)
 	err = d.host.Connect(ctx, pi)
 	if err != nil {
-		log.Debugf("error opening connection to %s: %s", pid.Pretty(), err.Error())
+		log.Debugw("error opening connection", "to", pid, "error", err)
 		return errorResponse(err)
 	}
 
@@ -231,7 +231,7 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, network.Stream) {
 
 	pid, err := peer.IDFromBytes(req.StreamOpen.Peer)
 	if err != nil {
-		log.Debugf("Error parsing peer ID: %s", err.Error())
+		log.Debugw("Error parsing peer ID", "error", err)
 		return errorResponse(err), nil
 	}
 
@@ -240,10 +240,10 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, network.Stream) {
 		protos[x] = protocol.ID(str)
 	}
 
-	log.Debugf("opening stream to %s", pid.Pretty())
+	log.Debugf("opening stream", "to", pid)
 	s, err := d.host.NewStream(ctx, pid, protos...)
 	if err != nil {
-		log.Debugf("Error opening stream to %s: %s", pid.Pretty(), err.Error())
+		log.Debugw("error opening stream", "to", pid, "error", err)
 		return errorResponse(err), nil
 	}
 
@@ -270,7 +270,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		if !ok {
 			d.host.SetStreamHandler(p, d.handleStream)
 		}
-		log.Debugf("set stream handler: %s -> %s", sp, maddr.String())
+		log.Debugw("set stream handler", "protocol", sp, "to", maddr)
 		d.handlers[p] = maddr
 	}
 
