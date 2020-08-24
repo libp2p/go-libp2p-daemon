@@ -101,9 +101,9 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
-	useSecio := flag.Bool("secio", true, "Enables SECIO channel security protocol")
-	useNoise := flag.Bool("noise", false, "Enables Noise channel security protocol")
-	useTls := flag.Bool("tls", false, "Enables TLS1.3 channel security protocol")
+	useSecio := flag.Bool("secio", false, "Enables SECIO channel security protocol")
+	useNoise := flag.Bool("noise", true, "Enables Noise channel security protocol")
+	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 
 	flag.Parse()
 
@@ -352,15 +352,16 @@ func main() {
 	}
 
 	var securityOpts []libp2p.Option
-	if c.Security.SECIO {
-		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
+	if c.Security.Noise {
+		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.New))
 	}
 	if c.Security.TLS {
 		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
 	}
-	if c.Security.Noise {
-		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.New))
+	if c.Security.SECIO {
+		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
 	}
+
 	if len(securityOpts) == 0 {
 		log.Fatal("at least one channel security protocol must be enabled")
 	}
