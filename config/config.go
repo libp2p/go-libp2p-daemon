@@ -69,6 +69,7 @@ type Relay struct {
 	Hop       bool
 	Discovery bool
 	Auto      bool
+	HopLimit  int
 }
 
 type DHT struct {
@@ -154,7 +155,7 @@ func NewDefaultConfig() Config {
 			Enabled:       false,
 			LowWaterMark:  256,
 			HighWaterMark: 512,
-			GracePeriod:   120,
+			GracePeriod:   120 * time.Second,
 		},
 		QUIC:       true,
 		NatPortMap: false,
@@ -173,6 +174,7 @@ func NewDefaultConfig() Config {
 			Hop:       false,
 			Discovery: false,
 			Auto:      false,
+			HopLimit:  0,
 		},
 		AutoNat:           false,
 		HostAddresses:     make(MaddrArray, 0),

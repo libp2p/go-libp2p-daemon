@@ -75,7 +75,7 @@ func main() {
 	connMgr := flag.Bool("connManager", false, "Enables the Connection Manager")
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
-	connMgrGrace := flag.Duration("connGrace", 120, "Connection Manager grace period (in seconds)")
+	connMgrGrace := flag.Duration("connGrace", 120*time.Second, "Connection Manager grace period (in seconds)")
 	QUIC := flag.Bool("quic", false, "Enables the QUIC transport")
 	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
@@ -87,6 +87,7 @@ func main() {
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
 	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
 	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays")
 	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
@@ -100,9 +101,9 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
-	useSecio := flag.Bool("secio", true, "Enables SECIO channel security protocol")
-	useNoise := flag.Bool("noise", false, "Enables Noise channel security protocol")
-	useTls := flag.Bool("tls", false, "Enables TLS1.3 channel security protocol")
+	useSecio := flag.Bool("secio", false, "Enables SECIO channel security protocol")
+	useNoise := flag.Bool("noise", true, "Enables Noise channel security protocol")
+	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 
 	flag.Parse()
 
@@ -191,6 +192,9 @@ func main() {
 		}
 		if *relayDiscovery {
 			c.Relay.Discovery = true
+		}
+		if *relayHopLimit > 0 {
+			c.Relay.HopLimit = *relayHopLimit
 		}
 	}
 
@@ -337,6 +341,10 @@ func main() {
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())
 		}
+
+		if c.Relay.HopLimit > 0 {
+			relay.HopStreamLimit = c.Relay.HopLimit
+		}
 	}
 
 	if c.NoListen {
@@ -344,15 +352,16 @@ func main() {
 	}
 
 	var securityOpts []libp2p.Option
-	if c.Security.SECIO {
-		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
+	if c.Security.Noise {
+		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.New))
 	}
 	if c.Security.TLS {
 		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
 	}
-	if c.Security.Noise {
-		securityOpts = append(securityOpts, libp2p.Security(noise.ID, noise.New))
+	if c.Security.SECIO {
+		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
 	}
+
 	if len(securityOpts) == 0 {
 		log.Fatal("at least one channel security protocol must be enabled")
 	}
