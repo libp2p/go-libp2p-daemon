@@ -87,6 +87,7 @@ func main() {
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
 	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
 	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays")
 	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
@@ -191,6 +192,9 @@ func main() {
 		}
 		if *relayDiscovery {
 			c.Relay.Discovery = true
+		}
+		if *relayHopLimit > 0 {
+			c.Relay.HopLimit = *relayHopLimit
 		}
 	}
 
@@ -336,6 +340,10 @@ func main() {
 
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())
+		}
+
+		if c.Relay.HopLimit > 0 {
+			relay.HopStreamLimit = c.Relay.HopLimit
 		}
 	}
 

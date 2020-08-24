@@ -69,6 +69,7 @@ type Relay struct {
 	Hop       bool
 	Discovery bool
 	Auto      bool
+	HopLimit  int
 }
 
 type DHT struct {
@@ -173,6 +174,7 @@ func NewDefaultConfig() Config {
 			Hop:       false,
 			Discovery: false,
 			Auto:      false,
+			HopLimit:  0,
 		},
 		AutoNat:           false,
 		HostAddresses:     make(MaddrArray, 0),
