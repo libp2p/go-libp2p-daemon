@@ -77,7 +77,7 @@ func main() {
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Duration("connGrace", 120*time.Second, "Connection Manager grace period (in seconds)")
-	QUIC := flag.Bool("quic", false, "Enables the QUIC transport")
+	QUIC := flag.Bool("quic", true, "Enables the QUIC transport")
 	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
@@ -175,8 +175,8 @@ func main() {
 		c.ConnectionManager.LowWaterMark = *connMgrLo
 	}
 
-	if *QUIC {
-		c.QUIC = true
+	if QUIC != nil {
+		c.QUIC = *QUIC
 	}
 
 	if *natPortMap {
