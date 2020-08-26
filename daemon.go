@@ -51,6 +51,8 @@ func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...
 		var dhtOpts []dhtopts.Option
 		if dhtMode == config.DHTClientMode {
 			dhtOpts = append(dhtOpts, dhtopts.Client(true))
+		} else if dhtMode == config.DHTServerMode {
+			dhtOpts = append(dhtOpts, dhtopts.Mode(dht.ModeServer))
 		}
 
 		opts = append(opts, libp2p.Routing(d.DHTRoutingFactory(dhtOpts)))

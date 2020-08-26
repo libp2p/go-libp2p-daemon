@@ -89,6 +89,7 @@ type Security struct {
 
 const DHTFullMode = "full"
 const DHTClientMode = "client"
+const DHTServerMode = "server"
 
 type Config struct {
 	ListenAddr        JSONMaddr
@@ -129,7 +130,7 @@ func (c *Config) UnmarshalJSON(b []byte) error {
 }
 
 func (c *Config) Validate() error {
-	if c.DHT.Mode != DHTClientMode && c.DHT.Mode != DHTFullMode && c.DHT.Mode != "" {
+	if c.DHT.Mode != DHTClientMode && c.DHT.Mode != DHTFullMode && c.DHT.Mode != DHTServerMode && c.DHT.Mode != "" {
 		return errors.New(fmt.Sprintf("unknown DHT mode %s", c.DHT))
 	}
 	if c.Relay.Auto == true && (c.Relay.Enabled == false || c.DHT.Mode == "") {

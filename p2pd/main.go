@@ -73,6 +73,7 @@ func main() {
 	bootstrapPeers := flag.String("bootstrapPeers", "", "comma separated list of bootstrap peers; defaults to the IPFS DHT peers")
 	dht := flag.Bool("dht", false, "Enables the DHT in full node mode")
 	dhtClient := flag.Bool("dhtClient", false, "Enables the DHT in client mode")
+	dhtServer := flag.Bool("dhtServer", false, "Enables the DHT in server mode (use 'dht' unless you actually need this)")
 	connMgr := flag.Bool("connManager", false, "Enables the Connection Manager")
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
@@ -253,6 +254,8 @@ func main() {
 		c.DHT.Mode = config.DHTFullMode
 	} else if *dhtClient {
 		c.DHT.Mode = config.DHTClientMode
+	} else if *dhtServer {
+		c.DHT.Mode = config.DHTServerMode
 	}
 
 	if *pprof {
