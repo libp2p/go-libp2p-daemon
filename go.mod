@@ -3,6 +3,7 @@ module github.com/libp2p/go-libp2p-daemon
 go 1.12
 
 require (
+	github.com/creack/pty v1.1.11 // indirect
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/gogo/protobuf v1.3.1
 	github.com/hashicorp/go-multierror v1.1.0
