@@ -106,6 +106,8 @@ func main() {
 	useSecio := flag.Bool("secio", false, "Enables SECIO channel security protocol")
 	useNoise := flag.Bool("noise", true, "Enables Noise channel security protocol")
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
+	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
+	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
 
 	flag.Parse()
 
@@ -370,6 +372,14 @@ func main() {
 		log.Fatal("at least one channel security protocol must be enabled")
 	}
 	opts = append(opts, securityOpts...)
+
+	if *forceReachabilityPrivate && *forceReachabilityPublic {
+		log.Fatal("forceReachability must be public or private, not both")
+	} else if *forceReachabilityPrivate {
+		opts = append(opts, libp2p.ForceReachabilityPrivate())
+	} else if *forceReachabilityPublic {
+		opts = append(opts, libp2p.ForceReachabilityPublic())
+	}
 
 	// start daemon
 	d, err := p2pd.NewDaemon(context.Background(), &c.ListenAddr, c.DHT.Mode, opts...)
