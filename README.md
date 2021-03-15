@@ -11,9 +11,15 @@
   interact with the DHT, participate in pubsub, etc. no matter the language they are developed in,
   nor whether a native libp2p implementation exists in that language.
 
-🚧 This project is under active development! 🚧
 
-Check out the [ROADMAP](ROADMAP.md) to see what's coming.
+## 🚧 This project is not actively maintained and is unsupported! 🚧
+
+It has reached viable PoC stage but is not being actively worked on or maintained. If you want to play around with libp2p, go ahead and try this project out. However:
+
+* There is little documentation and no support.
+* The libp2p version used in this project will not be actively updated.
+
+In other words: **DO NOT USE IN PRODUCTION**
 
 ## Install
 
