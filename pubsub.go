@@ -128,7 +128,7 @@ func psMessage(msg *ps.Message) *pb.PSMessage {
 		From:      msg.From,
 		Data:      msg.Data,
 		Seqno:     msg.Seqno,
-		TopicIDs:  msg.TopicIDs,
+		TopicIDs:  []string{*msg.Topic},
 		Signature: msg.Signature,
 		Key:       msg.Key,
 	}

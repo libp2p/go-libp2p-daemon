@@ -82,7 +82,6 @@ type PProf struct {
 }
 
 type Security struct {
-	SECIO bool
 	Noise bool
 	TLS   bool
 }
@@ -187,7 +186,6 @@ func NewDefaultConfig() Config {
 			Port:    0,
 		},
 		Security: Security{
-			SECIO: false,
 			Noise: true,
 			TLS:   true,
 		},
