@@ -40,11 +40,7 @@ func TestPubsubMessages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if err = sender.Connect(id, addrs); err != nil {
-		t.Fatal(err)
-	}
-
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
 	msgs, err := receiver.Subscribe(ctx, "test")
@@ -52,7 +48,11 @@ func TestPubsubMessages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(time.Second) // wait a second for the subscription to take effect
+	if err = sender.Connect(id, addrs); err != nil {
+		t.Fatal(err)
+	}
+
+	time.Sleep(2 * time.Second) // wait a second for the subscription to take effect
 
 	go func() {
 		if err := sender.Publish("test", []byte("foobar")); err != nil {
