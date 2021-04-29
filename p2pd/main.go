@@ -23,7 +23,6 @@ import (
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
 	tls "github.com/libp2p/go-libp2p-tls"
-	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -63,8 +62,6 @@ func pprofHTTP(port int) {
 }
 
 func main() {
-	identify.ClientVersion = "p2pd/0.1"
-
 	maddrString := flag.String("listen", "/unix/tmp/p2pd.sock", "daemon control listen multiaddr")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
@@ -110,7 +107,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	var opts []libp2p.Option
+	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)

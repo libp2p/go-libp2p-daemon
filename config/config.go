@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -130,10 +129,10 @@ func (c *Config) UnmarshalJSON(b []byte) error {
 
 func (c *Config) Validate() error {
 	if c.DHT.Mode != DHTClientMode && c.DHT.Mode != DHTFullMode && c.DHT.Mode != DHTServerMode && c.DHT.Mode != "" {
-		return errors.New(fmt.Sprintf("unknown DHT mode %s", c.DHT))
+		return fmt.Errorf("unknown DHT mode %s", c.DHT)
 	}
-	if c.Relay.Auto == true && (c.Relay.Enabled == false || c.DHT.Mode == "") {
-		return errors.New("can't have autorelay enabled without Relay enabled and DHT enabled")
+	if c.Relay.Auto && (!c.Relay.Enabled || c.DHT.Mode == "") {
+		return fmt.Errorf("can't have autorelay enabled without Relay enabled and DHT enabled")
 	}
 	return nil
 }
