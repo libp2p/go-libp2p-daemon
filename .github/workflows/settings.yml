@@ -37,4 +37,4 @@ jobs:
         asset_name: p2pd
         tag: ${{ github.ref }}
         overwrite: true
-        body: "This is my release text"
+        body: CI Release
