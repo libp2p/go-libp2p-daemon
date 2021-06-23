@@ -34,7 +34,7 @@ jobs:
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         file: p2pd/p2pd
-        asset_name: mything
+        asset_name: p2pd
         tag: ${{ github.ref }}
         overwrite: true
         body: "This is my release text"
