@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  push:
+    tags:        
+      - '*'
+
+jobs:
+  build:
+    name: Publish binaries
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.16.3
+
+    - uses: actions/checkout@v2
+
+    - name: Get the version
+      id: get_version
+      run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
+
+    - name: Build
+      run: CGO_ENABLED=0 cd p2pd && go build .
+
+    - name: Compress binaries
+      uses: svenstaro/upx-action@v2
+      with:
+        file: p2pd/p2pd
+
+    - name: Publish To Releases
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_token: ${{ secrets.GITHUB_TOKEN }}
+        release_name: ${{ steps.get_version.outputs.VERSION }}
+        file: p2pd/p2pd
+        asset_name: p2pd
+        tag: ${{ steps.get_version.outputs.VERSION }}
+        overwrite: true
+        body: CI Release
