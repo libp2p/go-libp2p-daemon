@@ -2,11 +2,11 @@ name: Release
 
 on:
   push:
-    branches: [ master, github-actions ]
+    branches: [ master ]
     tags:
       - "*.*.*"
   pull_request:
-    branches: [ master, github-actions ]
+    branches: [ master ]
 
 jobs:
   build:
