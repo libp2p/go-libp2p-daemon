@@ -21,7 +21,7 @@ jobs:
 
     - name: Build
     - uses: actions/checkout@v2
-        run: CGO_ENABLED=0 cd p2pd && go build .
+      run: CGO_ENABLED=0 cd p2pd && go build .
 
     - name: Compress binaries
     - uses: svenstaro/upx-action@v2
