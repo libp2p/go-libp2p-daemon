@@ -36,7 +36,7 @@ func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, a
 		}
 		res := methodv.Call(args)
 		if err, ok := res[1].Interface().(error); ok {
-			t.Fatalf("request failed: %s", err)
+			t.Errorf("request failed: %s", err)
 		}
 
 		if !streaming {
@@ -138,7 +138,7 @@ func TestDHTPutValue(t *testing.T) {
 	go func() {
 		err := client.PutValue(key, value)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 		donec <- struct{}{}
 	}()
@@ -162,7 +162,7 @@ func TestDHTProvide(t *testing.T) {
 	go func() {
 		err := client.Provide(cid)
 		if err != nil {
-			t.Fatal(err)
+			t.Error(err)
 		}
 		donec <- struct{}{}
 	}()

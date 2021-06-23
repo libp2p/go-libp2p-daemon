@@ -22,9 +22,7 @@ import (
 	noise "github.com/libp2p/go-libp2p-noise"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	quic "github.com/libp2p/go-libp2p-quic-transport"
-	secio "github.com/libp2p/go-libp2p-secio"
 	tls "github.com/libp2p/go-libp2p-tls"
-	identify "github.com/libp2p/go-libp2p/p2p/protocol/identify"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -64,8 +62,6 @@ func pprofHTTP(port int) {
 }
 
 func main() {
-	identify.ClientVersion = "p2pd/0.1"
-
 	maddrString := flag.String("listen", "/unix/tmp/p2pd.sock", "daemon control listen multiaddr")
 	quiet := flag.Bool("q", false, "be quiet")
 	id := flag.String("id", "", "peer identity; private key file")
@@ -103,7 +99,6 @@ func main() {
 		"available in the range [6060-7800], or on the user-provided port via -pprofPort")
 	pprofPort := flag.Uint("pprofPort", 0, "Binds the HTTP pprof handler to a specific port; "+
 		"has no effect unless the pprof option is enabled")
-	useSecio := flag.Bool("secio", false, "Enables SECIO channel security protocol")
 	useNoise := flag.Bool("noise", true, "Enables Noise channel security protocol")
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
@@ -112,7 +107,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
-	var opts []libp2p.Option
+	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
@@ -267,9 +262,6 @@ func main() {
 		}
 	}
 
-	if useSecio != nil {
-		c.Security.SECIO = *useSecio
-	}
 	if useTls != nil {
 		c.Security.TLS = *useTls
 	}
@@ -363,9 +355,6 @@ func main() {
 	}
 	if c.Security.TLS {
 		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
-	}
-	if c.Security.SECIO {
-		securityOpts = append(securityOpts, libp2p.Security(secio.ID, secio.New))
 	}
 
 	if len(securityOpts) == 0 {

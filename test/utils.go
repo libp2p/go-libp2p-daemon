@@ -3,7 +3,6 @@ package test
 import (
 	"context"
 	"crypto/rand"
-	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -143,34 +142,10 @@ func randCid(t *testing.T) cid.Cid {
 	return id
 }
 
-func randCids(t *testing.T, n int) []cid.Cid {
-	ids := make([]cid.Cid, n)
-	for i := 0; i < n; i++ {
-		ids[i] = randCid(t)
-	}
-	return ids
-}
-
 func randBytes(t *testing.T) []byte {
 	buf := make([]byte, 10)
 	rand.Read(buf)
 	return buf
-}
-
-func randString(t *testing.T) string {
-	buf := make([]byte, 10)
-	rand.Read(buf)
-	return hex.EncodeToString(buf)
-}
-
-func randStrings(t *testing.T, n int) []string {
-	out := make([]string, n)
-	for i := 0; i < n; i++ {
-		buf := make([]byte, 10)
-		rand.Read(buf)
-		out[i] = hex.EncodeToString(buf)
-	}
-	return out
 }
 
 func randPubKey(t *testing.T) crypto.PubKey {
