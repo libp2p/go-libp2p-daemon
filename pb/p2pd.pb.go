@@ -5,8 +5,8 @@ package p2pd_pb
 
 import (
 	fmt "fmt"
-	github_com_gogo_protobuf_proto "github.com/gogo/protobuf/proto"
-	proto "github.com/gogo/protobuf/proto"
+	github_com_golang_protobuf_proto "github.com/golang/protobuf/proto"
+	proto "github.com/golang/protobuf/proto"
 	io "io"
 	math "math"
 	math_bits "math/bits"
@@ -21,44 +21,53 @@ var _ = math.Inf
 // is compatible with the proto package it is being compiled against.
 // A compilation error at this line likely means your copy of the
 // proto package needs to be updated.
-const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
+const _ = proto.ProtoPackageIsVersion3 // please upgrade the proto package
 
 type Request_Type int32
 
 const (
-	Request_IDENTIFY       Request_Type = 0
-	Request_CONNECT        Request_Type = 1
-	Request_STREAM_OPEN    Request_Type = 2
-	Request_STREAM_HANDLER Request_Type = 3
-	Request_DHT            Request_Type = 4
-	Request_LIST_PEERS     Request_Type = 5
-	Request_CONNMANAGER    Request_Type = 6
-	Request_DISCONNECT     Request_Type = 7
-	Request_PUBSUB         Request_Type = 8
+	Request_IDENTIFY           Request_Type = 0
+	Request_CONNECT            Request_Type = 1
+	Request_STREAM_OPEN        Request_Type = 2
+	Request_STREAM_HANDLER     Request_Type = 3
+	Request_DHT                Request_Type = 4
+	Request_LIST_PEERS         Request_Type = 5
+	Request_CONNMANAGER        Request_Type = 6
+	Request_DISCONNECT         Request_Type = 7
+	Request_PUBSUB             Request_Type = 8
+	Request_PERSISTENT_CONNECT Request_Type = 9
+	Request_CALL_UNARY         Request_Type = 10
+	Request_ADD_UNARY_HANDLER  Request_Type = 11
 )
 
 var Request_Type_name = map[int32]string{
-	0: "IDENTIFY",
-	1: "CONNECT",
-	2: "STREAM_OPEN",
-	3: "STREAM_HANDLER",
-	4: "DHT",
-	5: "LIST_PEERS",
-	6: "CONNMANAGER",
-	7: "DISCONNECT",
-	8: "PUBSUB",
+	0:  "IDENTIFY",
+	1:  "CONNECT",
+	2:  "STREAM_OPEN",
+	3:  "STREAM_HANDLER",
+	4:  "DHT",
+	5:  "LIST_PEERS",
+	6:  "CONNMANAGER",
+	7:  "DISCONNECT",
+	8:  "PUBSUB",
+	9:  "PERSISTENT_CONNECT",
+	10: "CALL_UNARY",
+	11: "ADD_UNARY_HANDLER",
 }
 
 var Request_Type_value = map[string]int32{
-	"IDENTIFY":       0,
-	"CONNECT":        1,
-	"STREAM_OPEN":    2,
-	"STREAM_HANDLER": 3,
-	"DHT":            4,
-	"LIST_PEERS":     5,
-	"CONNMANAGER":    6,
-	"DISCONNECT":     7,
-	"PUBSUB":         8,
+	"IDENTIFY":           0,
+	"CONNECT":            1,
+	"STREAM_OPEN":        2,
+	"STREAM_HANDLER":     3,
+	"DHT":                4,
+	"LIST_PEERS":         5,
+	"CONNMANAGER":        6,
+	"DISCONNECT":         7,
+	"PUBSUB":             8,
+	"PERSISTENT_CONNECT": 9,
+	"CALL_UNARY":         10,
+	"ADD_UNARY_HANDLER":  11,
 }
 
 func (x Request_Type) Enum() *Request_Type {
@@ -318,17 +327,20 @@ func (PSRequest_Type) EnumDescriptor() ([]byte, []int) {
 }
 
 type Request struct {
-	Type                 *Request_Type         `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Request_Type" json:"type,omitempty"`
-	Connect              *ConnectRequest       `protobuf:"bytes,2,opt,name=connect" json:"connect,omitempty"`
-	StreamOpen           *StreamOpenRequest    `protobuf:"bytes,3,opt,name=streamOpen" json:"streamOpen,omitempty"`
-	StreamHandler        *StreamHandlerRequest `protobuf:"bytes,4,opt,name=streamHandler" json:"streamHandler,omitempty"`
-	Dht                  *DHTRequest           `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
-	ConnManager          *ConnManagerRequest   `protobuf:"bytes,6,opt,name=connManager" json:"connManager,omitempty"`
-	Disconnect           *DisconnectRequest    `protobuf:"bytes,7,opt,name=disconnect" json:"disconnect,omitempty"`
-	Pubsub               *PSRequest            `protobuf:"bytes,8,opt,name=pubsub" json:"pubsub,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
-	XXX_unrecognized     []byte                `json:"-"`
-	XXX_sizecache        int32                 `json:"-"`
+	Type                 *Request_Type             `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Request_Type" json:"type,omitempty"`
+	Connect              *ConnectRequest           `protobuf:"bytes,2,opt,name=connect" json:"connect,omitempty"`
+	StreamOpen           *StreamOpenRequest        `protobuf:"bytes,3,opt,name=streamOpen" json:"streamOpen,omitempty"`
+	StreamHandler        *StreamHandlerRequest     `protobuf:"bytes,4,opt,name=streamHandler" json:"streamHandler,omitempty"`
+	Dht                  *DHTRequest               `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
+	ConnManager          *ConnManagerRequest       `protobuf:"bytes,6,opt,name=connManager" json:"connManager,omitempty"`
+	Disconnect           *DisconnectRequest        `protobuf:"bytes,7,opt,name=disconnect" json:"disconnect,omitempty"`
+	Pubsub               *PSRequest                `protobuf:"bytes,8,opt,name=pubsub" json:"pubsub,omitempty"`
+	PersistentConnect    *PersistentConnectRequest `protobuf:"bytes,9,opt,name=persistentConnect" json:"persistentConnect,omitempty"`
+	CallUnary            *CallUnaryRequest         `protobuf:"bytes,10,opt,name=callUnary" json:"callUnary,omitempty"`
+	AddUnaryHandler      *AddUnaryHandlerRequest   `protobuf:"bytes,11,opt,name=addUnaryHandler" json:"addUnaryHandler,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}                  `json:"-"`
+	XXX_unrecognized     []byte                    `json:"-"`
+	XXX_sizecache        int32                     `json:"-"`
 }
 
 func (m *Request) Reset()         { *m = Request{} }
@@ -420,17 +432,40 @@ func (m *Request) GetPubsub() *PSRequest {
 	return nil
 }
 
+func (m *Request) GetPersistentConnect() *PersistentConnectRequest {
+	if m != nil {
+		return m.PersistentConnect
+	}
+	return nil
+}
+
+func (m *Request) GetCallUnary() *CallUnaryRequest {
+	if m != nil {
+		return m.CallUnary
+	}
+	return nil
+}
+
+func (m *Request) GetAddUnaryHandler() *AddUnaryHandlerRequest {
+	if m != nil {
+		return m.AddUnaryHandler
+	}
+	return nil
+}
+
 type Response struct {
-	Type                 *Response_Type    `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Response_Type" json:"type,omitempty"`
-	Error                *ErrorResponse    `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
-	StreamInfo           *StreamInfo       `protobuf:"bytes,3,opt,name=streamInfo" json:"streamInfo,omitempty"`
-	Identify             *IdentifyResponse `protobuf:"bytes,4,opt,name=identify" json:"identify,omitempty"`
-	Dht                  *DHTResponse      `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
-	Peers                []*PeerInfo       `protobuf:"bytes,6,rep,name=peers" json:"peers,omitempty"`
-	Pubsub               *PSResponse       `protobuf:"bytes,7,opt,name=pubsub" json:"pubsub,omitempty"`
-	XXX_NoUnkeyedLiteral struct{}          `json:"-"`
-	XXX_unrecognized     []byte            `json:"-"`
-	XXX_sizecache        int32             `json:"-"`
+	Type                 *Response_Type        `protobuf:"varint,1,req,name=type,enum=p2pd.pb.Response_Type" json:"type,omitempty"`
+	Error                *ErrorResponse        `protobuf:"bytes,2,opt,name=error" json:"error,omitempty"`
+	StreamInfo           *StreamInfo           `protobuf:"bytes,3,opt,name=streamInfo" json:"streamInfo,omitempty"`
+	Identify             *IdentifyResponse     `protobuf:"bytes,4,opt,name=identify" json:"identify,omitempty"`
+	Dht                  *DHTResponse          `protobuf:"bytes,5,opt,name=dht" json:"dht,omitempty"`
+	Peers                []*PeerInfo           `protobuf:"bytes,6,rep,name=peers" json:"peers,omitempty"`
+	Pubsub               *PSResponse           `protobuf:"bytes,7,opt,name=pubsub" json:"pubsub,omitempty"`
+	PersistentStreamInfo *PersistentStreamInfo `protobuf:"bytes,8,opt,name=persistentStreamInfo" json:"persistentStreamInfo,omitempty"`
+	CallUnaryResponse    *CallUnaryResponse    `protobuf:"bytes,9,opt,name=callUnaryResponse" json:"callUnaryResponse,omitempty"`
+	XXX_NoUnkeyedLiteral struct{}              `json:"-"`
+	XXX_unrecognized     []byte                `json:"-"`
+	XXX_sizecache        int32                 `json:"-"`
 }
 
 func (m *Response) Reset()         { *m = Response{} }
@@ -511,6 +546,20 @@ func (m *Response) GetPeers() []*PeerInfo {
 func (m *Response) GetPubsub() *PSResponse {
 	if m != nil {
 		return m.Pubsub
+	}
+	return nil
+}
+
+func (m *Response) GetPersistentStreamInfo() *PersistentStreamInfo {
+	if m != nil {
+		return m.PersistentStreamInfo
+	}
+	return nil
+}
+
+func (m *Response) GetCallUnaryResponse() *CallUnaryResponse {
+	if m != nil {
+		return m.CallUnaryResponse
 	}
 	return nil
 }
@@ -1397,6 +1446,313 @@ func (m *PSResponse) GetPeerIDs() [][]byte {
 	return nil
 }
 
+type PersistentConnectRequest struct {
+	Proto                *string  `protobuf:"bytes,1,req,name=proto" json:"proto,omitempty"`
+	ListenAddr           *string  `protobuf:"bytes,2,req,name=listenAddr" json:"listenAddr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PersistentConnectRequest) Reset()         { *m = PersistentConnectRequest{} }
+func (m *PersistentConnectRequest) String() string { return proto.CompactTextString(m) }
+func (*PersistentConnectRequest) ProtoMessage()    {}
+func (*PersistentConnectRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7333f0e9b622f7df, []int{16}
+}
+func (m *PersistentConnectRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PersistentConnectRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PersistentConnectRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PersistentConnectRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PersistentConnectRequest.Merge(m, src)
+}
+func (m *PersistentConnectRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *PersistentConnectRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_PersistentConnectRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PersistentConnectRequest proto.InternalMessageInfo
+
+func (m *PersistentConnectRequest) GetProto() string {
+	if m != nil && m.Proto != nil {
+		return *m.Proto
+	}
+	return ""
+}
+
+func (m *PersistentConnectRequest) GetListenAddr() string {
+	if m != nil && m.ListenAddr != nil {
+		return *m.ListenAddr
+	}
+	return ""
+}
+
+type PersistentStreamInfo struct {
+	Addr                 *string  `protobuf:"bytes,1,req,name=addr" json:"addr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *PersistentStreamInfo) Reset()         { *m = PersistentStreamInfo{} }
+func (m *PersistentStreamInfo) String() string { return proto.CompactTextString(m) }
+func (*PersistentStreamInfo) ProtoMessage()    {}
+func (*PersistentStreamInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7333f0e9b622f7df, []int{17}
+}
+func (m *PersistentStreamInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *PersistentStreamInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_PersistentStreamInfo.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *PersistentStreamInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_PersistentStreamInfo.Merge(m, src)
+}
+func (m *PersistentStreamInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *PersistentStreamInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_PersistentStreamInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_PersistentStreamInfo proto.InternalMessageInfo
+
+func (m *PersistentStreamInfo) GetAddr() string {
+	if m != nil && m.Addr != nil {
+		return *m.Addr
+	}
+	return ""
+}
+
+type AddUnaryHandlerRequest struct {
+	Proto                *string  `protobuf:"bytes,1,req,name=proto" json:"proto,omitempty"`
+	ListenAddr           *string  `protobuf:"bytes,2,req,name=listenAddr" json:"listenAddr,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *AddUnaryHandlerRequest) Reset()         { *m = AddUnaryHandlerRequest{} }
+func (m *AddUnaryHandlerRequest) String() string { return proto.CompactTextString(m) }
+func (*AddUnaryHandlerRequest) ProtoMessage()    {}
+func (*AddUnaryHandlerRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7333f0e9b622f7df, []int{18}
+}
+func (m *AddUnaryHandlerRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AddUnaryHandlerRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_AddUnaryHandlerRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *AddUnaryHandlerRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AddUnaryHandlerRequest.Merge(m, src)
+}
+func (m *AddUnaryHandlerRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *AddUnaryHandlerRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_AddUnaryHandlerRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AddUnaryHandlerRequest proto.InternalMessageInfo
+
+func (m *AddUnaryHandlerRequest) GetProto() string {
+	if m != nil && m.Proto != nil {
+		return *m.Proto
+	}
+	return ""
+}
+
+func (m *AddUnaryHandlerRequest) GetListenAddr() string {
+	if m != nil && m.ListenAddr != nil {
+		return *m.ListenAddr
+	}
+	return ""
+}
+
+type CallUnaryRequest struct {
+	CallId               *int64   `protobuf:"varint,1,req,name=callId" json:"callId,omitempty"`
+	Peer                 []byte   `protobuf:"bytes,2,req,name=peer" json:"peer,omitempty"`
+	Proto                []string `protobuf:"bytes,3,rep,name=proto" json:"proto,omitempty"`
+	Data                 []byte   `protobuf:"bytes,4,req,name=data" json:"data,omitempty"`
+	Timeout              *int64   `protobuf:"varint,5,opt,name=timeout" json:"timeout,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CallUnaryRequest) Reset()         { *m = CallUnaryRequest{} }
+func (m *CallUnaryRequest) String() string { return proto.CompactTextString(m) }
+func (*CallUnaryRequest) ProtoMessage()    {}
+func (*CallUnaryRequest) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7333f0e9b622f7df, []int{19}
+}
+func (m *CallUnaryRequest) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CallUnaryRequest) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CallUnaryRequest.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CallUnaryRequest) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CallUnaryRequest.Merge(m, src)
+}
+func (m *CallUnaryRequest) XXX_Size() int {
+	return m.Size()
+}
+func (m *CallUnaryRequest) XXX_DiscardUnknown() {
+	xxx_messageInfo_CallUnaryRequest.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CallUnaryRequest proto.InternalMessageInfo
+
+func (m *CallUnaryRequest) GetCallId() int64 {
+	if m != nil && m.CallId != nil {
+		return *m.CallId
+	}
+	return 0
+}
+
+func (m *CallUnaryRequest) GetPeer() []byte {
+	if m != nil {
+		return m.Peer
+	}
+	return nil
+}
+
+func (m *CallUnaryRequest) GetProto() []string {
+	if m != nil {
+		return m.Proto
+	}
+	return nil
+}
+
+func (m *CallUnaryRequest) GetData() []byte {
+	if m != nil {
+		return m.Data
+	}
+	return nil
+}
+
+func (m *CallUnaryRequest) GetTimeout() int64 {
+	if m != nil && m.Timeout != nil {
+		return *m.Timeout
+	}
+	return 0
+}
+
+type CallUnaryResponse struct {
+	CallId               *int64   `protobuf:"varint,1,req,name=callId" json:"callId,omitempty"`
+	Successful           *bool    `protobuf:"varint,2,req,name=successful" json:"successful,omitempty"`
+	Result               []byte   `protobuf:"bytes,3,opt,name=result" json:"result,omitempty"`
+	Error                *string  `protobuf:"bytes,4,opt,name=error" json:"error,omitempty"`
+	XXX_NoUnkeyedLiteral struct{} `json:"-"`
+	XXX_unrecognized     []byte   `json:"-"`
+	XXX_sizecache        int32    `json:"-"`
+}
+
+func (m *CallUnaryResponse) Reset()         { *m = CallUnaryResponse{} }
+func (m *CallUnaryResponse) String() string { return proto.CompactTextString(m) }
+func (*CallUnaryResponse) ProtoMessage()    {}
+func (*CallUnaryResponse) Descriptor() ([]byte, []int) {
+	return fileDescriptor_7333f0e9b622f7df, []int{20}
+}
+func (m *CallUnaryResponse) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *CallUnaryResponse) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	if deterministic {
+		return xxx_messageInfo_CallUnaryResponse.Marshal(b, m, deterministic)
+	} else {
+		b = b[:cap(b)]
+		n, err := m.MarshalToSizedBuffer(b)
+		if err != nil {
+			return nil, err
+		}
+		return b[:n], nil
+	}
+}
+func (m *CallUnaryResponse) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_CallUnaryResponse.Merge(m, src)
+}
+func (m *CallUnaryResponse) XXX_Size() int {
+	return m.Size()
+}
+func (m *CallUnaryResponse) XXX_DiscardUnknown() {
+	xxx_messageInfo_CallUnaryResponse.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_CallUnaryResponse proto.InternalMessageInfo
+
+func (m *CallUnaryResponse) GetCallId() int64 {
+	if m != nil && m.CallId != nil {
+		return *m.CallId
+	}
+	return 0
+}
+
+func (m *CallUnaryResponse) GetSuccessful() bool {
+	if m != nil && m.Successful != nil {
+		return *m.Successful
+	}
+	return false
+}
+
+func (m *CallUnaryResponse) GetResult() []byte {
+	if m != nil {
+		return m.Result
+	}
+	return nil
+}
+
+func (m *CallUnaryResponse) GetError() string {
+	if m != nil && m.Error != nil {
+		return *m.Error
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("p2pd.pb.Request_Type", Request_Type_name, Request_Type_value)
 	proto.RegisterEnum("p2pd.pb.Response_Type", Response_Type_name, Response_Type_value)
@@ -1420,83 +1776,105 @@ func init() {
 	proto.RegisterType((*PSRequest)(nil), "p2pd.pb.PSRequest")
 	proto.RegisterType((*PSMessage)(nil), "p2pd.pb.PSMessage")
 	proto.RegisterType((*PSResponse)(nil), "p2pd.pb.PSResponse")
+	proto.RegisterType((*PersistentConnectRequest)(nil), "p2pd.pb.PersistentConnectRequest")
+	proto.RegisterType((*PersistentStreamInfo)(nil), "p2pd.pb.PersistentStreamInfo")
+	proto.RegisterType((*AddUnaryHandlerRequest)(nil), "p2pd.pb.AddUnaryHandlerRequest")
+	proto.RegisterType((*CallUnaryRequest)(nil), "p2pd.pb.CallUnaryRequest")
+	proto.RegisterType((*CallUnaryResponse)(nil), "p2pd.pb.CallUnaryResponse")
 }
 
 func init() { proto.RegisterFile("p2pd.proto", fileDescriptor_7333f0e9b622f7df) }
 
 var fileDescriptor_7333f0e9b622f7df = []byte{
-	// 1123 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x55, 0x41, 0x8f, 0xdb, 0x44,
-	0x14, 0xae, 0xed, 0x24, 0x4e, 0x5e, 0xb2, 0x61, 0x76, 0xba, 0x6d, 0xbd, 0xa5, 0xac, 0x82, 0xa5,
-	0xa5, 0x4b, 0x5b, 0x56, 0xb0, 0x80, 0x84, 0x90, 0x40, 0x24, 0xb1, 0xbb, 0x31, 0xdd, 0x4d, 0xa2,
-	0xb1, 0x53, 0xd4, 0x53, 0xe4, 0x5d, 0xcf, 0xa6, 0x11, 0x5d, 0x3b, 0xb5, 0x1d, 0xd0, 0xfe, 0x07,
-	0xae, 0xdc, 0x39, 0xf1, 0x07, 0xb8, 0xf0, 0x07, 0x90, 0x38, 0xf2, 0x13, 0xd0, 0xde, 0xb8, 0xf0,
-	0x1b, 0xd0, 0x8c, 0x67, 0x1c, 0x3b, 0x1b, 0xaa, 0xde, 0xe6, 0xcd, 0x7c, 0xdf, 0x7b, 0x6f, 0xde,
-	0x7c, 0xef, 0x0d, 0xc0, 0xe2, 0x68, 0x11, 0x1c, 0x2e, 0xe2, 0x28, 0x8d, 0xb0, 0x9e, 0xad, 0xcf,
-	0xcc, 0x3f, 0x2a, 0xa0, 0x13, 0xfa, 0x7a, 0x49, 0x93, 0x14, 0x7f, 0x08, 0x95, 0xf4, 0x6a, 0x41,
-	0x0d, 0xa5, 0xa3, 0x1e, 0xb4, 0x8f, 0xee, 0x1c, 0x0a, 0xcc, 0xa1, 0x38, 0x3f, 0xf4, 0xae, 0x16,
-	0x94, 0x70, 0x08, 0xfe, 0x04, 0xf4, 0xf3, 0x28, 0x0c, 0xe9, 0x79, 0x6a, 0xa8, 0x1d, 0xe5, 0xa0,
-	0x79, 0x74, 0x2f, 0x47, 0xf7, 0xb3, 0x7d, 0x41, 0x22, 0x12, 0x87, 0xbf, 0x04, 0x48, 0xd2, 0x98,
-	0xfa, 0x97, 0xa3, 0x05, 0x0d, 0x0d, 0x8d, 0xb3, 0xee, 0xe7, 0x2c, 0x37, 0x3f, 0x92, 0xc4, 0x02,
-	0x1a, 0xf7, 0x61, 0x2b, 0xb3, 0x06, 0x7e, 0x18, 0xbc, 0xa2, 0xb1, 0x51, 0xe1, 0xf4, 0xf7, 0xd6,
-	0xe8, 0xe2, 0x54, 0x7a, 0x28, 0x73, 0xf0, 0x3e, 0x68, 0xc1, 0xcb, 0xd4, 0xa8, 0x72, 0xea, 0xed,
-	0x9c, 0x6a, 0x0d, 0x3c, 0x49, 0x60, 0xe7, 0xf8, 0x2b, 0x68, 0xb2, 0x94, 0x4f, 0xfd, 0xd0, 0x9f,
-	0xd1, 0xd8, 0xa8, 0x71, 0xf8, 0xbb, 0xa5, 0xeb, 0x89, 0x33, 0x49, 0x2b, 0xe2, 0xd9, 0x35, 0x83,
-	0x79, 0x22, 0x8b, 0xa3, 0xaf, 0x5d, 0xd3, 0xca, 0x8f, 0xf2, 0x6b, 0xae, 0xd0, 0xf8, 0x11, 0xd4,
-	0x16, 0xcb, 0xb3, 0x64, 0x79, 0x66, 0xd4, 0x39, 0x0f, 0xe7, 0xbc, 0xb1, 0x2b, 0xf1, 0x02, 0x61,
-	0xfe, 0xa4, 0x40, 0x85, 0x3d, 0x08, 0x6e, 0x41, 0xdd, 0xb1, 0xec, 0xa1, 0xe7, 0x3c, 0x7d, 0x81,
-	0x6e, 0xe1, 0x26, 0xe8, 0xfd, 0xd1, 0x70, 0x68, 0xf7, 0x3d, 0xa4, 0xe0, 0x77, 0xa0, 0xe9, 0x7a,
-	0xc4, 0xee, 0x9e, 0x4e, 0x47, 0x63, 0x7b, 0x88, 0x54, 0x8c, 0xa1, 0x2d, 0x36, 0x06, 0xdd, 0xa1,
-	0x75, 0x62, 0x13, 0xa4, 0x61, 0x1d, 0x34, 0x6b, 0xe0, 0xa1, 0x0a, 0x6e, 0x03, 0x9c, 0x38, 0xae,
-	0x37, 0x1d, 0xdb, 0x36, 0x71, 0x51, 0x95, 0xb1, 0x99, 0xab, 0xd3, 0xee, 0xb0, 0x7b, 0x6c, 0x13,
-	0x54, 0x63, 0x00, 0xcb, 0x71, 0xa5, 0x7b, 0x1d, 0x03, 0xd4, 0xc6, 0x93, 0x9e, 0x3b, 0xe9, 0xa1,
-	0xba, 0xf9, 0x8f, 0x0a, 0x75, 0x42, 0x93, 0x45, 0x14, 0x26, 0x14, 0x3f, 0x2a, 0x09, 0xe9, 0x6e,
-	0x41, 0x48, 0x19, 0xa0, 0xa8, 0xa4, 0x27, 0x50, 0xa5, 0x71, 0x1c, 0xc5, 0x42, 0x47, 0x2b, 0xb0,
-	0xcd, 0x76, 0x25, 0x83, 0x64, 0x20, 0xfc, 0xa9, 0x14, 0x91, 0x13, 0x5e, 0x44, 0x42, 0x44, 0xb7,
-	0xd7, 0x54, 0xc0, 0x8e, 0x48, 0x01, 0x86, 0x3f, 0x87, 0xfa, 0x3c, 0xa0, 0x61, 0x3a, 0xbf, 0xb8,
-	0x12, 0xc2, 0xd9, 0xcd, 0x29, 0x8e, 0x38, 0xc8, 0x03, 0xe5, 0x50, 0xfc, 0x41, 0x51, 0x2f, 0x3b,
-	0x65, 0xbd, 0x08, 0x30, 0x17, 0xcc, 0x43, 0xa8, 0x2e, 0x28, 0x8d, 0x13, 0xa3, 0xd6, 0xd1, 0x0e,
-	0x9a, 0x47, 0xdb, 0xab, 0x47, 0xa3, 0x34, 0xe6, 0xc9, 0x64, 0xe7, 0xf8, 0x71, 0xfe, 0xbc, 0xfa,
-	0x5a, 0xe2, 0xec, 0x79, 0x85, 0x4b, 0xf9, 0xbe, 0xbb, 0xe2, 0x79, 0x6b, 0xa0, 0x8e, 0x9e, 0xa1,
-	0x5b, 0xb8, 0x01, 0x55, 0x9b, 0x90, 0x11, 0x41, 0x8a, 0xf9, 0x05, 0xa0, 0xf5, 0xb4, 0x71, 0x1b,
-	0xd4, 0x79, 0xc0, 0x0b, 0xde, 0x22, 0xea, 0x3c, 0xc0, 0x3b, 0x50, 0xf5, 0x83, 0x20, 0x4e, 0x0c,
-	0xb5, 0xa3, 0x1d, 0xb4, 0x48, 0x66, 0x98, 0x1e, 0xb4, 0xcb, 0xed, 0x89, 0x31, 0x54, 0x58, 0x72,
-	0x82, 0xc9, 0xd7, 0x9b, 0xb9, 0xd8, 0x00, 0x3d, 0x9d, 0x5f, 0xd2, 0x68, 0x99, 0xf2, 0xba, 0x6b,
-	0x44, 0x9a, 0xe6, 0x77, 0xb0, 0x7d, 0xa3, 0x7d, 0xff, 0xcf, 0x31, 0x1f, 0x3f, 0xdc, 0x71, 0x83,
-	0x64, 0xc6, 0x1b, 0x1c, 0x7f, 0x03, 0x3b, 0x9b, 0x1a, 0x9b, 0xf9, 0x66, 0x39, 0x49, 0xdf, 0x6c,
-	0xbd, 0xd9, 0xb7, 0xf9, 0x3e, 0x6c, 0x95, 0x74, 0x84, 0x11, 0x68, 0x97, 0xc9, 0x8c, 0x33, 0x1b,
-	0x84, 0x2d, 0xcd, 0x6f, 0x01, 0x56, 0xba, 0xd9, 0x98, 0xb6, 0x0c, 0xa7, 0x6e, 0x0a, 0xa7, 0x71,
-	0x4f, 0x22, 0xdc, 0xbf, 0x2a, 0xc0, 0x6a, 0x9e, 0xe0, 0x27, 0xa5, 0x3e, 0x30, 0x36, 0x8c, 0x9c,
-	0x62, 0x27, 0xc8, 0xd0, 0xac, 0x11, 0x64, 0x68, 0x04, 0xda, 0xf9, 0x3c, 0xe0, 0x75, 0x69, 0x11,
-	0xb6, 0x64, 0x3b, 0xdf, 0xd3, 0x4c, 0xc7, 0x2d, 0xc2, 0x96, 0x2c, 0x95, 0x1f, 0xfc, 0x57, 0x4b,
-	0xca, 0x95, 0xda, 0x22, 0x99, 0xc1, 0x76, 0xcf, 0xa3, 0x65, 0x98, 0xf2, 0x01, 0x56, 0x25, 0x99,
-	0x51, 0xac, 0xb5, 0x5e, 0xae, 0xf5, 0x6f, 0x72, 0x9e, 0x6c, 0x41, 0xe3, 0xa9, 0x33, 0xb4, 0xf8,
-	0x18, 0x40, 0xb7, 0x70, 0x07, 0x1e, 0xe4, 0xa6, 0x3b, 0x15, 0xcd, 0x6f, 0x5b, 0x53, 0x6f, 0x94,
-	0x21, 0x14, 0x36, 0x54, 0x32, 0x04, 0x19, 0x3d, 0x77, 0x2c, 0x36, 0x3b, 0x54, 0x7c, 0x07, 0xb6,
-	0x8f, 0x6d, 0x6f, 0xda, 0x3f, 0x19, 0xb9, 0x76, 0x3e, 0x52, 0x34, 0x06, 0x65, 0xdb, 0xe3, 0x49,
-	0xef, 0xc4, 0xe9, 0x4f, 0x9f, 0xd9, 0x2f, 0x50, 0x85, 0xc5, 0x63, 0x7b, 0xcf, 0xbb, 0x27, 0x13,
-	0x1b, 0x55, 0x31, 0x82, 0x96, 0x6b, 0x77, 0x49, 0x7f, 0x20, 0x76, 0x6a, 0x0c, 0x30, 0x9e, 0x48,
-	0x80, 0xce, 0x26, 0x9c, 0x88, 0x84, 0xea, 0xe6, 0x2f, 0x0a, 0x34, 0x0b, 0x0d, 0x89, 0x3f, 0x2a,
-	0x55, 0x7c, 0x77, 0x53, 0xd3, 0x16, 0x4b, 0xbe, 0x5f, 0x28, 0xf9, 0xc6, 0xce, 0xcd, 0x75, 0x9b,
-	0x55, 0x58, 0x2b, 0x54, 0xd8, 0xdc, 0x17, 0x05, 0x6b, 0x40, 0xb5, 0x67, 0x1f, 0x3b, 0xc3, 0xac,
-	0x49, 0xb3, 0x34, 0x15, 0x36, 0x56, 0xed, 0xa1, 0x85, 0x54, 0xf3, 0x63, 0xa8, 0x4b, 0x77, 0x6f,
-	0xd9, 0xa5, 0xbf, 0x2b, 0x80, 0x6f, 0x7e, 0x33, 0xf8, 0xb3, 0xd2, 0xdd, 0x3a, 0x6f, 0xf8, 0x91,
-	0xde, 0x42, 0x55, 0xa9, 0x3f, 0xe3, 0xb7, 0x69, 0x10, 0xb6, 0xc4, 0x77, 0xa1, 0xf6, 0x23, 0x9d,
-	0xcf, 0x5e, 0xa6, 0x5c, 0x58, 0x1a, 0x11, 0x96, 0x79, 0xb8, 0xfa, 0x64, 0xbc, 0xee, 0xb1, 0xd4,
-	0x44, 0x1b, 0x60, 0x32, 0xcc, 0x6d, 0x05, 0xd7, 0xa1, 0xe2, 0x11, 0xe7, 0x14, 0xa9, 0xe6, 0x43,
-	0xd8, 0xbe, 0xf1, 0xc5, 0x6d, 0xea, 0x29, 0xf3, 0x57, 0x05, 0x1a, 0xf9, 0xa7, 0x86, 0x1f, 0x97,
-	0xae, 0x76, 0xef, 0xe6, 0xb7, 0x57, 0xbc, 0xd1, 0x0e, 0x54, 0xd3, 0x68, 0x31, 0x3f, 0xe7, 0x57,
-	0x6a, 0x90, 0xcc, 0x60, 0x41, 0x02, 0x3f, 0xf5, 0xc5, 0x13, 0xf1, 0xb5, 0xd9, 0x13, 0xd9, 0xb7,
-	0x01, 0x98, 0xc4, 0xbc, 0xd1, 0xd8, 0xe9, 0xbb, 0x59, 0xfe, 0x85, 0x9f, 0x4e, 0xe1, 0x92, 0x62,
-	0x92, 0x74, 0x07, 0x48, 0x65, 0x72, 0x73, 0x27, 0x3d, 0xb7, 0x4f, 0x9c, 0x9e, 0x8d, 0x34, 0xf3,
-	0x67, 0x9e, 0xe8, 0x29, 0x4d, 0x12, 0x7f, 0xc6, 0xab, 0x79, 0x11, 0x47, 0x97, 0x86, 0x92, 0x45,
-	0x61, 0xeb, 0x3c, 0xb2, 0xba, 0x8a, 0xcc, 0x72, 0x4c, 0xe8, 0xeb, 0x30, 0x92, 0x8a, 0xe1, 0x06,
-	0xbe, 0x0f, 0x75, 0x9e, 0xac, 0x63, 0x25, 0x46, 0x85, 0x8f, 0xa9, 0xdc, 0xc6, 0x0f, 0xa0, 0x91,
-	0xcc, 0x67, 0xa1, 0x9f, 0x2e, 0x63, 0xd9, 0xc9, 0xab, 0x0d, 0xd9, 0xf5, 0xb5, 0xbc, 0xeb, 0xcd,
-	0xaf, 0x01, 0x56, 0xbf, 0x06, 0x7b, 0x3f, 0xee, 0x29, 0x31, 0x14, 0xee, 0x57, 0x58, 0xac, 0xdf,
-	0x59, 0xb9, 0x59, 0xc0, 0x4c, 0x62, 0xd2, 0xec, 0xb5, 0xfe, 0xbc, 0xde, 0x53, 0xfe, 0xba, 0xde,
-	0x53, 0xfe, 0xbe, 0xde, 0x53, 0xfe, 0x0b, 0x00, 0x00, 0xff, 0xff, 0x7d, 0x4e, 0x88, 0x0e, 0x1c,
-	0x0a, 0x00, 0x00,
+	// 1396 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x56, 0x4f, 0x8f, 0x1b, 0xc5,
+	0x12, 0xdf, 0x99, 0xf1, 0xbf, 0x29, 0x3b, 0xce, 0xb8, 0xb3, 0xd9, 0x4c, 0xf2, 0x92, 0x7d, 0x9b,
+	0x91, 0xf2, 0xb2, 0x2f, 0xc9, 0x5b, 0x3d, 0x16, 0x10, 0x08, 0x09, 0x84, 0xff, 0x4c, 0xd6, 0x43,
+	0xbc, 0xb6, 0xe9, 0x19, 0x07, 0xe5, 0x64, 0x4d, 0xec, 0xde, 0x8d, 0x85, 0xd7, 0x76, 0x66, 0xc6,
+	0xa0, 0xbd, 0x72, 0xe0, 0x1b, 0x20, 0x71, 0xe4, 0xc4, 0x17, 0xe0, 0xc2, 0x47, 0x40, 0xe2, 0xc2,
+	0x95, 0x1b, 0x0a, 0x77, 0x3e, 0x03, 0xea, 0x7f, 0xf3, 0xc7, 0x9e, 0x44, 0x11, 0xb7, 0xae, 0xee,
+	0xfa, 0x55, 0x55, 0x57, 0xd7, 0xaf, 0xaa, 0x01, 0x56, 0xc7, 0xab, 0xe9, 0xd1, 0x2a, 0x58, 0x46,
+	0x4b, 0x54, 0xe6, 0xeb, 0xe7, 0xd6, 0xef, 0x25, 0x28, 0x63, 0xf2, 0x72, 0x4d, 0xc2, 0x08, 0xfd,
+	0x17, 0x0a, 0xd1, 0xe5, 0x8a, 0x98, 0xca, 0x81, 0x7a, 0x58, 0x3f, 0xbe, 0x7e, 0x24, 0x74, 0x8e,
+	0xc4, 0xf9, 0x91, 0x77, 0xb9, 0x22, 0x98, 0xa9, 0xa0, 0x77, 0xa0, 0x3c, 0x59, 0x2e, 0x16, 0x64,
+	0x12, 0x99, 0xea, 0x81, 0x72, 0x58, 0x3d, 0xbe, 0x11, 0x6b, 0xb7, 0xf9, 0xbe, 0x00, 0x61, 0xa9,
+	0x87, 0x3e, 0x02, 0x08, 0xa3, 0x80, 0xf8, 0x17, 0x83, 0x15, 0x59, 0x98, 0x1a, 0x43, 0xdd, 0x8a,
+	0x51, 0x6e, 0x7c, 0x24, 0x81, 0x29, 0x6d, 0xd4, 0x86, 0x2b, 0x5c, 0xea, 0xfa, 0x8b, 0xe9, 0x9c,
+	0x04, 0x66, 0x81, 0xc1, 0xef, 0x6c, 0xc0, 0xc5, 0xa9, 0xb4, 0x90, 0xc5, 0xa0, 0x7b, 0xa0, 0x4d,
+	0x5f, 0x44, 0x66, 0x91, 0x41, 0xaf, 0xc5, 0xd0, 0x4e, 0xd7, 0x93, 0x00, 0x7a, 0x8e, 0x3e, 0x86,
+	0x2a, 0x0d, 0xf9, 0xd4, 0x5f, 0xf8, 0xe7, 0x24, 0x30, 0x4b, 0x4c, 0xfd, 0x5f, 0x99, 0xeb, 0x89,
+	0x33, 0x09, 0x4b, 0xeb, 0xd3, 0x6b, 0x4e, 0x67, 0xa1, 0x4c, 0x4e, 0x79, 0xe3, 0x9a, 0x9d, 0xf8,
+	0x28, 0xbe, 0x66, 0xa2, 0x8d, 0x1e, 0x40, 0x69, 0xb5, 0x7e, 0x1e, 0xae, 0x9f, 0x9b, 0x15, 0x86,
+	0x43, 0x31, 0x6e, 0xe8, 0x4a, 0x7d, 0xa1, 0x81, 0x06, 0xd0, 0x58, 0x91, 0x20, 0x9c, 0x85, 0x11,
+	0x59, 0x44, 0x22, 0xe7, 0xa6, 0xce, 0x60, 0x77, 0x13, 0xd8, 0xa6, 0x86, 0xb4, 0xb2, 0x8d, 0x45,
+	0x1f, 0x80, 0x3e, 0xf1, 0xe7, 0xf3, 0xd1, 0xc2, 0x0f, 0x2e, 0x4d, 0x60, 0x86, 0x6e, 0x26, 0xb7,
+	0x96, 0x27, 0xd2, 0x40, 0xa2, 0x8b, 0x1c, 0xb8, 0xea, 0x4f, 0xa7, 0x6c, 0x2d, 0x9f, 0xa7, 0xca,
+	0xe0, 0xff, 0x8e, 0xe1, 0xcd, 0xec, 0xb9, 0x34, 0xb2, 0x89, 0xb3, 0x7e, 0x55, 0xa0, 0x40, 0xab,
+	0x0c, 0xd5, 0xa0, 0xe2, 0x74, 0xec, 0xbe, 0xe7, 0x3c, 0x7e, 0x66, 0xec, 0xa0, 0x2a, 0x94, 0xdb,
+	0x83, 0x7e, 0xdf, 0x6e, 0x7b, 0x86, 0x82, 0xae, 0x42, 0xd5, 0xf5, 0xb0, 0xdd, 0x3c, 0x1d, 0x0f,
+	0x86, 0x76, 0xdf, 0x50, 0x11, 0x82, 0xba, 0xd8, 0xe8, 0x36, 0xfb, 0x9d, 0x9e, 0x8d, 0x0d, 0x0d,
+	0x95, 0x41, 0xeb, 0x74, 0x3d, 0xa3, 0x80, 0xea, 0x00, 0x3d, 0xc7, 0xf5, 0xc6, 0x43, 0xdb, 0xc6,
+	0xae, 0x51, 0xa4, 0x68, 0x6a, 0xea, 0xb4, 0xd9, 0x6f, 0x9e, 0xd8, 0xd8, 0x28, 0x51, 0x85, 0x8e,
+	0xe3, 0x4a, 0xf3, 0x65, 0x04, 0x50, 0x1a, 0x8e, 0x5a, 0xee, 0xa8, 0x65, 0x54, 0xd0, 0x1e, 0xa0,
+	0xa1, 0x8d, 0x5d, 0xc7, 0xf5, 0xec, 0xbe, 0x37, 0x96, 0x3a, 0x3a, 0xc5, 0xb4, 0x9b, 0xbd, 0xde,
+	0x78, 0xd4, 0x6f, 0xe2, 0x67, 0x06, 0xa0, 0xeb, 0xd0, 0x68, 0x76, 0x3a, 0x5c, 0x8c, 0x83, 0xa8,
+	0x5a, 0xdf, 0x16, 0xa0, 0x82, 0x49, 0xb8, 0x5a, 0x2e, 0x42, 0x82, 0x1e, 0x64, 0xc8, 0xb5, 0x97,
+	0x22, 0x17, 0x57, 0x48, 0xb3, 0xeb, 0x11, 0x14, 0x49, 0x10, 0x2c, 0x03, 0xc1, 0xad, 0x44, 0xd9,
+	0xa6, 0xbb, 0x12, 0x81, 0xb9, 0x12, 0x7a, 0x57, 0x12, 0xcb, 0x59, 0x9c, 0x2d, 0x05, 0xb1, 0xae,
+	0x6d, 0x30, 0x83, 0x1e, 0xe1, 0x94, 0x1a, 0x7a, 0x1f, 0x2a, 0xb3, 0x29, 0x59, 0x44, 0xb3, 0xb3,
+	0x4b, 0x41, 0xa6, 0xe4, 0xb1, 0x1d, 0x71, 0x10, 0x3b, 0x8a, 0x55, 0xd1, 0x7f, 0xd2, 0x1c, 0xda,
+	0xcd, 0x72, 0x48, 0x28, 0x33, 0x12, 0xdd, 0x87, 0xe2, 0x8a, 0x90, 0x20, 0x34, 0x4b, 0x07, 0xda,
+	0x61, 0xf5, 0xb8, 0x91, 0xaa, 0x48, 0x12, 0xb0, 0x60, 0xf8, 0x39, 0x7a, 0x18, 0x97, 0x7c, 0x79,
+	0x23, 0x70, 0x5a, 0xf2, 0xc2, 0xa4, 0xac, 0xf9, 0xcf, 0x61, 0x37, 0xa9, 0xdb, 0xe4, 0x62, 0x82,
+	0x2d, 0x77, 0x72, 0xca, 0x3e, 0x75, 0xfb, 0x5c, 0x28, 0xea, 0x42, 0x63, 0x92, 0xd4, 0x36, 0xf7,
+	0x27, 0x68, 0x74, 0x2b, 0xaf, 0xfa, 0x45, 0x44, 0xdb, 0x20, 0xeb, 0xa6, 0x28, 0xdd, 0x12, 0xa8,
+	0x83, 0x27, 0xc6, 0x0e, 0xd2, 0xa1, 0x68, 0x63, 0x3c, 0xc0, 0x86, 0x62, 0x7d, 0x08, 0xc6, 0x66,
+	0x4e, 0x51, 0x1d, 0xd4, 0xd9, 0x94, 0x55, 0x43, 0x0d, 0xab, 0xb3, 0x29, 0xda, 0x85, 0xa2, 0x3f,
+	0x9d, 0x06, 0xa1, 0xa9, 0x1e, 0x68, 0x87, 0x35, 0xcc, 0x05, 0xcb, 0x83, 0x7a, 0x96, 0xb9, 0x08,
+	0x41, 0x81, 0x66, 0x4e, 0x20, 0xd9, 0x3a, 0x1f, 0x8b, 0x4c, 0x28, 0x47, 0xb3, 0x0b, 0xb2, 0x5c,
+	0x47, 0xac, 0x28, 0x34, 0x2c, 0x45, 0xeb, 0x0b, 0x68, 0x6c, 0xf5, 0xdb, 0xd7, 0x19, 0x66, 0xf3,
+	0x82, 0x19, 0xd6, 0x31, 0x17, 0xde, 0x60, 0xf8, 0x53, 0xd8, 0xcd, 0xeb, 0xc4, 0xd4, 0x36, 0x8d,
+	0x49, 0xda, 0xa6, 0xeb, 0x7c, 0xdb, 0xd6, 0x5d, 0xb8, 0x92, 0x29, 0x72, 0x64, 0x80, 0x76, 0x11,
+	0x9e, 0x33, 0xa4, 0x8e, 0xe9, 0xd2, 0xfa, 0x0c, 0x20, 0xf5, 0x80, 0x79, 0x61, 0x4b, 0x77, 0x6a,
+	0x9e, 0x3b, 0x8d, 0x59, 0x12, 0xee, 0xfe, 0x52, 0x01, 0x92, 0x01, 0x80, 0x1e, 0x65, 0x48, 0x6a,
+	0xe6, 0xcc, 0x88, 0x34, 0x4d, 0xa5, 0x6b, 0xca, 0x52, 0xe9, 0xda, 0x00, 0x6d, 0x32, 0x9b, 0xb2,
+	0xbc, 0xd4, 0x30, 0x5d, 0xd2, 0x9d, 0x2f, 0x09, 0x27, 0x59, 0x0d, 0xd3, 0x25, 0x0d, 0xe5, 0x2b,
+	0x7f, 0xbe, 0x26, 0x8c, 0x46, 0x35, 0xcc, 0x05, 0xba, 0x3b, 0x59, 0xae, 0x17, 0x11, 0x9b, 0x38,
+	0x45, 0xcc, 0x85, 0x74, 0xae, 0xcb, 0xd9, 0x5c, 0xff, 0x24, 0x7b, 0xe5, 0x15, 0xd0, 0x1f, 0x3b,
+	0xfd, 0x0e, 0x6b, 0x71, 0xc6, 0x0e, 0x3a, 0x80, 0xdb, 0xb1, 0xe8, 0xca, 0xa6, 0x65, 0x77, 0xc6,
+	0xde, 0x80, 0x6b, 0x28, 0xb4, 0x61, 0x72, 0x0d, 0x3c, 0x78, 0xea, 0x74, 0x68, 0x5f, 0x54, 0x69,
+	0x0b, 0x3b, 0xb1, 0xbd, 0x71, 0xbb, 0x37, 0x70, 0xed, 0xb8, 0x5d, 0x6a, 0x54, 0x95, 0x6e, 0x0f,
+	0x47, 0xad, 0x9e, 0xd3, 0x1e, 0x3f, 0xb1, 0x9f, 0x19, 0x05, 0xea, 0x8f, 0xee, 0x3d, 0x6d, 0xf6,
+	0x46, 0xb6, 0x51, 0x44, 0x06, 0xd4, 0x5c, 0xbb, 0x89, 0xdb, 0x5d, 0xb1, 0x53, 0xa2, 0x0a, 0xc3,
+	0x91, 0x54, 0x28, 0xd3, 0xee, 0x2d, 0x3c, 0x19, 0x15, 0xeb, 0x07, 0x05, 0xaa, 0xa9, 0x6e, 0x81,
+	0xfe, 0x97, 0xc9, 0xf8, 0xcd, 0xbc, 0x8e, 0x92, 0x4e, 0xf9, 0xbd, 0x54, 0xca, 0x73, 0xdb, 0x4a,
+	0x5c, 0xb7, 0x3c, 0xc3, 0x5a, 0x2a, 0xc3, 0xd6, 0x3d, 0x91, 0x30, 0x1d, 0x8a, 0x2d, 0xfb, 0xc4,
+	0xe9, 0x73, 0x92, 0xf2, 0x30, 0x15, 0x3a, 0x32, 0xec, 0x7e, 0xc7, 0x50, 0xad, 0xff, 0x43, 0x45,
+	0x9a, 0x7b, 0x4b, 0x96, 0xfe, 0xac, 0x00, 0xda, 0xfe, 0x17, 0xa0, 0xf7, 0x32, 0x77, 0x3b, 0x78,
+	0xc3, 0x17, 0xe2, 0x2d, 0xaa, 0x2a, 0xf2, 0xcf, 0xd9, 0x6d, 0x74, 0x4c, 0x97, 0x68, 0x0f, 0x4a,
+	0x5f, 0x93, 0xd9, 0xf9, 0x8b, 0x88, 0x15, 0x96, 0x86, 0x85, 0x64, 0x1d, 0x25, 0x03, 0xd4, 0x6b,
+	0x9e, 0xc8, 0x9a, 0xa8, 0x03, 0x8c, 0xfa, 0xb1, 0xac, 0xa0, 0x0a, 0x14, 0x3c, 0xec, 0x9c, 0x1a,
+	0xaa, 0x75, 0x1f, 0x1a, 0x5b, 0x7f, 0x92, 0x3c, 0x4e, 0x59, 0x3f, 0x2a, 0xa0, 0xc7, 0xbf, 0x10,
+	0xf4, 0x30, 0x73, 0xb5, 0x1b, 0xdb, 0xff, 0x94, 0xf4, 0x8d, 0x76, 0xa1, 0x18, 0x2d, 0x57, 0xb3,
+	0x09, 0xbb, 0x92, 0x8e, 0xb9, 0x40, 0x9d, 0x4c, 0xfd, 0xc8, 0x17, 0x4f, 0xc4, 0xd6, 0x56, 0x4b,
+	0x44, 0x5f, 0x07, 0xa0, 0x25, 0xe6, 0x0d, 0x86, 0x4e, 0xdb, 0xe5, 0xf1, 0xa7, 0xa6, 0xb8, 0xc2,
+	0x4a, 0x8a, 0x96, 0xa4, 0xdb, 0x35, 0x54, 0x5a, 0x6e, 0xee, 0xa8, 0xe5, 0xb6, 0xb1, 0xd3, 0xb2,
+	0x0d, 0xcd, 0xfa, 0x8e, 0x05, 0x7a, 0x4a, 0xc2, 0xd0, 0x3f, 0x67, 0xd9, 0x3c, 0x0b, 0x96, 0x17,
+	0xa6, 0xc2, 0xbd, 0xd0, 0x75, 0xec, 0x59, 0x4d, 0x3c, 0xd3, 0x18, 0x43, 0xf2, 0x72, 0xb1, 0x94,
+	0x15, 0xc3, 0x04, 0x74, 0x0b, 0x2a, 0x2c, 0x58, 0xa7, 0x13, 0x9a, 0x05, 0xd6, 0xa6, 0x62, 0x19,
+	0xdd, 0x06, 0x3d, 0x9c, 0x9d, 0x2f, 0xfc, 0x68, 0x1d, 0x48, 0x26, 0x27, 0x1b, 0x92, 0xf5, 0xa5,
+	0x98, 0xf5, 0xd6, 0x27, 0x00, 0xc9, 0x48, 0xa3, 0xef, 0xc7, 0x2c, 0x85, 0xa6, 0xc2, 0xec, 0x0a,
+	0x89, 0xf2, 0x9d, 0xa6, 0x9b, 0x3a, 0xe4, 0x25, 0x26, 0x45, 0x6b, 0x08, 0xe6, 0xeb, 0xbe, 0x73,
+	0x49, 0x73, 0x53, 0x52, 0xcd, 0x0d, 0xed, 0x03, 0xcc, 0x99, 0x7a, 0x53, 0x36, 0x43, 0x1d, 0xa7,
+	0x76, 0xac, 0x07, 0xb0, 0x9b, 0x37, 0x29, 0x33, 0xdd, 0x5a, 0xe7, 0xed, 0xd3, 0xea, 0xc3, 0x5e,
+	0xfe, 0x27, 0xee, 0x1f, 0xfa, 0xfe, 0x46, 0x01, 0x63, 0xf3, 0x53, 0x49, 0x93, 0x42, 0xe7, 0xaa,
+	0xc3, 0x19, 0xa7, 0x61, 0x21, 0xa5, 0x28, 0x91, 0x33, 0x9a, 0xb4, 0xf4, 0x68, 0x92, 0x4f, 0x5b,
+	0xe0, 0x9a, 0xec, 0x69, 0x53, 0x2d, 0xb4, 0x98, 0x6d, 0xa1, 0x97, 0xd0, 0xd8, 0x1a, 0xed, 0xaf,
+	0x0d, 0x62, 0x1f, 0x20, 0x5c, 0x4f, 0x26, 0x24, 0x0c, 0xcf, 0xd6, 0x73, 0x16, 0x4a, 0x05, 0xa7,
+	0x76, 0x28, 0x2e, 0x20, 0xe1, 0x7a, 0x1e, 0x89, 0x12, 0x12, 0x12, 0x0d, 0x94, 0x7f, 0xe6, 0x0a,
+	0xbc, 0xfa, 0x99, 0xd0, 0x32, 0x7e, 0x79, 0xb5, 0xaf, 0xfc, 0xf6, 0x6a, 0x5f, 0xf9, 0xe3, 0xd5,
+	0xbe, 0xf2, 0xfd, 0x9f, 0xfb, 0x3b, 0x7f, 0x07, 0x00, 0x00, 0xff, 0xff, 0xbe, 0xde, 0x32, 0x0e,
+	0x9f, 0x0d, 0x00, 0x00,
 }
 
 func (m *Request) Marshal() (dAtA []byte, err error) {
@@ -1522,6 +1900,42 @@ func (m *Request) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.AddUnaryHandler != nil {
+		{
+			size, err := m.AddUnaryHandler.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x5a
+	}
+	if m.CallUnary != nil {
+		{
+			size, err := m.CallUnary.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x52
+	}
+	if m.PersistentConnect != nil {
+		{
+			size, err := m.PersistentConnect.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x4a
 	}
 	if m.Pubsub != nil {
 		{
@@ -1608,7 +2022,7 @@ func (m *Request) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -1640,6 +2054,30 @@ func (m *Response) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.XXX_unrecognized != nil {
 		i -= len(m.XXX_unrecognized)
 		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.CallUnaryResponse != nil {
+		{
+			size, err := m.CallUnaryResponse.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.PersistentStreamInfo != nil {
+		{
+			size, err := m.PersistentStreamInfo.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintP2Pd(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
 	}
 	if m.Pubsub != nil {
 		{
@@ -1716,7 +2154,7 @@ func (m *Response) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -1759,7 +2197,7 @@ func (m *IdentifyResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Id == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Id)
 		copy(dAtA[i:], m.Id)
@@ -1809,7 +2247,7 @@ func (m *ConnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Peer)
 		copy(dAtA[i:], m.Peer)
@@ -1859,7 +2297,7 @@ func (m *StreamOpenRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Peer)
 		copy(dAtA[i:], m.Peer)
@@ -1904,7 +2342,7 @@ func (m *StreamHandlerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Addr == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Addr)
 		copy(dAtA[i:], m.Addr)
@@ -1940,7 +2378,7 @@ func (m *ErrorResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if m.Msg == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("msg")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(*m.Msg)
 		copy(dAtA[i:], *m.Msg)
@@ -1976,7 +2414,7 @@ func (m *StreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if m.Proto == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(*m.Proto)
 		copy(dAtA[i:], *m.Proto)
@@ -1985,7 +2423,7 @@ func (m *StreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 	}
 	if m.Addr == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Addr)
 		copy(dAtA[i:], m.Addr)
@@ -1994,7 +2432,7 @@ func (m *StreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Peer)
 		copy(dAtA[i:], m.Peer)
@@ -2068,7 +2506,7 @@ func (m *DHTRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -2121,7 +2559,7 @@ func (m *DHTResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -2164,7 +2602,7 @@ func (m *PeerInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 	}
 	if m.Id == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Id)
 		copy(dAtA[i:], m.Id)
@@ -2219,7 +2657,7 @@ func (m *ConnManagerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -2253,7 +2691,7 @@ func (m *DisconnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		copy(dAtA[i:], m.XXX_unrecognized)
 	}
 	if m.Peer == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i -= len(m.Peer)
 		copy(dAtA[i:], m.Peer)
@@ -2303,7 +2741,7 @@ func (m *PSRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x12
 	}
 	if m.Type == nil {
-		return 0, github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	} else {
 		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Type))
 		i--
@@ -2428,6 +2866,258 @@ func (m *PSResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *PersistentConnectRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PersistentConnectRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PersistentConnectRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ListenAddr == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(*m.ListenAddr)
+		copy(dAtA[i:], *m.ListenAddr)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.ListenAddr)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Proto == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(*m.Proto)
+		copy(dAtA[i:], *m.Proto)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *PersistentStreamInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *PersistentStreamInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *PersistentStreamInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Addr == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(*m.Addr)
+		copy(dAtA[i:], *m.Addr)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Addr)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AddUnaryHandlerRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AddUnaryHandlerRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AddUnaryHandlerRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.ListenAddr == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(*m.ListenAddr)
+		copy(dAtA[i:], *m.ListenAddr)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.ListenAddr)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Proto == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(*m.Proto)
+		copy(dAtA[i:], *m.Proto)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Proto)))
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CallUnaryRequest) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CallUnaryRequest) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CallUnaryRequest) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Timeout != nil {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.Timeout))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Data == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(m.Data)
+		copy(dAtA[i:], m.Data)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Data)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.Proto) > 0 {
+		for iNdEx := len(m.Proto) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.Proto[iNdEx])
+			copy(dAtA[i:], m.Proto[iNdEx])
+			i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Proto[iNdEx])))
+			i--
+			dAtA[i] = 0x1a
+		}
+	}
+	if m.Peer == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i -= len(m.Peer)
+		copy(dAtA[i:], m.Peer)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Peer)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.CallId == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.CallId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *CallUnaryResponse) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *CallUnaryResponse) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *CallUnaryResponse) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.XXX_unrecognized != nil {
+		i -= len(m.XXX_unrecognized)
+		copy(dAtA[i:], m.XXX_unrecognized)
+	}
+	if m.Error != nil {
+		i -= len(*m.Error)
+		copy(dAtA[i:], *m.Error)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(*m.Error)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.Result != nil {
+		i -= len(m.Result)
+		copy(dAtA[i:], m.Result)
+		i = encodeVarintP2Pd(dAtA, i, uint64(len(m.Result)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.Successful == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i--
+		if *m.Successful {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.CallId == nil {
+		return 0, new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	} else {
+		i = encodeVarintP2Pd(dAtA, i, uint64(*m.CallId))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintP2Pd(dAtA []byte, offset int, v uint64) int {
 	offset -= sovP2Pd(v)
 	base := offset
@@ -2476,6 +3166,18 @@ func (m *Request) Size() (n int) {
 		l = m.Pubsub.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
+	if m.PersistentConnect != nil {
+		l = m.PersistentConnect.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.CallUnary != nil {
+		l = m.CallUnary.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.AddUnaryHandler != nil {
+		l = m.AddUnaryHandler.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
 	if m.XXX_unrecognized != nil {
 		n += len(m.XXX_unrecognized)
 	}
@@ -2515,6 +3217,14 @@ func (m *Response) Size() (n int) {
 	}
 	if m.Pubsub != nil {
 		l = m.Pubsub.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.PersistentStreamInfo != nil {
+		l = m.PersistentStreamInfo.Size()
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.CallUnaryResponse != nil {
+		l = m.CallUnaryResponse.Size()
 		n += 1 + l + sovP2Pd(uint64(l))
 	}
 	if m.XXX_unrecognized != nil {
@@ -2866,6 +3576,120 @@ func (m *PSResponse) Size() (n int) {
 	return n
 }
 
+func (m *PersistentConnectRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Proto != nil {
+		l = len(*m.Proto)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.ListenAddr != nil {
+		l = len(*m.ListenAddr)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *PersistentStreamInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Addr != nil {
+		l = len(*m.Addr)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *AddUnaryHandlerRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Proto != nil {
+		l = len(*m.Proto)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.ListenAddr != nil {
+		l = len(*m.ListenAddr)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CallUnaryRequest) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CallId != nil {
+		n += 1 + sovP2Pd(uint64(*m.CallId))
+	}
+	if m.Peer != nil {
+		l = len(m.Peer)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if len(m.Proto) > 0 {
+		for _, s := range m.Proto {
+			l = len(s)
+			n += 1 + l + sovP2Pd(uint64(l))
+		}
+	}
+	if m.Data != nil {
+		l = len(m.Data)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Timeout != nil {
+		n += 1 + sovP2Pd(uint64(*m.Timeout))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
+func (m *CallUnaryResponse) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.CallId != nil {
+		n += 1 + sovP2Pd(uint64(*m.CallId))
+	}
+	if m.Successful != nil {
+		n += 2
+	}
+	if m.Result != nil {
+		l = len(m.Result)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.Error != nil {
+		l = len(*m.Error)
+		n += 1 + l + sovP2Pd(uint64(l))
+	}
+	if m.XXX_unrecognized != nil {
+		n += len(m.XXX_unrecognized)
+	}
+	return n
+}
+
 func sovP2Pd(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
@@ -3175,16 +3999,121 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PersistentConnect", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PersistentConnect == nil {
+				m.PersistentConnect = &PersistentConnectRequest{}
+			}
+			if err := m.PersistentConnect.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 10:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CallUnary", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CallUnary == nil {
+				m.CallUnary = &CallUnaryRequest{}
+			}
+			if err := m.CallUnary.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AddUnaryHandler", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AddUnaryHandler == nil {
+				m.AddUnaryHandler = &AddUnaryHandlerRequest{}
+			}
+			if err := m.AddUnaryHandler.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipP2Pd(dAtA[iNdEx:])
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -3195,7 +4124,7 @@ func (m *Request) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -3468,16 +4397,85 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PersistentStreamInfo", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.PersistentStreamInfo == nil {
+				m.PersistentStreamInfo = &PersistentStreamInfo{}
+			}
+			if err := m.PersistentStreamInfo.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CallUnaryResponse", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.CallUnaryResponse == nil {
+				m.CallUnaryResponse = &CallUnaryResponse{}
+			}
+			if err := m.CallUnaryResponse.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipP2Pd(dAtA[iNdEx:])
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -3488,7 +4486,7 @@ func (m *Response) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -3599,10 +4597,7 @@ func (m *IdentifyResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -3613,7 +4608,7 @@ func (m *IdentifyResponse) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -3744,10 +4739,7 @@ func (m *ConnectRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -3758,7 +4750,7 @@ func (m *ConnectRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -3889,10 +4881,7 @@ func (m *StreamOpenRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -3903,7 +4892,7 @@ func (m *StreamOpenRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4014,10 +5003,7 @@ func (m *StreamHandlerRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4028,7 +5014,7 @@ func (m *StreamHandlerRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4106,10 +5092,7 @@ func (m *ErrorResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4120,7 +5103,7 @@ func (m *ErrorResponse) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("msg")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4268,10 +5251,7 @@ func (m *StreamInfo) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4282,13 +5262,13 @@ func (m *StreamInfo) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 	if hasFields[0]&uint64(0x00000002) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("addr")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 	if hasFields[0]&uint64(0x00000004) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("proto")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4529,10 +5509,7 @@ func (m *DHTRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4543,7 +5520,7 @@ func (m *DHTRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4678,10 +5655,7 @@ func (m *DHTResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4692,7 +5666,7 @@ func (m *DHTResponse) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4803,10 +5777,7 @@ func (m *PeerInfo) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4817,7 +5788,7 @@ func (m *PeerInfo) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("id")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -4969,10 +5940,7 @@ func (m *ConnManagerRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -4983,7 +5951,7 @@ func (m *ConnManagerRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -5062,10 +6030,7 @@ func (m *DisconnectRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5076,7 +6041,7 @@ func (m *DisconnectRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("peer")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -5208,10 +6173,7 @@ func (m *PSRequest) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5222,7 +6184,7 @@ func (m *PSRequest) Unmarshal(dAtA []byte) error {
 		}
 	}
 	if hasFields[0]&uint64(0x00000001) == 0 {
-		return github_com_gogo_protobuf_proto.NewRequiredNotSetError("type")
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -5467,10 +6429,7 @@ func (m *PSMessage) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5585,10 +6544,7 @@ func (m *PSResponse) Unmarshal(dAtA []byte) error {
 			if err != nil {
 				return err
 			}
-			if skippy < 0 {
-				return ErrInvalidLengthP2Pd
-			}
-			if (iNdEx + skippy) < 0 {
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
 				return ErrInvalidLengthP2Pd
 			}
 			if (iNdEx + skippy) > l {
@@ -5597,6 +6553,719 @@ func (m *PSResponse) Unmarshal(dAtA []byte) error {
 			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
 			iNdEx += skippy
 		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PersistentConnectRequest) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PersistentConnectRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PersistentConnectRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Proto", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Proto = &s
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ListenAddr", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.ListenAddr = &s
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000002)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *PersistentStreamInfo) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: PersistentStreamInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: PersistentStreamInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Addr", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Addr = &s
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000001)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AddUnaryHandlerRequest) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AddUnaryHandlerRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AddUnaryHandlerRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Proto", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Proto = &s
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ListenAddr", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.ListenAddr = &s
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000002)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CallUnaryRequest) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CallUnaryRequest: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CallUnaryRequest: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CallId", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.CallId = &v
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Peer", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Peer = append(m.Peer[:0], dAtA[iNdEx:postIndex]...)
+			if m.Peer == nil {
+				m.Peer = []byte{}
+			}
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000002)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Proto", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Proto = append(m.Proto, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Data = append(m.Data[:0], dAtA[iNdEx:postIndex]...)
+			if m.Data == nil {
+				m.Data = []byte{}
+			}
+			iNdEx = postIndex
+			hasFields[0] |= uint64(0x00000004)
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Timeout", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Timeout = &v
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+	if hasFields[0]&uint64(0x00000004) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *CallUnaryResponse) Unmarshal(dAtA []byte) error {
+	var hasFields [1]uint64
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowP2Pd
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: CallUnaryResponse: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: CallUnaryResponse: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CallId", wireType)
+			}
+			var v int64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.CallId = &v
+			hasFields[0] |= uint64(0x00000001)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Successful", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			b := bool(v != 0)
+			m.Successful = &b
+			hasFields[0] |= uint64(0x00000002)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Result", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Result = append(m.Result[:0], dAtA[iNdEx:postIndex]...)
+			if m.Result == nil {
+				m.Result = []byte{}
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Error", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowP2Pd
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			s := string(dAtA[iNdEx:postIndex])
+			m.Error = &s
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipP2Pd(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if (skippy < 0) || (iNdEx+skippy) < 0 {
+				return ErrInvalidLengthP2Pd
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.XXX_unrecognized = append(m.XXX_unrecognized, dAtA[iNdEx:iNdEx+skippy]...)
+			iNdEx += skippy
+		}
+	}
+	if hasFields[0]&uint64(0x00000001) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
+	}
+	if hasFields[0]&uint64(0x00000002) == 0 {
+		return new(github_com_golang_protobuf_proto.RequiredNotSetError)
 	}
 
 	if iNdEx > l {
@@ -5661,9 +7330,6 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 				return 0, ErrInvalidLengthP2Pd
 			}
 			iNdEx += length
-			if iNdEx < 0 {
-				return 0, ErrInvalidLengthP2Pd
-			}
 		case 3:
 			depth++
 		case 4:
@@ -5675,6 +7341,9 @@ func skipP2Pd(dAtA []byte) (n int, err error) {
 			iNdEx += 4
 		default:
 			return 0, fmt.Errorf("proto: illegal wireType %d", wireType)
+		}
+		if iNdEx < 0 {
+			return 0, ErrInvalidLengthP2Pd
 		}
 		if depth == 0 {
 			return iNdEx, nil

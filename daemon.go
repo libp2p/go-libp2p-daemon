@@ -39,6 +39,9 @@ type Daemon struct {
 	handlers map[protocol.ID]ma.Multiaddr
 	// closed is set when the daemon is shutting down
 	closed bool
+
+	// `unordered set` that stores unary protocol names
+	unaryProtocols map[protocol.ID]bool
 }
 
 func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...libp2p.Option) (*Daemon, error) {

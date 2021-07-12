@@ -5,6 +5,7 @@ go 1.15
 require (
 	github.com/davidlazar/go-crypto v0.0.0-20200604182044-b73af7476f6c // indirect
 	github.com/gogo/protobuf v1.3.2
+	github.com/golang/protobuf v1.4.2 // indirect
 	github.com/hashicorp/go-multierror v1.1.0
 	github.com/ipfs/go-cid v0.0.7
 	github.com/ipfs/go-log v1.0.5

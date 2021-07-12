@@ -4,15 +4,18 @@ package p2pd.pb;
 
 message Request {
   enum Type {
-    IDENTIFY       = 0;
-    CONNECT        = 1;
-    STREAM_OPEN    = 2;
-    STREAM_HANDLER = 3;
-    DHT            = 4;
-    LIST_PEERS     = 5;
-    CONNMANAGER    = 6;
-    DISCONNECT     = 7;
-    PUBSUB         = 8;
+    IDENTIFY                     = 0;
+    CONNECT                      = 1;
+    STREAM_OPEN                  = 2;
+    STREAM_HANDLER               = 3;
+    DHT                          = 4;
+    LIST_PEERS                   = 5;
+    CONNMANAGER                  = 6;
+    DISCONNECT                   = 7;
+    PUBSUB                       = 8;
+    PERSISTENT_CONNECT           = 9;
+    CALL_UNARY                   = 10;
+    ADD_UNARY_HANDLER            = 11;
   }
 
   required Type type = 1;
@@ -24,6 +27,9 @@ message Request {
   optional ConnManagerRequest connManager = 6;
   optional DisconnectRequest disconnect = 7;
   optional PSRequest pubsub = 8;
+  optional PersistentConnectRequest persistentConnect = 9;
+  optional CallUnaryRequest callUnary = 10;
+  optional AddUnaryHandlerRequest addUnaryHandler = 11;
 }
 
 message Response {
@@ -39,6 +45,8 @@ message Response {
   optional DHTResponse dht = 5;
   repeated PeerInfo peers = 6;
   optional PSResponse pubsub = 7;
+  optional PersistentStreamInfo persistentStreamInfo = 8;
+  optional CallUnaryResponse callUnaryResponse = 9;
 }
 
 message IdentifyResponse {
@@ -155,4 +163,33 @@ message PSMessage {
 message PSResponse {
   repeated string topics = 1;
   repeated bytes peerIDs = 2;
+}
+
+message PersistentConnectRequest {
+  required string proto = 1;
+  required string listenAddr = 2;
+}
+
+message PersistentStreamInfo {
+  required string addr = 1;
+}
+
+message AddUnaryHandlerRequest {
+  required string proto = 1;
+  required string listenAddr = 2;
+}
+
+message CallUnaryRequest {
+  required int64 callId = 1;
+  required bytes peer = 2;
+  repeated string proto = 3;
+  required bytes data = 4;
+  optional int64 timeout = 5;
+}
+
+message CallUnaryResponse {
+  required int64 callId = 1;
+  required bool successful = 2;
+  optional bytes result = 3;
+  optional string error = 4;
 }

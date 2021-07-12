@@ -146,6 +146,9 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_PERSISTENT_CONNECT:
+			fallthrough
+
 		default:
 			log.Debugw("unexpected request type", "type", req.GetType())
 			return
@@ -319,6 +322,10 @@ func errorResponseString(err string) *pb.Response {
 		Type:  pb.Response_ERROR.Enum(),
 		Error: &pb.ErrorResponse{Msg: &err},
 	}
+}
+
+func malformedRequestErrorResponse() *pb.Response {
+	return errorResponseString("Malformed request; missing parameters")
 }
 
 func makeStreamInfo(s network.Stream) *pb.StreamInfo {
