@@ -83,19 +83,9 @@ func (d *Daemon) handlePersistentConn(pid protocol.ID, c net.Conn) {
 
 		switch req.GetType() {
 		case pb.Request_CALL_UNARY:
-			res, s := d.openUnaryStream(&req)
-			if s != nil {
-				if err := d.doUnaryCall(&req, res, s); err != nil {
-					log.Debugw("error writing response", "error", err)
-				}
-			}
-
-			err := w.WriteMsg(res)
-			if err != nil {
-				log.Debugw("error writing response", "error", err)
-				if s != nil {
-					s.Reset()
-				}
+			resp := d.doUnaryCall(&req)
+			if err := w.WriteMsg(resp); err != nil {
+				log.Debugw("error reading message", "error", err)
 				return
 			}
 		}
@@ -133,22 +123,50 @@ func (d *Daemon) openUnaryStream(req *pb.Request) (*pb.Response, network.Stream)
 	return res, s
 }
 
-func (d *Daemon) doUnaryCall(req *pb.Request, resp *pb.Response, s network.Stream) error {
-	// TODO: implement stream caching
+func (d *Daemon) doUnaryCall(req *pb.Request) *pb.Response {
+	if req.CallUnary == nil {
+		return malformedRequestErrorResponse()
+	}
+
+	// pare peer id
+	pid, err := peer.IDFromBytes(req.CallUnary.Peer)
+	if err != nil {
+		return errorResponseString(
+			fmt.Sprintf("Failed to parse peer id: %v", err),
+		)
+	}
+
+	// parse protocols
+	protos := make([]protocol.ID, len(req.CallUnary.Proto))
+	for x, str := range req.CallUnary.Proto {
+		protos[x] = protocol.ID(str)
+	}
+
+	// parse timeout
+	ctx, cancel := d.requestContext(req.CallUnary.GetTimeout())
+	defer cancel()
+
+	// TODO: cache streams
+	s, err := d.host.NewStream(ctx, pid, protos...)
+	if err != nil {
+		return errorResponse(err)
+	}
+	defer s.Close()
+
 	requestData := req.CallUnary.GetData()
-
 	if _, err := s.Write(requestData); err != nil {
-		return err
+		return errorResponseString(
+			fmt.Sprintf("Failed to write message: %s", err.Error()),
+		)
 	}
 
-	if resp.CallUnaryResponse == nil {
-		resp.CallUnaryResponse = &pb.CallUnaryResponse{}
-	}
-
-	//             when does this stop reading?
+	resp := okResponse()
+	resp.CallUnaryResponse = &pb.CallUnaryResponse{}
 	if _, err := s.Read(resp.CallUnaryResponse.Result); err != nil {
-		return err
+		return errorResponseString(
+			fmt.Sprintf("Failed to read message: %s", err.Error()),
+		)
 	}
 
-	return nil
+	return resp
 }
