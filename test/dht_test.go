@@ -91,7 +91,7 @@ func TestDHTGetPublicKey(t *testing.T) {
 	keyc := clientRequestAsync(t, client, "GetPublicKey", id).(chan crypto.PubKey)
 	conn := daemon.ExpectConn(t)
 	conn.ExpectDHTRequestType(t, pb.DHTRequest_GET_PUBLIC_KEY)
-	keybytes, err := key.Bytes()
+	keybytes, err := crypto.MarshalPublicKey(key)
 	if err != nil {
 		t.Fatal(err)
 	}
