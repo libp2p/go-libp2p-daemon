@@ -1,18 +1,15 @@
-# File managed by web3-bot. DO NOT EDIT.
-# See https://github.com/protocol/.github/ for details.
-
-on: [push, pull_request]
+on: [push]
 name: Go Test
 
 jobs:
-  unit:
+  go_test:
     strategy:
       fail-fast: false
       matrix:
         os: [ "ubuntu", "windows", "macos" ]
         go: [ "1.15.x", "1.16.x" ]
     runs-on: ${{ matrix.os }}-latest
-    name: ${{ matrix.os}} (go ${{ matrix.go }})
+    name: ${{ matrix.os }}, go ${{ matrix.go }}
     steps:
       - uses: actions/checkout@v2
         with:

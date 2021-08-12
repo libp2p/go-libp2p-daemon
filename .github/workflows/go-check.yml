@@ -1,13 +1,9 @@
-# File managed by web3-bot. DO NOT EDIT.
-# See https://github.com/protocol/.github/ for details.
-
-on: [push, pull_request]
+on: [push]
 name: Go Checks
 
 jobs:
-  unit:
+  go_checks:
     runs-on: ubuntu-latest
-    name: All
     steps:
       - uses: actions/checkout@v2
         with:
