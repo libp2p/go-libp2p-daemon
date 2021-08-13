@@ -26,6 +26,13 @@ type Client struct {
 
 	mhandlers sync.Mutex
 	handlers  map[string]StreamHandlerFunc
+
+	openPersistentConn   sync.Once
+	persistentConnWriter ggio.WriteCloser
+
+	// callID (uuid.UUID) -> persistentConnectionFuture
+	callFutures   sync.Map
+	unaryHandlers sync.Map
 }
 
 // NewClient creates a new libp2p daemon client, connecting to a daemon

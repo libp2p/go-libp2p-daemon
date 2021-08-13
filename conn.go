@@ -146,6 +146,10 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_PERSISTENT_CONN_UPGRADE:
+			d.handlePersistentConn(r, w)
+			return
+
 		default:
 			log.Debugw("unexpected request type", "type", req.GetType())
 			return

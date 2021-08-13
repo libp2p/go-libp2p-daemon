@@ -45,6 +45,9 @@ func createDaemon(t *testing.T, daemonAddr ma.Multiaddr) (*p2pd.Daemon, func()) 
 	if err != nil {
 		t.Fatal(err)
 	}
+
+	go daemon.Serve()
+
 	return daemon, cancelCtx
 }
 
