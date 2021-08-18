@@ -134,7 +134,7 @@ func (d *Daemon) doDHTGetClosestPeers(req *pb.DHTRequest) (*pb.Response, <-chan 
 	go func() {
 		defer cancel()
 		defer close(rch)
-		for p := range ch {
+		for _, p := range ch {
 			select {
 			case rch <- dhtResponsePeerID(p):
 			case <-ctx.Done():
