@@ -6,12 +6,59 @@ import (
 	"errors"
 	"fmt"
 	"math"
+	"sync"
 	"testing"
 	"time"
 
 	"github.com/libp2p/go-libp2p-core/protocol"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 )
+
+func TestConcurrentCalls(t *testing.T) {
+	_, p1, cancel1 := createDaemonClientPair(t)
+	_, p2, cancel2 := createDaemonClientPair(t)
+
+	defer func() {
+		cancel1()
+		cancel2()
+	}()
+
+	peer1ID, peer1Addrs, err := p1.Identify()
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := p2.Connect(peer1ID, peer1Addrs); err != nil {
+		t.Fatal(err)
+	}
+
+	var proto protocol.ID = "sqrt"
+	if err := p1.AddUnaryHandler(proto, sqrtHandler); err != nil {
+		t.Fatal(err)
+	}
+
+	count := 100
+
+	var wg sync.WaitGroup
+	var m sync.Map
+	wg.Add(count)
+
+	for i := 0; i < count; i++ {
+		go func(i int) {
+			defer wg.Done()
+
+			reply, err := p2.CallUnaryHandler(context.Background(), peer1ID, proto, float64Bytes(float64(i)))
+			if err != nil {
+				panic(err)
+			}
+
+			if _, loaded := m.LoadOrStore(float64FromBytes(reply), ""); loaded {
+				panic(err)
+			}
+		}(i)
+	}
+
+	wg.Wait()
+}
 
 func TestUnaryCalls(t *testing.T) {
 	_, p1, cancel1 := createDaemonClientPair(t)

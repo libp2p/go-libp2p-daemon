@@ -45,67 +45,63 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 			return
 		}
 
-		callID, err := uuid.FromBytes(req.CallId)
-		if err != nil {
-			log.Debugw("bad call id: ", "error", err)
-			continue
+		go d.handlePersistentConnRequest(req, w, &streamHandlers)
+	}
+}
+
+func (d *Daemon) handlePersistentConnRequest(req pb.PersistentConnectionRequest, w ggio.WriteCloser, streamHandlers *[]string) {
+	callID, err := uuid.FromBytes(req.CallId)
+	if err != nil {
+		log.Debugw("bad call id: ", "error", err)
+		return
+	}
+
+	switch req.Message.(type) {
+	case *pb.PersistentConnectionRequest_AddUnaryHandler:
+		resp := d.doAddUnaryHandler(w, callID, req.GetAddUnaryHandler())
+
+		d.mx.Lock()
+		if _, ok := resp.Message.(*pb.PersistentConnectionResponse_DaemonError); !ok {
+			*streamHandlers = append(
+				*streamHandlers,
+				*req.GetAddUnaryHandler().Proto,
+			)
+		}
+		d.mx.Unlock()
+
+		if err := w.WriteMsg(resp); err != nil {
+			log.Debugw("error reading message", "error", err)
+			return
 		}
 
-		switch req.Message.(type) {
-		case *pb.PersistentConnectionRequest_AddUnaryHandler:
-			go func() {
-				resp := d.doAddUnaryHandler(w, callID, req.GetAddUnaryHandler())
+	case *pb.PersistentConnectionRequest_CallUnary:
+		ctx, cancel := context.WithCancel(context.Background())
+		d.cancelUnary.Store(callID, cancel)
+		defer cancel()
 
-				d.mx.Lock()
-				if _, ok := resp.Message.(*pb.PersistentConnectionResponse_DaemonError); !ok {
-					streamHandlers = append(
-						streamHandlers,
-						*req.GetAddUnaryHandler().Proto,
-					)
-				}
-				d.mx.Unlock()
+		defer d.cancelUnary.Delete(callID)
 
-				if err := w.WriteMsg(resp); err != nil {
-					log.Debugw("error reading message", "error", err)
-					return
-				}
-			}()
+		resp := d.doUnaryCall(ctx, callID, &req)
 
-		case *pb.PersistentConnectionRequest_CallUnary:
-			go func() {
-				ctx, cancel := context.WithCancel(context.Background())
-				d.cancelUnary.Store(callID, cancel)
-				defer cancel()
-
-				defer d.cancelUnary.Delete(callID)
-
-				resp := d.doUnaryCall(ctx, callID, &req)
-
-				if err := w.WriteMsg(resp); err != nil {
-					log.Debugw("error reading message", "error", err)
-					return
-				}
-			}()
-
-		case *pb.PersistentConnectionRequest_UnaryResponse:
-			go func() {
-				resp := d.sendReponseToRemote(&req)
-				if err := w.WriteMsg(resp); err != nil {
-					log.Debugw("error reading message", "error", err)
-					return
-				}
-			}()
-
-		case *pb.PersistentConnectionRequest_Cancel:
-			go func() {
-				cf, found := d.cancelUnary.Load(callID)
-				if !found {
-					return
-				}
-
-				cf.(context.CancelFunc)()
-			}()
+		if err := w.WriteMsg(resp); err != nil {
+			log.Debugw("error reading message", "error", err)
+			return
 		}
+
+	case *pb.PersistentConnectionRequest_UnaryResponse:
+		resp := d.sendReponseToRemote(&req)
+		if err := w.WriteMsg(resp); err != nil {
+			log.Debugw("error reading message", "error", err)
+			return
+		}
+
+	case *pb.PersistentConnectionRequest_Cancel:
+		cf, found := d.cancelUnary.Load(callID)
+		if !found {
+			return
+		}
+
+		cf.(context.CancelFunc)()
 	}
 }
 
