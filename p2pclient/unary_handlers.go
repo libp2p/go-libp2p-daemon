@@ -57,7 +57,6 @@ func (c *Client) run(r ggio.Reader, w ggio.Writer) {
 		case *pb.PersistentConnectionResponse_RequestHandling:
 			proto := protocol.ID(*resp.GetRequestHandling().Proto)
 
-			c.mhandlers.Lock()
 			h, found := c.unaryHandlers.Load(proto)
 			handler, ok := h.(UnaryHandlerFunc)
 			if !ok {
@@ -68,7 +67,6 @@ func (c *Client) run(r ggio.Reader, w ggio.Writer) {
 			if !found {
 				w.WriteMsg(makeErrProtoNotFoundMsg(resp.CallId, string(proto)))
 			}
-			c.mhandlers.Unlock()
 
 			go func() {
 				ctx, cancel := context.WithCancel(context.Background())
