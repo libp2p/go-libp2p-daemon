@@ -97,6 +97,16 @@ func (c *Client) getPersistentWriter() ggio.WriteCloser {
 			c.persistentConnWriter = w
 
 			r := ggio.NewDelimitedReader(conn, network.MessageSizeMax)
+
+			var msg pb.Response
+			if err := r.ReadMsg(&msg); err != nil {
+				panic(err)
+			}
+
+			if *msg.Type != pb.Response_OK {
+				panic("failed to open persistent connection")
+			}
+
 			go c.run(r, c.persistentConnWriter)
 
 		},

@@ -38,6 +38,12 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 	d.terminateOnce.Do(func() { go d.awaitTermination() })
 
 	w := utils.NewSafeWriter(unsafeW)
+
+	if err := w.WriteMsg(&pb.Response{Type: pb.Response_OK.Enum()}); err != nil {
+		log.Debugw("error writing message", "error", err)
+		return
+	}
+
 	for {
 		var req pb.PersistentConnectionRequest
 		if err := r.ReadMsg(&req); err != nil {
@@ -89,11 +95,7 @@ func (d *Daemon) handlePersistentConnRequest(req pb.PersistentConnectionRequest,
 		}
 
 	case *pb.PersistentConnectionRequest_UnaryResponse:
-		resp := d.sendReponseToRemote(&req)
-		if err := w.WriteMsg(resp); err != nil {
-			log.Debugw("error reading message", "error", err)
-			return
-		}
+		d.sendReponseToRemote(&req)
 
 	case *pb.PersistentConnectionRequest_Cancel:
 		cf, found := d.cancelUnary.Load(callID)
@@ -274,26 +276,20 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 	}
 }
 
-func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) *pb.PersistentConnectionResponse {
+func (d *Daemon) sendReponseToRemote(req *pb.PersistentConnectionRequest) {
 	callID, err := uuid.FromBytes(req.CallId)
 	if err != nil {
-		return errorUnaryCallString(
-			callID,
-			"malformed request: call id not in UUID format",
-		)
+		log.Debugf("failed to unmarshal call id from bytes: %v", err)
+		return
 	}
 
 	rc, found := d.responseWaiters.Load(callID)
 	if !found {
-		return errorUnaryCallString(
-			callID,
-			fmt.Sprintf("Response for call id %d not requested or cancelled", callID),
-		)
+		log.Debugf("could not find request awaiting response for following call id: %s", callID.String())
+		return
 	}
 
 	rc.(chan *pb.PersistentConnectionRequest) <- req
-
-	return okUnaryCallResponse(callID)
 }
 
 func errorUnaryCall(callID uuid.UUID, err error) *pb.PersistentConnectionResponse {
