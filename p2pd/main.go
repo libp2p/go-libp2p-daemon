@@ -106,6 +106,8 @@ func main() {
 	idleTimeout := flag.Duration("idleTimeout", 0,
 		"Kills the daemon if no client opens a persistent connection in idleTimeout seconds."+
 			" The zero value (default) disables this feature")
+	persistentConnMaxMsgSize := flag.Int("persistentConnMaxMsgSize", 1<<22,
+		"Max size for persistent connection messages (bytes)")
 
 	flag.Parse()
 
@@ -374,7 +376,7 @@ func main() {
 	}
 
 	// start daemon
-	d, err := p2pd.NewDaemon(context.Background(), &c.ListenAddr, c.DHT.Mode, opts...)
+	d, err := p2pd.NewDaemon(context.Background(), &c.ListenAddr, c.DHT.Mode, *persistentConnMaxMsgSize, opts...)
 	if err != nil {
 		log.Fatal(err)
 	}

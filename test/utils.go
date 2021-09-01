@@ -11,6 +11,7 @@ import (
 	"testing"
 
 	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/libp2p/go-libp2p-core/network"
 	"github.com/libp2p/go-libp2p-core/peer"
 	"github.com/libp2p/go-libp2p-core/test"
 
@@ -40,7 +41,7 @@ func createTempDir(t *testing.T) (string, string, func()) {
 
 func createDaemon(t *testing.T, daemonAddr ma.Multiaddr) (*p2pd.Daemon, func()) {
 	ctx, cancelCtx := context.WithCancel(context.Background())
-	daemon, err := p2pd.NewDaemon(ctx, daemonAddr, "")
+	daemon, err := p2pd.NewDaemon(ctx, daemonAddr, "", network.MessageSizeMax)
 	daemon.EnablePubsub("gossipsub", false, false)
 	if err != nil {
 		t.Fatal(err)

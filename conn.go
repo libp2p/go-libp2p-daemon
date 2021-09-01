@@ -21,7 +21,7 @@ const DefaultTimeout = 60 * time.Second
 func (d *Daemon) handleConn(c net.Conn) {
 	defer c.Close()
 
-	r := ggio.NewDelimitedReader(c, network.MessageSizeMax)
+	r := ggio.NewDelimitedReader(c, d.persistentConnMsgMaxSize)
 	w := ggio.NewDelimitedWriter(c)
 
 	for {
