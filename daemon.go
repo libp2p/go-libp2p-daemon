@@ -55,13 +55,22 @@ type Daemon struct {
 	terminateOnce        sync.Once
 	terminateWG          sync.WaitGroup
 	cancelTerminateTimer context.CancelFunc
+
+	persistentConnMsgMaxSize int
 }
 
-func NewDaemon(ctx context.Context, maddr ma.Multiaddr, dhtMode string, opts ...libp2p.Option) (*Daemon, error) {
+func NewDaemon(
+	ctx context.Context,
+	maddr ma.Multiaddr,
+	dhtMode string,
+	persistentConnMsgMaxSize int,
+	opts ...libp2p.Option,
+) (*Daemon, error) {
 	d := &Daemon{
 		ctx:                      ctx,
 		handlers:                 make(map[protocol.ID]ma.Multiaddr),
 		registeredUnaryProtocols: make(map[protocol.ID]bool),
+		persistentConnMsgMaxSize: persistentConnMsgMaxSize,
 	}
 
 	if dhtMode != "" {

@@ -144,7 +144,7 @@ func (d *Daemon) doUnaryCall(ctx context.Context, callID uuid.UUID, req *pb.Pers
 	defer remoteStream.Close()
 
 	select {
-	case response := <-exchangeMessages(ctx, remoteStream, req):
+	case response := <-d.exchangeMessages(ctx, remoteStream, req):
 		return response
 
 	case <-ctx.Done():
@@ -152,7 +152,7 @@ func (d *Daemon) doUnaryCall(ctx context.Context, callID uuid.UUID, req *pb.Pers
 	}
 }
 
-func exchangeMessages(ctx context.Context, s network.Stream, req *pb.PersistentConnectionRequest) <-chan *pb.PersistentConnectionResponse {
+func (d *Daemon) exchangeMessages(ctx context.Context, s network.Stream, req *pb.PersistentConnectionRequest) <-chan *pb.PersistentConnectionResponse {
 	callID, _ := uuid.FromBytes(req.CallId)
 	rc := make(chan *pb.PersistentConnectionResponse)
 
@@ -167,7 +167,7 @@ func exchangeMessages(ctx context.Context, s network.Stream, req *pb.PersistentC
 		}
 
 		remoteResp := &pb.PersistentConnectionRequest{}
-		if err := ggio.NewDelimitedReader(s, network.MessageSizeMax).ReadMsg(remoteResp); ctx.Err() != nil {
+		if err := ggio.NewDelimitedReader(s, d.persistentConnMsgMaxSize).ReadMsg(remoteResp); ctx.Err() != nil {
 			return
 		} else if err != nil {
 			rc <- errorUnaryCall(callID, err)
@@ -218,7 +218,7 @@ func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandle
 		defer s.Close()
 
 		req := &pb.PersistentConnectionRequest{}
-		if err := ggio.NewDelimitedReader(s, network.MessageSizeMax).ReadMsg(req); err != nil {
+		if err := ggio.NewDelimitedReader(s, d.persistentConnMsgMaxSize).ReadMsg(req); err != nil {
 			log.Debugw("failed to read proto from incoming p2p stream", "error", err)
 			return
 		}
