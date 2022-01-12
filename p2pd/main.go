@@ -83,10 +83,10 @@ func main() {
 	gossipsubHeartbeatInterval := flag.Duration("gossipsubHeartbeatInterval", 0, "Specifies the gossipsub heartbeat interval")
 	gossipsubHeartbeatInitialDelay := flag.Duration("gossipsubHeartbeatInitialDelay", 0, "Specifies the gossipsub initial heartbeat delay")
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
-	relayActive := flag.Bool("relayActive", false, "Enables active mode for relay")
-	relayHop := flag.Bool("relayHop", false, "Enables hop for relay")
+	flag.Bool("relayActive", false, "Enables active mode for relay (deprecated, has no effect)")
+	flag.Bool("relayHop", false, "Enables hop for relay (deprecated, has no effect)")
 	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays")
-	relayDiscovery := flag.Bool("relayDiscovery", false, "Enables passive discovery for relay")
+	flag.Bool("relayDiscovery", false, "Enables passive discovery for relay (deprecated, has no effect)")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
@@ -188,15 +188,6 @@ func main() {
 
 	if *relayEnabled {
 		c.Relay.Enabled = true
-		if *relayActive {
-			c.Relay.Active = true
-		}
-		if *relayHop {
-			c.Relay.Hop = true
-		}
-		if *relayDiscovery {
-			c.Relay.Discovery = true
-		}
 		if *relayHopLimit > 0 {
 			c.Relay.HopLimit = *relayHopLimit
 		}
@@ -304,9 +295,12 @@ func main() {
 	}
 
 	if c.ConnectionManager.Enabled {
-		cm := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
+		cm, err := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
 			c.ConnectionManager.HighWaterMark,
-			c.ConnectionManager.GracePeriod)
+			connmgr.WithGracePeriod(c.ConnectionManager.GracePeriod))
+		if err != nil {
+			log.Fatal(err)
+		}
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
@@ -329,17 +323,7 @@ func main() {
 	}
 
 	if c.Relay.Enabled {
-		var relayOpts []relay.RelayOpt
-		if c.Relay.Active {
-			relayOpts = append(relayOpts, relay.OptActive)
-		}
-		if c.Relay.Hop {
-			relayOpts = append(relayOpts, relay.OptHop)
-		}
-		if c.Relay.Discovery {
-			relayOpts = append(relayOpts, relay.OptDiscovery)
-		}
-		opts = append(opts, libp2p.EnableRelay(relayOpts...))
+		opts = append(opts, libp2p.EnableRelay())
 
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())

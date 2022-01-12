@@ -63,12 +63,9 @@ type PubSub struct {
 }
 
 type Relay struct {
-	Enabled   bool
-	Active    bool
-	Hop       bool
-	Discovery bool
-	Auto      bool
-	HopLimit  int
+	Enabled  bool
+	Auto     bool
+	HopLimit int
 }
 
 type DHT struct {
@@ -169,11 +166,9 @@ func NewDefaultConfig() Config {
 			},
 		},
 		Relay: Relay{
-			Enabled:   true,
-			Hop:       false,
-			Discovery: false,
-			Auto:      false,
-			HopLimit:  0,
+			Enabled:  true,
+			Auto:     false,
+			HopLimit: 0,
 		},
 		AutoNat:           false,
 		HostAddresses:     make(MaddrArray, 0),
