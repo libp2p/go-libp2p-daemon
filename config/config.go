@@ -93,7 +93,6 @@ type Config struct {
 	Bootstrap         Bootstrap
 	DHT               DHT
 	ConnectionManager ConnectionManager
-	QUIC              bool
 	NatPortMap        bool
 	PubSub            PubSub
 	Relay             Relay
@@ -153,7 +152,6 @@ func NewDefaultConfig() Config {
 			HighWaterMark: 512,
 			GracePeriod:   120 * time.Second,
 		},
-		QUIC:       true,
 		NatPortMap: false,
 		PubSub: PubSub{
 			Enabled:    false,
