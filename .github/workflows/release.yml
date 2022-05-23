@@ -9,6 +9,9 @@ jobs:
   build:
     name: Publish binaries
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        executable: [ p2pd, p2p-keygen ]
 
     steps:
     - name: Install Go
@@ -23,20 +26,20 @@ jobs:
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
     - name: Build
-      run: CGO_ENABLED=0 cd p2pd && go build .
+      run: CGO_ENABLED=0 cd ${{ matrix.executable }} && go build .
 
     - name: Compress binaries
       uses: svenstaro/upx-action@v2
       with:
-        file: p2pd/p2pd
+        file: ${{ matrix.executable }}/${{ matrix.executable }}
 
     - name: Publish To Releases
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         release_name: ${{ steps.get_version.outputs.VERSION }}
-        file: p2pd/p2pd
-        asset_name: p2pd
+        file: ${{ matrix.executable }}/${{ matrix.executable }}
+        asset_name: ${{ matrix.executable }}
         tag: ${{ steps.get_version.outputs.VERSION }}
         overwrite: true
         body: CI Release
