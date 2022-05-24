@@ -1,5 +1,9 @@
-on: [push]
 name: Go Test
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
 
 jobs:
   go_test:
