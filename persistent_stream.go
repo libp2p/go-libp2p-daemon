@@ -20,7 +20,6 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 	defer func() {
 		d.mx.Lock()
 		defer d.mx.Unlock()
-
 		for _, proto := range streamHandlers {
 			p := protocol.ID(proto)
 			d.host.RemoveStreamHandler(p)
@@ -112,15 +111,19 @@ func (d *Daemon) doAddUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.AddU
 	defer d.mx.Unlock()
 
 	p := protocol.ID(*req.Proto)
-	if registered, found := d.registeredUnaryProtocols[p]; found && registered {
+	_, ok := d.registeredUnaryProtocols[p]
+	if !ok {
+		d.registeredUnaryProtocols[p] = utils.NewRoundRobin()
+		d.registeredUnaryProtocols[p].Push(w)
+		d.host.SetStreamHandler(p, d.persistentStreamHandler)
+	} else if !req.GetBalanced() {
 		return errorUnaryCallString(
 			callID,
 			fmt.Sprintf("handler for protocol %s already set", *req.Proto),
 		)
+	} else {
+		d.registeredUnaryProtocols[p].Push(w)
 	}
-
-	d.host.SetStreamHandler(p, d.getPersistentStreamHandler(w))
-	d.registeredUnaryProtocols[p] = true
 
 	log.Debugw("set unary stream handler", "protocol", p)
 
@@ -213,65 +216,79 @@ func notifyWhenClosed(ctx context.Context, r io.Reader) <-chan struct{} {
 
 // getPersistentStreamHandler returns a libp2p stream handler tied to a
 // given persistent client stream
-func (d *Daemon) getPersistentStreamHandler(cw ggio.Writer) network.StreamHandler {
-	return func(s network.Stream) {
-		defer s.Close()
+func (d *Daemon) persistentStreamHandler(s network.Stream) {
+	defer s.Close()
 
-		req := &pb.PersistentConnectionRequest{}
-		if err := ggio.NewDelimitedReader(s, d.persistentConnMsgMaxSize).ReadMsg(req); err != nil {
-			log.Debugw("failed to read proto from incoming p2p stream", "error", err)
-			return
-		}
+	p := s.Protocol()
 
-		if req.GetCallUnary() == nil {
-			log.Debug("proto is expected to include callUnary but does not have it")
-			return
-		}
+	d.mx.Lock()
+	cws, ok := d.registeredUnaryProtocols[p]
+	var cw ggio.Writer
+	if ok {
+		cw = cws.Next().(ggio.Writer)
+	}
+	d.mx.Unlock()
 
-		// now the peer field stores the caller's peer id
-		req.GetCallUnary().Peer = []byte(s.Conn().RemotePeer())
+	if !ok {
+		log.Debugw("unexpected persistent stream", "protocol", p)
+		return
+	}
 
-		callID, err := uuid.FromBytes(req.CallId)
-		if err != nil {
-			log.Debugw("bad call id in p2p handler", "error", err)
-			return
-		}
+	req := &pb.PersistentConnectionRequest{}
+	if err := ggio.NewDelimitedReader(s, d.persistentConnMsgMaxSize).ReadMsg(req); err != nil {
+		log.Debugw("failed to read proto from incoming p2p stream", "error", err)
+		return
+	}
 
-		rc := make(chan *pb.PersistentConnectionRequest)
-		d.responseWaiters.Store(callID, rc)
-		defer d.responseWaiters.Delete(callID)
+	if req.GetCallUnary() == nil {
+		log.Debug("proto is expected to include callUnary but does not have it")
+		return
+	}
 
-		ctx, cancel := context.WithCancel(d.ctx)
-		defer cancel()
+	// now the peer field stores the caller's peer id
+	req.GetCallUnary().Peer = []byte(s.Conn().RemotePeer())
 
-		resp := &pb.PersistentConnectionResponse{
-			CallId: req.CallId,
-			Message: &pb.PersistentConnectionResponse_RequestHandling{
-				RequestHandling: req.GetCallUnary(),
-			},
-		}
-		if err := cw.WriteMsg(resp); err != nil {
-			log.Debugw("failed to write message to client", "error", err)
-			return
-		}
+	callID, err := uuid.FromBytes(req.CallId)
+	if err != nil {
+		log.Debugw("bad call id in p2p handler", "error", err)
+		return
+	}
 
-		select {
-		case <-notifyWhenClosed(ctx, s):
-			if err := cw.WriteMsg(
-				&pb.PersistentConnectionResponse{
-					CallId: callID[:],
-					Message: &pb.PersistentConnectionResponse_Cancel{
-						Cancel: &pb.Cancel{},
-					},
+	rc := make(chan *pb.PersistentConnectionRequest)
+	d.responseWaiters.Store(callID, rc)
+	defer d.responseWaiters.Delete(callID)
+
+	ctx, cancel := context.WithCancel(d.ctx)
+	defer cancel()
+
+	resp := &pb.PersistentConnectionResponse{
+		CallId: req.CallId,
+		Message: &pb.PersistentConnectionResponse_RequestHandling{
+			RequestHandling: req.GetCallUnary(),
+		},
+	}
+
+	if err := cw.WriteMsg(resp); err != nil {
+		log.Debugw("failed to write message to client", "error", err)
+		return
+	}
+
+	select {
+	case <-notifyWhenClosed(ctx, s):
+		if err := cw.WriteMsg(
+			&pb.PersistentConnectionResponse{
+				CallId: callID[:],
+				Message: &pb.PersistentConnectionResponse_Cancel{
+					Cancel: &pb.Cancel{},
 				},
-			); err != nil {
-				log.Debugw("failed to write to client", "error", err)
-			}
-		case response := <-rc:
-			w := ggio.NewDelimitedWriter(s)
-			if err := w.WriteMsg(response); err != nil {
-				log.Debugw("failed to write message to remote", "error", err)
-			}
+			},
+		); err != nil {
+			log.Debugw("failed to write to client", "error", err)
+		}
+	case response := <-rc:
+		w := ggio.NewDelimitedWriter(s)
+		if err := w.WriteMsg(response); err != nil {
+			log.Debugw("failed to write message to remote", "error", err)
 		}
 	}
 }

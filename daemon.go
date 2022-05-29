@@ -9,6 +9,7 @@ import (
 	"sync"
 
 	"github.com/libp2p/go-libp2p-daemon/config"
+	"github.com/libp2p/go-libp2p-daemon/internal/utils"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p-core/host"
@@ -36,12 +37,13 @@ type Daemon struct {
 	pubsub *ps.PubSub
 
 	mx sync.Mutex
-	// stream handlers: map of protocol.ID to multi-address
-	handlers map[protocol.ID]ma.Multiaddr
+	// stream handlers: map of protocol.ID to multi-addresses, balanced by round robin
+	handlers map[protocol.ID]*utils.RoundRobin
 	// closed is set when the daemon is shutting down
 	closed bool
 
-	registeredUnaryProtocols map[protocol.ID]bool
+	// unary protocols handlers: map of protocol.ID to wirte ends of pipe, balanced by round robin
+	registeredUnaryProtocols map[protocol.ID]*utils.RoundRobin
 
 	// callID (int64) to chan *pb.PersistentConnectionResponse
 	// used to return responses to goroutines awating them
@@ -68,8 +70,8 @@ func NewDaemon(
 ) (*Daemon, error) {
 	d := &Daemon{
 		ctx:                      ctx,
-		handlers:                 make(map[protocol.ID]ma.Multiaddr),
-		registeredUnaryProtocols: make(map[protocol.ID]bool),
+		handlers:                 make(map[protocol.ID]*utils.RoundRobin),
+		registeredUnaryProtocols: make(map[protocol.ID]*utils.RoundRobin),
 		persistentConnMsgMaxSize: persistentConnMsgMaxSize,
 	}
 

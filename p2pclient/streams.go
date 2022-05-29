@@ -194,7 +194,7 @@ type StreamHandlerFunc func(*StreamInfo, io.ReadWriteCloser)
 // NewStreamHandler establishes an inbound multi-address and starts a listener.
 // All inbound connections to the listener are delegated to the provided
 // handler.
-func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) error {
+func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc, balanced bool) error {
 	control, err := c.newControlConn()
 	if err != nil {
 		return err
@@ -207,8 +207,9 @@ func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc) er
 	req := &pb.Request{
 		Type: pb.Request_STREAM_HANDLER.Enum(),
 		StreamHandler: &pb.StreamHandlerRequest{
-			Addr:  c.listenMaddr.Bytes(),
-			Proto: protos,
+			Addr:     c.listenMaddr.Bytes(),
+			Proto:    protos,
+			Balanced: &balanced,
 		},
 	}
 	if err := w.WriteMsg(req); err != nil {

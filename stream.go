@@ -8,6 +8,7 @@ import (
 	"github.com/libp2p/go-libp2p-core/network"
 
 	ggio "github.com/gogo/protobuf/io"
+	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 )
 
@@ -35,7 +36,11 @@ func (d *Daemon) handleStream(s network.Stream) {
 	p := s.Protocol()
 
 	d.mx.Lock()
-	maddr, ok := d.handlers[p]
+	maddrs, ok := d.handlers[p]
+	var maddr ma.Multiaddr
+	if ok {
+		maddr = maddrs.Next().(ma.Multiaddr)
+	}
 	d.mx.Unlock()
 
 	if !ok {

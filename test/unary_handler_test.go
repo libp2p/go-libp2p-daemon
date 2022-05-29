@@ -32,7 +32,7 @@ func TestConcurrentCalls(t *testing.T) {
 	}
 
 	var proto protocol.ID = "sqrt"
-	if err := p1.AddUnaryHandler(proto, sqrtHandler); err != nil {
+	if err := p1.AddUnaryHandler(proto, sqrtHandler, false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -78,7 +78,7 @@ func TestUnaryCalls(t *testing.T) {
 	}
 
 	var proto protocol.ID = "sqrt"
-	if err := p1.AddUnaryHandler(proto, sqrtHandler); err != nil {
+	if err := p1.AddUnaryHandler(proto, sqrtHandler, false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -145,7 +145,7 @@ func TestCancellation(t *testing.T) {
 	}
 
 	var proto protocol.ID = "slow"
-	if err := p1.AddUnaryHandler(proto, slowHandler); err != nil {
+	if err := p1.AddUnaryHandler(proto, slowHandler, false); err != nil {
 		t.Fatal(err)
 	}
 
@@ -180,12 +180,16 @@ func TestAddUnaryHandler(t *testing.T) {
 
 	var proto protocol.ID = "sqrt"
 
-	if err := c1.AddUnaryHandler(proto, sqrtHandler); err != nil {
+	if err := c1.AddUnaryHandler(proto, sqrtHandler, false); err != nil {
 		t.Fatal(err)
 	}
 
-	if err := c2.AddUnaryHandler(proto, sqrtHandler); err == nil {
+	if err := c2.AddUnaryHandler(proto, sqrtHandler, false); err == nil {
 		t.Fatal("adding second unary handler with same name should have returned error")
+	}
+
+	if err := c2.AddUnaryHandler(proto, sqrtHandler, true); err != nil {
+		t.Fatal("adding secondary BALANCED unary handler with same name returned error")
 	}
 
 	if err := c1.Close(); err != nil {
@@ -194,8 +198,66 @@ func TestAddUnaryHandler(t *testing.T) {
 
 	time.Sleep(time.Second)
 
-	if err := c2.AddUnaryHandler(proto, sqrtHandler); err != nil {
+	if err := c2.AddUnaryHandler(proto, sqrtHandler, false); err != nil {
 		t.Fatal("closing client 1 should have cleaned up the proto list", err)
+	}
+}
+
+func TestBalancedCall(t *testing.T) {
+	dmaddr, c1maddr, dir1Closer := getEndpointsMaker(t)(t)
+	_, c2maddr, dir2Closer := getEndpointsMaker(t)(t)
+
+	handlerDaemon, closeDaemon := createDaemon(t, dmaddr)
+
+	handlerClient1, closeClient1 := createClient(t, handlerDaemon.Listener().Multiaddr(), c1maddr)
+	handlerClient2, closeClient2 := createClient(t, handlerDaemon.Listener().Multiaddr(), c2maddr)
+	_, callerClient, callerClose := createDaemonClientPair(t)
+	defer func() {
+		closeClient1()
+		closeClient2()
+
+		closeDaemon()
+
+		dir1Closer()
+		dir2Closer()
+		callerClose()
+	}()
+
+	if err := callerClient.Connect(handlerDaemon.ID(), handlerDaemon.Addrs()); err != nil {
+		t.Fatal(err)
+	}
+
+	var proto protocol.ID = "test"
+	done := make(chan int, 10)
+
+	if err := handlerClient1.AddUnaryHandler(proto, getNumberedHandler(done, 1, t), true); err != nil {
+		t.Fatal(err)
+	}
+
+	if err := handlerClient2.AddUnaryHandler(proto, getNumberedHandler(done, -1, t), true); err != nil {
+		t.Fatal(err)
+	}
+
+	for i := 0; i < 10; i++ {
+		_, err := callerClient.CallUnaryHandler(context.Background(), handlerDaemon.ID(), proto, []byte("test"))
+		if err != nil {
+			t.Fatal(err.Error())
+		}
+	}
+
+	control := 0
+
+	for i := 0; i < 10; i++ {
+		select {
+		case x := <-done:
+			control += x
+		case <-time.After(1 * time.Second):
+			t.Fatal("timed out waiting for stream result")
+		}
+	}
+
+	if control != 0 {
+		t.Fatalf("daemon did not balanced handlers %d", control)
 	}
 }
 
@@ -225,6 +287,14 @@ func sqrtHandler(ctx context.Context, data []byte) ([]byte, error) {
 
 	result := math.Sqrt(f)
 	return float64Bytes(result), nil
+}
+
+func getNumberedHandler(ch chan<- int, x int, t *testing.T) p2pclient.UnaryHandlerFunc {
+	return func(ctx context.Context, data []byte) ([]byte, error) {
+		t.Logf("numbered handler x = %d", x)
+		ch <- x
+		return []byte("test"), nil
+	}
 }
 
 // Je reprends mon bien où je le trouve
