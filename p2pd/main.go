@@ -10,6 +10,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
 	"time"
 
@@ -398,6 +399,8 @@ func main() {
 		http.Handle("/metrics", promhttp.Handler())
 		go func() { log.Println(http.ListenAndServe(c.MetricsAddress, nil)) }()
 	}
+
+	signal.Ignore(os.Interrupt)
 
 	if err := d.Serve(); err != nil {
 		log.Fatal(err)
