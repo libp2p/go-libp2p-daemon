@@ -222,3 +222,42 @@ func (c *Client) NewStreamHandler(protos []string, handler StreamHandlerFunc, ba
 
 	return nil
 }
+
+func (c *Client) RemoveStreamHandler(protos []string) error {
+	raw_control, err := c.newControlConn()
+	if err != nil {
+		return err
+	}
+	control := &byteReaderConn{raw_control}
+	defer control.Close()
+
+	c.mhandlers.Lock()
+	defer c.mhandlers.Unlock()
+
+	w := ggio.NewDelimitedWriter(control)
+	req := &pb.Request{
+		Type: pb.Request_REMOVE_STREAM_HANDLER.Enum(),
+		RemoveStreamHandler: &pb.RemoveStreamHandlerRequest{
+			Addr:  c.listenMaddr.Bytes(),
+			Proto: protos,
+		},
+	}
+	if err := w.WriteMsg(req); err != nil {
+		return err
+	}
+
+	resp := &pb.Response{}
+	err = readMsgSafe(control, resp)
+	if err != nil {
+		return err
+	}
+	if err := resp.GetError(); err != nil {
+		return fmt.Errorf("error from daemon: %s", err.GetMsg())
+	}
+
+	for _, proto := range protos {
+		delete(c.handlers, proto)
+	}
+
+	return nil
+}

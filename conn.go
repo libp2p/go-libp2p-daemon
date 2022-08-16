@@ -80,6 +80,14 @@ func (d *Daemon) handleConn(c net.Conn) {
 				return
 			}
 
+		case pb.Request_REMOVE_STREAM_HANDLER:
+			res := d.doRemoveStreamHandler(&req)
+			err := w.WriteMsg(res)
+			if err != nil {
+				log.Debugw("error writing response", "error", err)
+				return
+			}
+
 		case pb.Request_DHT:
 			res, ch, cancel := d.doDHT(&req)
 			err := w.WriteMsg(res)
@@ -271,17 +279,50 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 	}
 	for _, sp := range req.StreamHandler.Proto {
 		p := protocol.ID(sp)
-		_, ok := d.handlers[p]
+		round_robin, ok := d.handlers[p]
 		if !ok {
 			d.handlers[p] = utils.NewRoundRobin()
-			d.handlers[p].Push(maddr)
+			d.handlers[p].Append(maddr)
 			d.host.SetStreamHandler(p, d.handleStream)
 		} else if !req.StreamHandler.GetBalanced() {
 			return errorResponseString(fmt.Sprintf("handler for protocol %s already set", p))
 		} else {
-			d.handlers[p].Push(maddr)
+			round_robin.Append(maddr)
 		}
 		log.Debugw("set stream handler", "protocol", sp, "to", maddr)
+	}
+
+	return okResponse()
+}
+
+func (d *Daemon) doRemoveStreamHandler(req *pb.Request) *pb.Response {
+	if req.RemoveStreamHandler == nil {
+		return errorResponseString("Malformed request; missing parameters")
+	}
+
+	d.mx.Lock()
+	defer d.mx.Unlock()
+
+	maddr, err := ma.NewMultiaddrBytes(req.RemoveStreamHandler.Addr)
+	if err != nil {
+		return errorResponse(err)
+	}
+	for _, sp := range req.RemoveStreamHandler.Proto {
+		p := protocol.ID(sp)
+		round_robin, ok := d.handlers[p]
+		if !ok {
+			return errorResponseString(fmt.Sprintf("handler for protocol %s does not exist", p))
+		}
+
+		ok = round_robin.Remove(maddr)
+		if !ok {
+			return errorResponseString(fmt.Sprintf("handler for protocol %s with maddr %s does not exist", p, maddr.String()))
+		}
+		if round_robin.Len() == 0 {
+			d.host.RemoveStreamHandler(p)
+			delete(d.handlers, p)
+		}
+		log.Debugw("removed stream handler", "protocol", sp, "to", maddr)
 	}
 
 	return okResponse()

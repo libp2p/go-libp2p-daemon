@@ -16,14 +16,19 @@ import (
 )
 
 func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
+	w := utils.NewSafeWriter(unsafeW)
+
 	var streamHandlers []string
 	defer func() {
 		d.mx.Lock()
 		defer d.mx.Unlock()
 		for _, proto := range streamHandlers {
 			p := protocol.ID(proto)
-			d.host.RemoveStreamHandler(p)
-			delete(d.registeredUnaryProtocols, p)
+			d.registeredUnaryProtocols[p].Remove(w)
+			if d.registeredUnaryProtocols[p].Len() == 0 {
+				d.host.RemoveStreamHandler(p)
+				delete(d.registeredUnaryProtocols, p)
+			}
 		}
 	}()
 
@@ -36,8 +41,6 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 
 	d.terminateOnce.Do(func() { go d.awaitTermination() })
 
-	w := utils.NewSafeWriter(unsafeW)
-
 	if err := w.WriteMsg(&pb.Response{Type: pb.Response_OK.Enum()}); err != nil {
 		log.Debugw("error writing message", "error", err)
 		return
@@ -46,7 +49,9 @@ func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {
 	for {
 		var req pb.PersistentConnectionRequest
 		if err := r.ReadMsg(&req); err != nil {
-			log.Debugw("error reading message", "error", err)
+			if err != io.EOF {
+				log.Debugw("error reading message", "error", err)
+			}
 			return
 		}
 
@@ -75,7 +80,26 @@ func (d *Daemon) handlePersistentConnRequest(req pb.PersistentConnectionRequest,
 		d.mx.Unlock()
 
 		if err := w.WriteMsg(resp); err != nil {
-			log.Debugw("error reading message", "error", err)
+			log.Debugw("error writing message", "error", err)
+			return
+		}
+
+	case *pb.PersistentConnectionRequest_RemoveUnaryHandler:
+		resp := d.doRemoveUnaryHandler(w, callID, req.GetRemoveUnaryHandler())
+
+		d.mx.Lock()
+		if _, ok := resp.Message.(*pb.PersistentConnectionResponse_DaemonError); !ok {
+			for index, proto := range *streamHandlers {
+				if proto == *req.GetRemoveUnaryHandler().Proto {
+					*streamHandlers = append((*streamHandlers)[:index], (*streamHandlers)[index+1:]...)
+					break
+				}
+			}
+		}
+		d.mx.Unlock()
+
+		if err := w.WriteMsg(resp); err != nil {
+			log.Debugw("error writing message", "error", err)
 			return
 		}
 
@@ -111,10 +135,10 @@ func (d *Daemon) doAddUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.AddU
 	defer d.mx.Unlock()
 
 	p := protocol.ID(*req.Proto)
-	_, ok := d.registeredUnaryProtocols[p]
+	round_robin, ok := d.registeredUnaryProtocols[p]
 	if !ok {
 		d.registeredUnaryProtocols[p] = utils.NewRoundRobin()
-		d.registeredUnaryProtocols[p].Push(w)
+		d.registeredUnaryProtocols[p].Append(w)
 		d.host.SetStreamHandler(p, d.persistentStreamHandler)
 	} else if !req.GetBalanced() {
 		return errorUnaryCallString(
@@ -122,11 +146,36 @@ func (d *Daemon) doAddUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.AddU
 			fmt.Sprintf("handler for protocol %s already set", *req.Proto),
 		)
 	} else {
-		d.registeredUnaryProtocols[p].Push(w)
+		round_robin.Append(w)
 	}
 
-	log.Debugw("set unary stream handler", "protocol", p)
+	return okUnaryCallResponse(callID)
+}
 
+func (d *Daemon) doRemoveUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.RemoveUnaryHandlerRequest) *pb.PersistentConnectionResponse {
+	d.mx.Lock()
+	defer d.mx.Unlock()
+
+	p := protocol.ID(*req.Proto)
+	round_robin, ok := d.registeredUnaryProtocols[p]
+	if !ok {
+		return errorUnaryCallString(
+			callID,
+			fmt.Sprintf("handler for protocol %s does not exist", *req.Proto),
+		)
+	}
+
+	ok = round_robin.Remove(w)
+	if !ok {
+		return errorUnaryCallString(
+			callID,
+			fmt.Sprintf("handler for protocol %s was not created in this persistent connection", *req.Proto),
+		)
+	}
+	if round_robin.Len() == 0 {
+		d.host.RemoveStreamHandler(p)
+		delete(d.registeredUnaryProtocols, p)
+	}
 	return okUnaryCallResponse(callID)
 }
 

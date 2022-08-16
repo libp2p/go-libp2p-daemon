@@ -1,5 +1,9 @@
 package utils
 
+import (
+	"reflect"
+)
+
 type RoundRobin struct {
 	data []interface{}
 	next int
@@ -11,8 +15,30 @@ func (r *RoundRobin) Next() interface{} {
 	return v
 }
 
-func (r *RoundRobin) Push(v interface{}) {
+func (r *RoundRobin) Append(v interface{}) {
 	r.data = append(r.data, v)
+}
+
+func (r *RoundRobin) Remove(v interface{}) bool {
+	found := -1
+	for index, item := range r.data {
+		if reflect.DeepEqual(item, v) {
+			found = index
+			break
+		}
+	}
+	if found == -1 {
+		return false
+	}
+
+	r.data = append(r.data[:found], r.data[found+1:]...)
+	if found < r.next {
+		r.next--
+	}
+	if r.next == r.Len() {
+		r.next = 0
+	}
+	return true
 }
 
 func (r *RoundRobin) Len() int {

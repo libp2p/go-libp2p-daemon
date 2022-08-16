@@ -153,6 +153,31 @@ func (c *Client) AddUnaryHandler(proto protocol.ID, handler UnaryHandlerFunc, ba
 	return nil
 }
 
+func (c *Client) RemoveUnaryHandler(proto protocol.ID) error {
+	w := c.getPersistentWriter()
+
+	callID := uuid.New()
+
+	w.WriteMsg(
+		&pb.PersistentConnectionRequest{
+			CallId: callID[:],
+			Message: &pb.PersistentConnectionRequest_RemoveUnaryHandler{
+				RemoveUnaryHandler: &pb.RemoveUnaryHandlerRequest{
+					Proto: (*string)(&proto),
+				},
+			},
+		},
+	)
+
+	if _, err := c.getResponse(callID); err != nil {
+		return err
+	}
+
+	c.unaryHandlers.Delete(proto)
+
+	return nil
+}
+
 func (c *Client) CallUnaryHandler(
 	ctx context.Context,
 	peerID peer.ID,

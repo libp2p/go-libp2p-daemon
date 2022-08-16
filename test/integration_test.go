@@ -1,12 +1,14 @@
 package test
 
 import (
+	"errors"
 	"io"
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/stretchr/testify/require"
 
+	"github.com/libp2p/go-libp2p-core/peer"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	ma "github.com/multiformats/go-multiaddr"
@@ -74,13 +76,59 @@ func TestStreams(t *testing.T) {
 	defer closer1()
 	d2, c2, closer2 := createDaemonClientPair(t)
 	defer closer2()
-	if err := connect(c1, d2); err != nil {
-		t.Fatal(err)
-	}
-	testprotos := []string{"/test"}
+	err := connect(c1, d2)
+	require.NoError(t, err)
 
+	testprotos := []string{"/test"}
 	done := make(chan struct{})
-	err := c1.NewStreamHandler(testprotos, func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
+	err = c1.NewStreamHandler(testprotos, makeExpectStringHandler(t, done), false)
+	require.NoError(t, err)
+
+	err = callExpectStringHandler(c2, d1.ID(), testprotos, done)
+	require.NoError(t, err)
+}
+
+func TestRemovingStreams(t *testing.T) {
+	d1, c1, cancel1 := createDaemonClientPair(t)
+	c2maddr, err := ma.NewMultiaddr("/ip4/127.0.0.1/tcp/0")
+	require.NoError(t, err)
+	c2, cancel2 := createClient(t, d1.Listener().Multiaddr(), c2maddr)
+
+	_, c3, cancel3 := createDaemonClientPair(t)
+
+	defer func() {
+		cancel1()
+		cancel2()
+		cancel3()
+	}()
+
+	peer1ID, peer1Addrs, err := c1.Identify()
+	require.NoError(t, err)
+	err = c3.Connect(peer1ID, peer1Addrs)
+	require.NoError(t, err)
+
+	testprotos := []string{"/test"}
+	done := make(chan struct{})
+	err = c1.NewStreamHandler(testprotos, makeExpectStringHandler(t, done), true)
+	require.NoError(t, err)
+	err = c2.NewStreamHandler(testprotos, makeExpectStringHandler(t, done), true)
+	require.NoError(t, err)
+	err = callExpectStringHandler(c3, peer1ID, testprotos, done)
+	require.NoError(t, err)
+
+	err = c1.RemoveStreamHandler(testprotos)
+	require.NoError(t, err)
+	err = callExpectStringHandler(c3, peer1ID, testprotos, done)
+	require.NoError(t, err, "The handler was removed only on the 1st client, the 2nd client should respond")
+
+	err = c2.RemoveStreamHandler(testprotos)
+	require.NoError(t, err)
+	err = callExpectStringHandler(c3, peer1ID, testprotos, done)
+	require.Error(t, err, "Calling a handler removed on all clients should return an error")
+}
+
+func makeExpectStringHandler(t *testing.T, done chan struct{}) p2pclient.StreamHandlerFunc {
+	return func(info *p2pclient.StreamInfo, conn io.ReadWriteCloser) {
 		defer conn.Close()
 		buf := make([]byte, 1024)
 		n, err := conn.Read(buf)
@@ -94,29 +142,30 @@ func TestStreams(t *testing.T) {
 			t.Fatalf(`expected "test", got "%s"`, string(buf))
 		}
 		done <- struct{}{}
-	}, false)
-	if err != nil {
-		t.Fatal(err)
 	}
+}
 
-	_, conn, err := c2.NewStream(d1.ID(), testprotos)
+func callExpectStringHandler(client *p2pclient.Client, peerID peer.ID, testprotos []string, done chan struct{}) error {
+	_, conn, err := client.NewStream(peerID, testprotos)
 	if err != nil {
-		t.Fatal(err)
+		return err
 	}
+	defer conn.Close()
+
 	n, err := conn.Write([]byte("test"))
 	if err != nil {
-		t.Fatal(err)
+		return err
 	}
 	if n != 4 {
-		t.Fatal("wrote wrong # of bytes")
+		return errors.New("wrote wrong # of bytes")
 	}
 
 	select {
 	case <-done:
 	case <-time.After(1 * time.Second):
-		t.Fatal("timed out waiting for stream result")
+		return errors.New("timed out waiting for stream result")
 	}
-	conn.Close()
+	return nil
 }
 
 func TestBalancedStreams(t *testing.T) {
