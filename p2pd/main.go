@@ -352,7 +352,8 @@ func main() {
 	}
 
 	if *idleTimeout > 0 {
-		d.KillOnTimeout(*idleTimeout)
+		ctx, d.cancelTerminateTimer := context.WithCancel(d.ctx)
+		d.KillOnTimeout(ctx, *idleTimeout)
 	}
 
 	if c.PubSub.Enabled {
