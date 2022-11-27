@@ -225,10 +225,9 @@ func (d *Daemon) awaitTermination() {
 }
 
 func (d *Daemon) KillOnTimeout(timeout time.Duration) {
+	var ctx context.Context
+	ctx, d.cancelTerminateTimer = context.WithCancel(d.ctx)
 	go func() {
-		ctx, cancel := context.WithCancel(d.ctx)
-		d.cancelTerminateTimer = cancel
-
 		select {
 		case <-ctx.Done():
 			return
