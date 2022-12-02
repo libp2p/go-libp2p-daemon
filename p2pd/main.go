@@ -16,13 +16,12 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 
-	relay "github.com/libp2p/go-libp2p-circuit"
-	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
-	noise "github.com/libp2p/go-libp2p-noise"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	tls "github.com/libp2p/go-libp2p-tls"
+	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
+	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
+	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -85,7 +84,7 @@ func main() {
 	relayEnabled := flag.Bool("relay", true, "Enables circuit relay")
 	flag.Bool("relayActive", false, "Enables active mode for relay (deprecated, has no effect)")
 	flag.Bool("relayHop", false, "Enables hop for relay (deprecated, has no effect)")
-	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays")
+	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays (deprecated, has no effect)")
 	flag.Bool("relayDiscovery", false, "Enables passive discovery for relay (deprecated, has no effect)")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
@@ -313,10 +312,6 @@ func main() {
 
 		if c.Relay.Auto {
 			opts = append(opts, libp2p.EnableAutoRelay())
-		}
-
-		if c.Relay.HopLimit > 0 {
-			relay.HopStreamLimit = c.Relay.HopLimit
 		}
 	}
 

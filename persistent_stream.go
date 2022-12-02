@@ -6,13 +6,13 @@ import (
 	"io"
 
 	"github.com/google/uuid"
-	"github.com/libp2p/go-libp2p-core/network"
-	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p/core/network"
+	"github.com/libp2p/go-libp2p/core/peer"
 
 	ggio "github.com/gogo/protobuf/io"
-	"github.com/libp2p/go-libp2p-core/protocol"
 	"github.com/libp2p/go-libp2p-daemon/internal/utils"
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	"github.com/libp2p/go-libp2p/core/protocol"
 )
 
 func (d *Daemon) handlePersistentConn(r ggio.Reader, unsafeW ggio.WriteCloser) {

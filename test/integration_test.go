@@ -8,9 +8,9 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	"github.com/libp2p/go-libp2p-core/peer"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	"github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -193,13 +193,16 @@ func TestBalancedStreams(t *testing.T) {
 			buf := make([]byte, 1024)
 			n, err := conn.Read(buf)
 			if err != nil {
-				t.Fatal(err)
+				t.Error(err)
+				return
 			}
 			if n != 4 {
-				t.Fatalf("expected to read 4 bytes, %d: %s", n, string(buf))
+				t.Errorf("expected to read 4 bytes, %d: %s", n, string(buf))
+				return
 			}
 			if string(buf[0:4]) != "test" {
-				t.Fatalf(`expected "test", got "%s"`, string(buf))
+				t.Errorf(`expected "test", got "%s"`, string(buf))
+				return
 			}
 			time.Sleep(50 * time.Millisecond)
 			done <- x
@@ -227,7 +230,7 @@ func TestBalancedStreams(t *testing.T) {
 		if n != 4 {
 			t.Fatal("wrote wrong # of bytes")
 		}
-		conn.Close()
+		defer conn.Close()
 	}
 
 	for i := 0; i < 10; i++ {

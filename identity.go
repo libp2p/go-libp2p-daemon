@@ -3,7 +3,7 @@ package p2pd
 import (
 	"io/ioutil"
 
-	"github.com/libp2p/go-libp2p-core/crypto"
+	"github.com/libp2p/go-libp2p/core/crypto"
 )
 
 func ReadIdentity(path string) (crypto.PrivKey, error) {

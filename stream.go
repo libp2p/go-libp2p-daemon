@@ -5,7 +5,7 @@ import (
 	"net"
 	"sync"
 
-	"github.com/libp2p/go-libp2p-core/network"
+	"github.com/libp2p/go-libp2p/core/network"
 
 	ggio "github.com/gogo/protobuf/io"
 	ma "github.com/multiformats/go-multiaddr"
