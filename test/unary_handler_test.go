@@ -10,11 +10,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/stretchr/testify/require"
-
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	ma "github.com/multiformats/go-multiaddr"
+	"github.com/stretchr/testify/require"
 )
 
 func TestConcurrentCalls(t *testing.T) {
@@ -189,8 +188,7 @@ func TestAddUnaryHandler(t *testing.T) {
 
 	err = c1.Close()
 	require.NoError(t, err)
-
-	time.Sleep(time.Second)
+	time.Sleep(100 * time.Millisecond)
 
 	err = c2.AddUnaryHandler(proto, sqrtHandler, false)
 	require.NoError(t, err, "closing client 1 should have cleaned up the proto list")

@@ -47,6 +47,7 @@ func TestPubsubMessages(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
+	time.Sleep(100 * time.Millisecond)
 
 	if err = sender.Connect(id, addrs); err != nil {
 		t.Fatal(err)

@@ -5,8 +5,9 @@ import (
 )
 
 type RoundRobin struct {
-	data []interface{}
-	next int
+	data          []interface{}
+	next          int
+	needDeepEqual bool
 }
 
 func (r *RoundRobin) Next() interface{} {
@@ -22,7 +23,13 @@ func (r *RoundRobin) Append(v interface{}) {
 func (r *RoundRobin) Remove(v interface{}) bool {
 	found := -1
 	for index, item := range r.data {
-		if reflect.DeepEqual(item, v) {
+		var isEqual bool
+		if r.needDeepEqual {
+			isEqual = reflect.DeepEqual(item, v)
+		} else {
+			isEqual = item == v
+		}
+		if isEqual {
 			found = index
 			break
 		}
@@ -45,6 +52,6 @@ func (r *RoundRobin) Len() int {
 	return len(r.data)
 }
 
-func NewRoundRobin() *RoundRobin {
-	return &RoundRobin{make([]interface{}, 0), 0}
+func NewRoundRobin(deepEqual bool) *RoundRobin {
+	return &RoundRobin{make([]interface{}, 0), 0, deepEqual}
 }

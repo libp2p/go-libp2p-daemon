@@ -137,7 +137,7 @@ func (d *Daemon) doAddUnaryHandler(w ggio.Writer, callID uuid.UUID, req *pb.AddU
 	p := protocol.ID(*req.Proto)
 	round_robin, ok := d.registeredUnaryProtocols[p]
 	if !ok {
-		d.registeredUnaryProtocols[p] = utils.NewRoundRobin()
+		d.registeredUnaryProtocols[p] = utils.NewRoundRobin(false)
 		d.registeredUnaryProtocols[p].Append(w)
 		d.host.SetStreamHandler(p, d.persistentStreamHandler)
 	} else if !req.GetBalanced() {

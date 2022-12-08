@@ -16,6 +16,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
+	"github.com/libp2p/go-libp2p/p2p/host/resource-manager"
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
@@ -74,6 +75,12 @@ func NewDaemon(
 		registeredUnaryProtocols: make(map[protocol.ID]*utils.RoundRobin),
 		persistentConnMsgMaxSize: persistentConnMsgMaxSize,
 	}
+	// setup resource usage limits; see https://github.com/libp2p/go-libp2p/tree/master/p2p/host/resource-manager
+	rm, err := rcmgr.NewResourceManager(rcmgr.NewFixedLimiter(rcmgr.InfiniteLimits))
+	if err != nil {
+		panic(err)
+	}
+	opts = append(opts, libp2p.ResourceManager(rm))
 
 	if dhtMode != "" {
 		var dhtOpts []dhtopts.Option

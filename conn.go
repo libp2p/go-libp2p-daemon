@@ -281,7 +281,7 @@ func (d *Daemon) doStreamHandler(req *pb.Request) *pb.Response {
 		p := protocol.ID(sp)
 		round_robin, ok := d.handlers[p]
 		if !ok {
-			d.handlers[p] = utils.NewRoundRobin()
+			d.handlers[p] = utils.NewRoundRobin(true)
 			d.handlers[p].Append(maddr)
 			d.host.SetStreamHandler(p, d.handleStream)
 		} else if !req.StreamHandler.GetBalanced() {
