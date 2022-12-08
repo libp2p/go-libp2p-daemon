@@ -49,7 +49,7 @@ func (c *Client) run(r ggio.Reader, w ggio.Writer) {
 
 		callID, err := uuid.FromBytes(resp.CallId)
 		if err != nil {
-			log.Debugw("received response with bad call id:", "error", err)
+			log.Errorw("received response with bad call id:", "error", err)
 			continue
 		}
 
