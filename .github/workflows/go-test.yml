@@ -12,6 +12,7 @@ jobs:
       matrix:
         os: [ "ubuntu", "windows", "macos" ]
         go: [ "1.18.x", "1.19.x" ]
+        moon-phase: [ "New Moon", "First Quarter", "Waxing Gibbous", "Full Moon", "Waning Gibbous", "Last Quarter", "Waning Crescent" ]
     runs-on: ${{ matrix.os }}-latest
     name: ${{ matrix.os }}, go ${{ matrix.go }}
     steps:
