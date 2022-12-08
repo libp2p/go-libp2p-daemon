@@ -23,6 +23,7 @@ func TestConcurrentCalls(t *testing.T) {
 	if err != nil {
 		panic(err)
 	}
+
 	logging.SetAllLoggers(lvl)
 	_, p1, cancel1 := createDaemonClientPair(t)
 	_, p2, cancel2 := createDaemonClientPair(t)
