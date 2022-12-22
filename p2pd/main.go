@@ -24,6 +24,8 @@ import (
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
+    "github.com/libp2p/go-libp2p/core/peer"
+
 
 	_ "net/http/pprof"
 )
@@ -90,6 +92,7 @@ func main() {
 	autonat := flag.Bool("autonat", false, "Enables the AutoNAT service")
 	hostAddrs := flag.String("hostAddrs", "", "comma separated list of multiaddrs the host should listen on")
 	announceAddrs := flag.String("announceAddrs", "", "comma separated list of multiaddrs the host should announce to the network")
+	staticRelays := flag.String("staticRelays", "", "comma separated list of multiaddrs for static circuit relay peers")
 	noListen := flag.Bool("noListenAddrs", false, "sets the host to listen on no addresses")
 	metricsAddr := flag.String("metricsAddr", "", "an address to bind the metrics handler to")
 	configFilename := flag.String("f", "", "a file from which to read a json representation of the deamon config")
@@ -170,6 +173,14 @@ func main() {
 		c.AnnounceAddresses = ha
 	}
 
+	var staticRelaysArray []string
+	if *staticRelays != "" {
+		staticRelaysArray := strings.Split(*staticRelays, ",")
+		if len(staticRelaysArray) > 0 && !*autoRelay{
+		    panic("Found staticRelays but autoRelay is not enabled, please use -autoRelay=1")
+		}
+	}
+
 	if *connMgr {
 		c.ConnectionManager.Enabled = true
 		c.ConnectionManager.GracePeriod = *connMgrGrace
@@ -178,7 +189,7 @@ func main() {
 	}
 
 	if *natPortMap {
-		c.NatPortMap = true
+	    c.NatPortMap = true
 	}
 
 	if *relayEnabled {
@@ -305,13 +316,23 @@ func main() {
 
 	if c.AutoNat {
 		opts = append(opts, libp2p.EnableNATService())
+		opts = append(opts, libp2p.EnableHolePunching())
+		if c.Relay.Enabled {
+		    opts = append(opts, libp2p.EnableHolePunching())
+		}
 	}
 
+    var peerChan chan peer.AddrInfo
 	if c.Relay.Enabled {
 		opts = append(opts, libp2p.EnableRelay())
 
+		if !c.NoListen {
+            opts = append(opts, libp2p.EnableRelayService())
+		}
+
 		if c.Relay.Auto {
-			opts = append(opts, libp2p.EnableAutoRelay())
+			opts, peerChan = p2pd.ConfigureAutoRelay(opts, staticRelaysArray)
+			// note: daemon will detect that this is enabled and run autoRelayFeeder for this to work
 		}
 	}
 
@@ -396,6 +417,22 @@ func main() {
 	}
 
 	signal.Ignore(os.Interrupt)
+
+
+	//TODO move inside serve
+	// how: feed peerChan into server; save as d.peerChan; in d.serve, beginAutoRelayFeeder and defer cancel
+    if peerChan != nil {
+	    if c.DHT.Mode == "" {
+	       panic("Using autorelay but DHT is disabled, please enable DHT or set staticRelays")
+	    }
+	    fmt.Printf("Launching a background autoRelay feeder %v\n", d.Dht)
+	    var peering = p2pd.Peering{}  // TODO construct this from bootstrap peers
+	    peering = peering;
+	    cancel := p2pd.BeginAutoRelayFeeder(d.Host, d.Dht, peering, peerChan)
+	    defer cancel()
+	}
+	//TODO move inside serve
+
 
 	if err := d.Serve(); err != nil {
 		log.Fatal(err)

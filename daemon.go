@@ -35,6 +35,8 @@ type Daemon struct {
 	listener manet.Listener
 
 	dht    *dht.IpfsDHT
+	Host    host.Host
+	Dht    *dht.IpfsDHT
 	pubsub *ps.PubSub
 
 	mx sync.Mutex
@@ -98,6 +100,7 @@ func NewDaemon(
 		return nil, err
 	}
 	d.host = h
+	d.Host = h
 
 	l, err := manet.Listen(maddr)
 	if err != nil {
@@ -122,6 +125,7 @@ func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routi
 			return nil, err
 		}
 		d.dht = dhtInst
+		d.Dht = d.dht
 		return dhtInst, nil
 	}
 
