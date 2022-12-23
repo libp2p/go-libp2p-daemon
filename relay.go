@@ -13,6 +13,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/host"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/p2p/host/autorelay"
+	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	"github.com/cenkalti/backoff/v4"
 )
@@ -146,4 +147,19 @@ func BeginRelayDiscovery(h host.Host, dht *dht.IpfsDHT, trustedRelays []string, 
 	}()
 
 	return cancel
+}
+
+func ConfigureRelayService(opts []libp2p.Option, maxCircuits int, maxReservations int, relayBufferSize int, dataLimit int64, timeLimit time.Duration) []libp2p.Option {
+	resources := relay.DefaultResources()
+	resources.Limit = &relay.RelayLimit{Duration: timeLimit, Data: dataLimit}
+	resources.MaxCircuits = maxCircuits
+	resources.MaxReservations = maxReservations
+	resources.MaxReservationsPerPeer = maxReservations
+	resources.MaxReservationsPerIP = maxReservations
+	resources.MaxReservationsPerASN = maxReservations
+	resources.BufferSize = relayBufferSize
+	opts = append(opts, libp2p.EnableRelayService(
+		relay.WithResources(resources),
+	))
+	return opts
 }
