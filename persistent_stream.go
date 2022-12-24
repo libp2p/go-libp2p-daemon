@@ -104,7 +104,7 @@ func (d *Daemon) handlePersistentConnRequest(req pb.PersistentConnectionRequest,
 		}
 
 	case *pb.PersistentConnectionRequest_CallUnary:
-		ctx, cancel := context.WithCancel(context.Background())
+		ctx, cancel := context.WithCancel(d.ctx)
 		d.cancelUnary.Store(callID, cancel)
 		defer cancel()
 

@@ -19,6 +19,7 @@ import (
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	network "github.com/libp2p/go-libp2p/core/network"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
@@ -120,6 +121,7 @@ func main() {
 	flag.Parse()
 
 	var c config.Config
+	defaultCtx := context.Background() // context used for all streams opened by this daemon
 	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
 
 	if *configStdin {
@@ -335,6 +337,9 @@ func main() {
 	if c.Relay.Enabled {
 		opts = append(opts, libp2p.EnableRelay())
 
+		// this allows all outgoing streams to run over relays; by default, only some low-bandwidth streams use it
+		defaultCtx = network.WithUseTransient(defaultCtx, "relayEnabled")
+
 		if *relayService {
 			opts = p2pd.ConfigureRelayService(opts, *relayMaxCircuits, *relayMaxReservations, *relayBufferSize, *relayDataLimit, *relayTimeLimit)
 		}
@@ -367,7 +372,7 @@ func main() {
 
 	// start daemon
 	d, err := p2pd.NewDaemon(
-		context.Background(), &c.ListenAddr, c.DHT.Mode,
+		defaultCtx, &c.ListenAddr, c.DHT.Mode,
 		*relayDiscovery, trustedRelays, *persistentConnMaxMsgSize,
 		opts...)
 	if err != nil {
