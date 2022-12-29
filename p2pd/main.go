@@ -88,9 +88,9 @@ func main() {
 	flag.Bool("relayHop", false, "Enables hop for relay (deprecated, has no effect)")
 	relayHopLimit := flag.Int("relayHopLimit", 0, "Sets the hop limit for hop relays (deprecated, has no effect)")
 	autoRelay := flag.Bool("autoRelay", false, "Enables autorelay")
-	relayDiscovery := flag.Bool("relayDiscovery", true, "Discover potential relays in background if -autoRelay=1")
+	allowRelayDiscovery := flag.Bool("relayDiscovery", true, "Discover potential relays in background if -autoRelay=1")
 	trustedRelaysRaw := flag.String("trustedRelays", "", "comma separated list of multiaddrs for static circuit relay peers; by default, use bootstrap peers as trusted relays")
-	relayService := flag.Bool("relayService", true, "Configures this node to serve as a relay for others if -relayEnabled=1")
+	allowRelayService := flag.Bool("relayService", true, "Configures this node to serve as a relay for others if -relayEnabled=1")
 	relayMaxCircuits := flag.Int("relayMaxCircuits", 16, "maximum number of open relay connections for each peer if -relayService=1")
 	relayMaxReservations := flag.Int("relayMaxReservations", 128, "maximum number of reserved relay slots for each peer if -relayService=1")
 	relayBufferSize := flag.Int("relayBufferSize", 1<<24, "size (in bytes) of the relayed connection buffers if -relayService=1")
@@ -201,6 +201,7 @@ func main() {
 
 	if *autoRelay {
 		c.Relay.Auto = true
+		c.Relay.Discovery = *allowRelayDiscovery
 	}
 
 	var trustedRelays []string
@@ -214,7 +215,7 @@ func main() {
 		}
 	}
 
-	if *autoRelay && !*relayDiscovery && len(trustedRelays) == 0 {
+	if c.Relay.Auto && !c.Relay.Discovery && len(trustedRelays) == 0 {
 		panic("Daemon with autoRelay requires either -relayDiscovery=1 or -trustedRelays=$STATIC_RELAYS_HERE")
 	}
 
@@ -340,7 +341,7 @@ func main() {
 		// this allows all outgoing streams to run over relays; by default, only some low-bandwidth streams use it
 		defaultCtx = network.WithUseTransient(defaultCtx, "relayEnabled")
 
-		if *relayService {
+		if *allowRelayService {
 			opts = p2pd.ConfigureRelayService(opts, *relayMaxCircuits, *relayMaxReservations, *relayBufferSize, *relayDataLimit, *relayTimeLimit)
 		}
 	}
@@ -373,7 +374,7 @@ func main() {
 	// start daemon
 	d, err := p2pd.NewDaemon(
 		defaultCtx, &c.ListenAddr, c.DHT.Mode,
-		*relayDiscovery, trustedRelays, *persistentConnMaxMsgSize,
+		c.Relay.Discovery, trustedRelays, *persistentConnMaxMsgSize,
 		opts...)
 	if err != nil {
 		log.Fatal(err)
