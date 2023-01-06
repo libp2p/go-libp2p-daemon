@@ -15,14 +15,14 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 
-	relay "github.com/libp2p/go-libp2p-circuit"
-	connmgr "github.com/libp2p/go-libp2p-connmgr"
 	p2pd "github.com/libp2p/go-libp2p-daemon"
+	// relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	config "github.com/libp2p/go-libp2p-daemon/config"
-	noise "github.com/libp2p/go-libp2p-noise"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	quic "github.com/libp2p/go-libp2p-quic-transport"
-	tls "github.com/libp2p/go-libp2p-tls"
+	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
+	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
+	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
+	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -299,9 +299,13 @@ func main() {
 	}
 
 	if c.ConnectionManager.Enabled {
-		cm := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
+		cm, err := connmgr.NewConnManager(c.ConnectionManager.LowWaterMark,
 			c.ConnectionManager.HighWaterMark,
-			c.ConnectionManager.GracePeriod)
+			connmgr.WithGracePeriod(c.ConnectionManager.GracePeriod),
+		)
+		if err != nil {
+			panic(err)
+		}
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
@@ -323,27 +327,27 @@ func main() {
 		opts = append(opts, libp2p.EnableNATService())
 	}
 
-	if c.Relay.Enabled {
-		var relayOpts []relay.RelayOpt
-		if c.Relay.Active {
-			relayOpts = append(relayOpts, relay.OptActive)
-		}
-		if c.Relay.Hop {
-			relayOpts = append(relayOpts, relay.OptHop)
-		}
-		if c.Relay.Discovery {
-			relayOpts = append(relayOpts, relay.OptDiscovery)
-		}
-		opts = append(opts, libp2p.EnableRelay(relayOpts...))
+	// 	if c.Relay.Enabled {
+	// 		var relayOpts []relayv1.RelayOpt
+	// 		if c.Relay.Active {
+	// 			relayOpts = append(relayOpts, relayv1.OptActive)
+	// 		}
+	// 		if c.Relay.Hop {
+	// 			relayOpts = append(relayOpts, relayv1.OptHop)
+	// 		}
+	// 		if c.Relay.Discovery {
+	// 			relayOpts = append(relayOpts, relayv1.OptDiscovery)
+	// 		}
+	// 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
 
-		if c.Relay.Auto {
-			opts = append(opts, libp2p.EnableAutoRelay())
-		}
+	// 		if c.Relay.Auto {
+	// 			opts = append(opts, libp2p.EnableAutoRelay())
+	// 		}
 
-		if c.Relay.HopLimit > 0 {
-			relay.HopStreamLimit = c.Relay.HopLimit
-		}
-	}
+	// 		if c.Relay.HopLimit > 0 {
+	// 			relayv1.HopStreamLimit = c.Relay.HopLimit
+	// 		}
+	// 	}
 
 	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
