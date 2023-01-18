@@ -327,27 +327,9 @@ func main() {
 		opts = append(opts, libp2p.EnableNATService())
 	}
 
-	// 	if c.Relay.Enabled {
-	// 		var relayOpts []relayv1.RelayOpt
-	// 		if c.Relay.Active {
-	// 			relayOpts = append(relayOpts, relayv1.OptActive)
-	// 		}
-	// 		if c.Relay.Hop {
-	// 			relayOpts = append(relayOpts, relayv1.OptHop)
-	// 		}
-	// 		if c.Relay.Discovery {
-	// 			relayOpts = append(relayOpts, relayv1.OptDiscovery)
-	// 		}
-	// 		opts = append(opts, libp2p.EnableRelay(relayOpts...))
-
-	// 		if c.Relay.Auto {
-	// 			opts = append(opts, libp2p.EnableAutoRelay())
-	// 		}
-
-	// 		if c.Relay.HopLimit > 0 {
-	// 			relayv1.HopStreamLimit = c.Relay.HopLimit
-	// 		}
-	// 	}
+	if c.Relay.Enabled && c.Relay.Auto {
+		opts = append(opts, libp2p.EnableAutoRelay(), libp2p.EnableRelay())
+	}
 
 	if c.NoListen {
 		opts = append(opts, libp2p.NoListenAddrs)
@@ -390,6 +372,12 @@ func main() {
 
 		err = d.EnablePubsub(c.PubSub.Router, c.PubSub.Sign, c.PubSub.SignStrict)
 		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if c.Relay.Enabled {
+		if err := d.EnableRelayV2(); err != nil {
 			log.Fatal(err)
 		}
 	}

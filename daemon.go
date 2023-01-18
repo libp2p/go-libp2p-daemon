@@ -14,6 +14,7 @@ import (
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
+	"github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 
 	multierror "github.com/hashicorp/go-multierror"
 	logging "github.com/ipfs/go-log"
@@ -92,6 +93,11 @@ func (d *Daemon) DHTRoutingFactory(opts []dhtopts.Option) func(host.Host) (routi
 	}
 
 	return makeRouting
+}
+
+func (d *Daemon) EnableRelayV2() error {
+	_, err := relay.New(d.host)
+	return err
 }
 
 func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
