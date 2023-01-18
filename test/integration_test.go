@@ -1,14 +1,21 @@
 package test
 
 import (
+	"context"
 	"io"
 	"testing"
 	"time"
 
+	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/peer"
+	v2client "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/client"
+	v2proto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
+	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
+	"github.com/stretchr/testify/require"
 
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	"github.com/multiformats/go-multiaddr"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -117,4 +124,55 @@ func TestStreams(t *testing.T) {
 		t.Fatal("timed out waiting for stream result")
 	}
 	conn.Close()
+}
+
+func TestRelayV2(t *testing.T) {
+	relayHost, _, closer1 := createDaemonClientPair(t)
+	defer closer1()
+	_, c2, closer2 := createDaemonClientPair(t)
+	defer closer2()
+
+	err := relayHost.EnableRelayV2()
+	require.NoError(t, err)
+
+	// create an unreachable host
+	unreachableHost, err := libp2p.New(
+		libp2p.NoListenAddrs,
+		libp2p.EnableRelay(),
+	)
+	require.NoError(t, err)
+	defer unreachableHost.Close()
+
+	// host should connect to the relay and make a reservation
+	idService, err := identify.NewIDService(unreachableHost)
+	relayInfo := peer.AddrInfo{
+		ID:    relayHost.ID(),
+		Addrs: relayHost.Addrs(),
+	}
+
+	// connect to the relay
+	err = unreachableHost.Connect(context.Background(), relayInfo)
+	require.NoError(t, err)
+
+	// await identify
+	conns := unreachableHost.Network().ConnsToPeer(relayInfo.ID)
+	require.NotEmpty(t, conns)
+	<-idService.IdentifyWait(conns[0])
+
+	// ensure the circuitv2 protocols are present
+	protocols, err := unreachableHost.Peerstore().GetProtocols(relayInfo.ID)
+	require.Contains(t, protocols, v2proto.ProtoIDv2Hop)
+	require.Contains(t, protocols, v2proto.ProtoIDv2Stop)
+
+	// make the reservation
+	reservation, err := v2client.Reserve(context.Background(), unreachableHost, relayInfo)
+	require.NoError(t, err)
+	require.NotNil(t, reservation)
+	require.NotEmpty(t, reservation.Addrs)
+
+	// connect using d2
+	relayaddr, err := multiaddr.NewMultiaddr(reservation.Addrs[0].String() + "/p2p-circuit/p2p/" + unreachableHost.ID().String())
+	require.NoError(t, err)
+	err = c2.Connect(unreachableHost.ID(), []multiaddr.Multiaddr{relayaddr})
+	require.NoError(t, err)
 }

@@ -16,7 +16,6 @@ import (
 	"github.com/libp2p/go-libp2p"
 
 	p2pd "github.com/libp2p/go-libp2p-daemon"
-	// relayv1 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv1/relay"
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
@@ -377,7 +376,8 @@ func main() {
 	}
 
 	if c.Relay.Enabled {
-		if err := d.EnableRelayV2(); err != nil {
+		err = d.EnableRelayV2()
+		if err != nil {
 			log.Fatal(err)
 		}
 	}
