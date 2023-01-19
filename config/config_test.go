@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 	"testing"
 
 	"github.com/multiformats/go-multiaddr"
@@ -20,6 +19,6 @@ func TestDefaultConfig(t *testing.T) {
 		t.Fatal(err)
 	}
 	if c.ListenAddr.String() != defaultListen.String() {
-		t.Fatal(fmt.Sprintf("Expected %s, got %s", defaultListen.String(), c.ListenAddr.String()))
+		t.Fatalf("Expected %s, got %s", defaultListen.String(), c.ListenAddr.String())
 	}
 }

@@ -15,7 +15,6 @@ import (
 
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	"github.com/multiformats/go-multiaddr"
 	ma "github.com/multiformats/go-multiaddr"
 )
 
@@ -145,6 +144,7 @@ func TestRelayV2(t *testing.T) {
 
 	// host should connect to the relay and make a reservation
 	idService, err := identify.NewIDService(unreachableHost)
+	require.NoError(t, err)
 	relayInfo := peer.AddrInfo{
 		ID:    relayHost.ID(),
 		Addrs: relayHost.Addrs(),
@@ -179,8 +179,8 @@ func TestRelayV2(t *testing.T) {
 	}
 
 	// connect using c2
-	relayaddr, err := multiaddr.NewMultiaddr(reservation.Addrs[0].String() + "/p2p-circuit/p2p/" + unreachableHost.ID().String())
+	relayaddr, err := ma.NewMultiaddr(reservation.Addrs[0].String() + "/p2p-circuit/p2p/" + unreachableHost.ID().String())
 	require.NoError(t, err)
-	err = c2.Connect(unreachableHost.ID(), []multiaddr.Multiaddr{relayaddr})
+	err = c2.Connect(unreachableHost.ID(), []ma.Multiaddr{relayaddr})
 	require.NoError(t, err)
 }
