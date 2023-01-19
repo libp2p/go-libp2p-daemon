@@ -170,7 +170,7 @@ func TestRelayV2(t *testing.T) {
 	require.NotNil(t, reservation)
 	require.NotEmpty(t, reservation.Addrs)
 
-	// connect using d2
+	// connect using c2
 	relayaddr, err := multiaddr.NewMultiaddr(reservation.Addrs[0].String() + "/p2p-circuit/p2p/" + unreachableHost.ID().String())
 	require.NoError(t, err)
 	err = c2.Connect(unreachableHost.ID(), []multiaddr.Multiaddr{relayaddr})
