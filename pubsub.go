@@ -3,7 +3,7 @@ package p2pd
 import (
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
-	"github.com/libp2p/go-libp2p-core/peer"
+	"github.com/libp2p/go-libp2p/core/peer"
 
 	ggio "github.com/gogo/protobuf/io"
 	ps "github.com/libp2p/go-libp2p-pubsub"
