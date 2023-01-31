@@ -1,6 +1,8 @@
 package p2pd
 
 import (
+	"context"
+
 	pb "github.com/libp2p/go-libp2p-daemon/pb"
 
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -56,8 +58,12 @@ func (d *Daemon) doPubsubPublish(req *pb.PSRequest) (*pb.Response, *ps.Subscript
 		return errorResponseString("Malformed request; missing topic parameter"), nil
 	}
 
-	//lint:ignore SA1019 requires API changes
-	err := d.pubsub.Publish(*req.Topic, req.Data)
+	topic, err := d.pubsub.Join(*req.Topic)
+	if err != nil {
+		return errorResponse(err), nil
+	}
+
+	err = topic.Publish(context.Background(), req.Data)
 	if err != nil {
 		return errorResponse(err), nil
 	}
