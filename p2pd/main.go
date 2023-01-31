@@ -23,7 +23,6 @@ import (
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
-	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -75,7 +74,6 @@ func main() {
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Duration("connGrace", 120*time.Second, "Connection Manager grace period (in seconds)")
-	QUIC := flag.Bool("quic", false, "Enables the QUIC transport")
 	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
@@ -176,10 +174,6 @@ func main() {
 		c.ConnectionManager.GracePeriod = *connMgrGrace
 		c.ConnectionManager.HighWaterMark = *connMgrHi
 		c.ConnectionManager.LowWaterMark = *connMgrLo
-	}
-
-	if QUIC != nil {
-		c.QUIC = *QUIC
 	}
 
 	if *natPortMap {
@@ -318,15 +312,6 @@ func main() {
 			panic(err)
 		}
 		opts = append(opts, libp2p.ConnectionManager(cm))
-	}
-
-	if c.QUIC {
-		opts = append(opts,
-			libp2p.Transport(quic.NewTransport),
-		)
-		if len(c.HostAddresses) == 0 {
-			log.Fatal("if we explicitly specify a transport, we must also explicitly specify the listen addrs")
-		}
 	}
 
 	if c.NatPortMap {
