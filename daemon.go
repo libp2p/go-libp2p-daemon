@@ -104,14 +104,12 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 	var opts []ps.Option
 
 	if !sign {
-		log.Errorf("no message signing")
 		opts = append(opts, ps.WithMessageSigning(false))
 	} else if !strict {
-		log.Errorf("no strict verification")
 		opts = append(opts, ps.WithStrictSignatureVerification(false))
+	} else {
+		opts = append(opts, ps.WithMessageSignaturePolicy(ps.StrictSign))
 	}
-
-	opts = append(opts, ps.WithMessageSignaturePolicy(ps.StrictSign))
 
 	switch router {
 	case "floodsub":
