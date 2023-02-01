@@ -18,10 +18,11 @@ import (
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	"github.com/libp2p/go-libp2p/p2p/muxer/mplex"
+	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
-	quic "github.com/libp2p/go-libp2p/p2p/transport/quic"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -73,7 +74,6 @@ func main() {
 	connMgrLo := flag.Int("connLo", 256, "Connection Manager Low Water mark")
 	connMgrHi := flag.Int("connHi", 512, "Connection Manager High Water mark")
 	connMgrGrace := flag.Duration("connGrace", 120*time.Second, "Connection Manager grace period (in seconds)")
-	QUIC := flag.Bool("quic", true, "Enables the QUIC transport")
 	natPortMap := flag.Bool("natPortMap", false, "Enables NAT port mapping")
 	pubsub := flag.Bool("pubsub", false, "Enables pubsub")
 	pubsubRouter := flag.String("pubsubRouter", "gossipsub", "Specifies the pubsub router implementation")
@@ -102,11 +102,15 @@ func main() {
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
+	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
 
 	flag.Parse()
 
 	var c config.Config
-	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
+	opts := []libp2p.Option{
+		libp2p.UserAgent("p2pd/0.1"),
+		libp2p.DefaultTransports,
+	}
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
@@ -172,10 +176,6 @@ func main() {
 		c.ConnectionManager.LowWaterMark = *connMgrLo
 	}
 
-	if QUIC != nil {
-		c.QUIC = *QUIC
-	}
-
 	if *natPortMap {
 		c.NatPortMap = true
 	}
@@ -236,6 +236,12 @@ func main() {
 
 	if *bootstrap {
 		c.Bootstrap.Enabled = true
+	}
+
+	if *muxer == "mplex" {
+		opts = append(opts, libp2p.Muxer("/mplex/6.7.0", mplex.DefaultTransport))
+	} else if *muxer == "yamux" {
+		opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
 	}
 
 	if *quiet {
@@ -308,16 +314,6 @@ func main() {
 		opts = append(opts, libp2p.ConnectionManager(cm))
 	}
 
-	if c.QUIC {
-		opts = append(opts,
-			libp2p.DefaultTransports,
-			libp2p.Transport(quic.NewTransport),
-		)
-		if len(c.HostAddresses) == 0 {
-			log.Fatal("if we explicitly specify a transport, we must also explicitly specify the listen addrs")
-		}
-	}
-
 	if c.NatPortMap {
 		opts = append(opts, libp2p.NATPortMap())
 	}
@@ -326,12 +322,12 @@ func main() {
 		opts = append(opts, libp2p.EnableNATService())
 	}
 
-	if c.Relay.Enabled && c.Relay.Auto {
-		opts = append(opts, libp2p.EnableAutoRelay(), libp2p.EnableRelay())
-	}
-
 	if c.NoListen {
-		opts = append(opts, libp2p.NoListenAddrs)
+		opts = append(opts,
+			libp2p.NoListenAddrs,
+			// NoListenAddrs disables the relay transport
+			libp2p.EnableRelay(),
+		)
 	}
 
 	var securityOpts []libp2p.Option
