@@ -7,7 +7,6 @@ require (
 	github.com/google/pprof v0.0.0-20230405160723-4a4c7d95572b // indirect
 	github.com/hashicorp/go-multierror v1.1.1
 	github.com/ipfs/go-cid v0.4.1
-	github.com/ipfs/go-ipns v0.3.0 // indirect
 	github.com/ipfs/go-log v1.0.5
 	github.com/ipld/go-ipld-prime v0.20.0 // indirect
 	github.com/klauspost/compress v1.16.4 // indirect
@@ -15,8 +14,6 @@ require (
 	github.com/libp2p/go-libp2p v0.27.1
 	github.com/libp2p/go-libp2p-kad-dht v0.23.0
 	github.com/libp2p/go-libp2p-pubsub v0.9.3
-	github.com/marten-seemann/qtls-go1-18 v0.1.4 // indirect
-	github.com/marten-seemann/qtls-go1-19 v0.1.2 // indirect
 	github.com/mattn/go-isatty v0.0.18 // indirect
 	github.com/multiformats/go-multiaddr v0.9.0
 	github.com/multiformats/go-multihash v0.2.1
@@ -44,7 +41,6 @@ require (
 	github.com/decred/dcrd/dcrec/secp256k1/v4 v4.1.0 // indirect
 	github.com/docker/go-units v0.5.0 // indirect
 	github.com/elastic/gosigar v0.14.2 // indirect
-	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/flynn/noise v1.0.0 // indirect
 	github.com/francoispqt/gojay v1.2.13 // indirect
 	github.com/go-logr/logr v1.2.3 // indirect
@@ -55,7 +51,6 @@ require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/gopacket v1.1.19 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
 	github.com/hashicorp/errwrap v1.1.0 // indirect
 	github.com/hashicorp/golang-lru v0.5.4 // indirect
 	github.com/hashicorp/golang-lru/v2 v2.0.2 // indirect
@@ -78,12 +73,9 @@ require (
 	github.com/libp2p/go-msgio v0.3.0 // indirect
 	github.com/libp2p/go-nat v0.1.0 // indirect
 	github.com/libp2p/go-netroute v0.2.1 // indirect
-	github.com/libp2p/go-openssl v0.1.0 // indirect
 	github.com/libp2p/go-reuseport v0.2.0 // indirect
 	github.com/libp2p/go-yamux/v4 v4.0.0 // indirect
-	github.com/lucas-clemente/quic-go v0.31.1 // indirect
 	github.com/marten-seemann/tcp v0.0.0-20210406111302-dfbc87cc63fd // indirect
-	github.com/mattn/go-pointer v0.0.1 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/miekg/dns v1.1.53 // indirect
 	github.com/mikioh/tcpinfo v0.0.0-20190314235526-30a79bb1804b // indirect
@@ -110,7 +102,6 @@ require (
 	github.com/quic-go/quic-go v0.33.0 // indirect
 	github.com/quic-go/webtransport-go v0.5.2 // indirect
 	github.com/raulk/go-watchdog v1.3.0 // indirect
-	github.com/spacemonkeygo/spacelog v0.0.0-20180420211403-2296661a0572 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
 	github.com/whyrusleeping/go-keyspace v0.0.0-20160322163242-5b898ac5add1 // indirect
 	go.opencensus.io v0.24.0 // indirect
