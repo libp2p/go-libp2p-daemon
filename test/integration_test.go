@@ -8,6 +8,7 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/peer"
+	"github.com/libp2p/go-libp2p/core/protocol"
 	v2client "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/client"
 	v2proto "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/proto"
 	"github.com/libp2p/go-libp2p/p2p/protocol/identify"
@@ -144,6 +145,8 @@ func TestRelayV2(t *testing.T) {
 
 	// host should connect to the relay and make a reservation
 	idService, err := identify.NewIDService(unreachableHost)
+	idService.Start()
+	defer idService.Close()
 	require.NoError(t, err)
 	relayInfo := peer.AddrInfo{
 		ID:    relayHost.ID(),
@@ -162,8 +165,8 @@ func TestRelayV2(t *testing.T) {
 	// ensure the circuitv2 protocols are present
 	protocols, err := unreachableHost.Peerstore().GetProtocols(relayInfo.ID)
 	require.NoError(t, err)
-	require.Contains(t, protocols, v2proto.ProtoIDv2Hop)
-	require.Contains(t, protocols, v2proto.ProtoIDv2Stop)
+	require.Contains(t, protocols, protocol.ID(v2proto.ProtoIDv2Hop))
+	require.Contains(t, protocols, protocol.ID(v2proto.ProtoIDv2Stop))
 
 	// make the reservation
 	reservation, err := v2client.Reserve(context.Background(), unreachableHost, relayInfo)
