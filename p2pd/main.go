@@ -18,7 +18,6 @@ import (
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p/p2p/muxer/mplex"
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
@@ -102,7 +101,6 @@ func main() {
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
-	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
 
 	flag.Parse()
 
@@ -238,11 +236,7 @@ func main() {
 		c.Bootstrap.Enabled = true
 	}
 
-	if *muxer == "mplex" {
-		opts = append(opts, libp2p.Muxer("/mplex/6.7.0", mplex.DefaultTransport))
-	} else if *muxer == "yamux" {
-		opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
-	}
+	opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
 
 	if *quiet {
 		c.Quiet = true
