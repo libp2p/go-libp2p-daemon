@@ -8,16 +8,16 @@ on:
 jobs:
   build:
     name: Publish binaries
-    runs-on: ubuntu-latest
     strategy:
       matrix:
-        executable: [ p2pd, p2p-keygen ]
-
+        os: [ "ubuntu", "macos" ]
+    runs-on: ${{ matrix.os }}-latest
     steps:
+
     - name: Install Go
       uses: actions/setup-go@v2
       with:
-        go-version: 1.18.8
+        go-version: 1.19.x
 
     - uses: actions/checkout@v2
 
@@ -25,21 +25,34 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: Build
-      run: CGO_ENABLED=0 cd ${{ matrix.executable }} && go build .
+    - name: Build for Linux
+      if: ${{ matrix.os == 'ubuntu' }}
+      run: |
+        cd p2pd
+        CGO_ENABLED=0 go build .
+
+    - name: Build for macOS
+      if: ${{ matrix.os == 'macos' }}
+      run: |
+        set -x  # Print executed commands
+        cd p2pd
+        CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o p2pd_amd64 .
+        CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o p2pd_arm64 .
+        lipo -create -output p2pd p2pd_amd64 p2pd_arm64  # Merge to a universal binary
 
     - name: Compress binaries
+      if: ${{ matrix.os == 'ubuntu' }}
       uses: svenstaro/upx-action@v2
       with:
-        file: ${{ matrix.executable }}/${{ matrix.executable }}
+        file: p2pd/p2pd
 
     - name: Publish To Releases
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
         release_name: ${{ steps.get_version.outputs.VERSION }}
-        file: ${{ matrix.executable }}/${{ matrix.executable }}
-        asset_name: ${{ matrix.executable }}
+        file: p2pd/p2pd
+        asset_name: p2pd-${{ matrix.os == 'ubuntu' && 'linux' || 'darwin' }}
         tag: ${{ steps.get_version.outputs.VERSION }}
         overwrite: true
         body: CI Release
