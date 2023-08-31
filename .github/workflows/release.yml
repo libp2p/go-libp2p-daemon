@@ -8,10 +8,7 @@ on:
 jobs:
   build:
     name: Publish binaries
-    strategy:
-      matrix:
-        os: [ "ubuntu", "macos" ]
-    runs-on: ${{ matrix.os }}-latest
+    runs-on: ubuntu-latest
     steps:
 
     - name: Install Go
@@ -25,34 +22,37 @@ jobs:
       id: get_version
       run: echo ::set-output name=VERSION::$(echo $GITHUB_REF | cut -d / -f 3)
 
-    - name: Build for Linux
-      if: ${{ matrix.os == 'ubuntu' }}
-      run: |
-        cd p2pd
-        CGO_ENABLED=0 go build .
-
-    - name: Build for macOS
-      if: ${{ matrix.os == 'macos' }}
+    - name: Build
       run: |
         set -x  # Print executed commands
-        cd p2pd
-        CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o p2pd_amd64 .
-        CGO_ENABLED=0 GOOS=darwin GOARCH=arm64 go build -o p2pd_arm64 .
-        lipo -create -output p2pd p2pd_amd64 p2pd_arm64  # Merge to a universal binary
+        export CGO_ENABLED=0 GOOS GOARCH
+        for GOOS in linux darwin; do
+          for GOARCH in amd64 arm64; do
+            go build -o p2pd-$GOOS-$GOARCH ./p2pd
+          done
+        done
 
     - name: Compress binaries
-      if: ${{ matrix.os == 'ubuntu' }}
       uses: svenstaro/upx-action@v2
       with:
-        file: p2pd/p2pd
+        files: p2pd-linux-amd64
+
+    - name: Compute SHA256 hashes
+      id: sha256sum
+      run: |
+        echo 'OUTPUTS<<EOF' >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        sha256sum p2pd-* >> $GITHUB_OUTPUT
+        echo '```' >> $GITHUB_OUTPUT
+        echo 'EOF' >> $GITHUB_OUTPUT
 
     - name: Publish To Releases
       uses: svenstaro/upload-release-action@v2
       with:
         repo_token: ${{ secrets.GITHUB_TOKEN }}
-        release_name: ${{ steps.get_version.outputs.VERSION }}
-        file: p2pd/p2pd
-        asset_name: p2pd-${{ matrix.os == 'ubuntu' && 'linux' || 'darwin' }}
         tag: ${{ steps.get_version.outputs.VERSION }}
+        release_name: ${{ steps.get_version.outputs.VERSION }}
+        body: ${{ steps.sha256sum.outputs.OUTPUTS }}
+        file: p2pd-*
+        file_glob: true
         overwrite: true
-        body: CI Release
