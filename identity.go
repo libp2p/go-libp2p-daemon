@@ -7,7 +7,7 @@ import (
 )
 
 func ReadIdentity(path string) (crypto.PrivKey, error) {
-	bytes, err := os.ReadFile(path)
+	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
