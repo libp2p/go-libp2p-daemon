@@ -11,7 +11,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	cid "github.com/ipfs/go-cid"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 	ma "github.com/multiformats/go-multiaddr"
 )
 

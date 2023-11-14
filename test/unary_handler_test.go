@@ -10,7 +10,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	"github.com/learning-at-home/go-libp2p-daemon/p2pclient"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	ma "github.com/multiformats/go-multiaddr"
 	"github.com/stretchr/testify/require"

@@ -10,8 +10,8 @@ import (
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/peer"
 
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	"github.com/learning-at-home/go-libp2p-daemon/p2pclient"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 )
 
 func clientRequestAsync(t *testing.T, client *p2pclient.Client, method string, arg interface{}) interface{} {

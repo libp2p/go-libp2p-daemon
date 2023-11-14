@@ -12,7 +12,7 @@ import (
 
 	ggio "github.com/gogo/protobuf/io"
 	proto "github.com/gogo/protobuf/proto"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 	ma "github.com/multiformats/go-multiaddr"
 	manet "github.com/multiformats/go-multiaddr/net"
 )

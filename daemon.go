@@ -8,8 +8,8 @@ import (
 	"os"
 	"sync"
 
-	"github.com/libp2p/go-libp2p-daemon/config"
-	"github.com/libp2p/go-libp2p-daemon/internal/utils"
+	"github.com/learning-at-home/go-libp2p-daemon/config"
+	"github.com/learning-at-home/go-libp2p-daemon/internal/utils"
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"

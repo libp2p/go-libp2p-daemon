@@ -57,7 +57,7 @@ func (d *Daemon) handleSIGUSR1() {
 		}
 
 		streams := c.GetStreams()
-		fmt.Printf("peer: %s, multiaddr: %s\n", c.RemotePeer().Pretty(), c.RemoteMultiaddr())
+		fmt.Printf("peer: %s, multiaddr: %s\n", c.RemotePeer().String(), c.RemoteMultiaddr())
 		fmt.Printf("\tprotoVersion: %s, agent: %s\n", protoVersion, agent)
 		fmt.Printf("\tprotocols: %v\n", protos)
 		fmt.Printf("\tstreams (%d):\n", len(streams))

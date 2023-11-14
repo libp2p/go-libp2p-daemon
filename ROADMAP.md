@@ -47,7 +47,7 @@ and a Go binding is in the works.
 ## Short-term roadmap
 
 These are the short-term priorities for us. If you feel something is missing,
-please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
+please open a [Github issue](https://github.com/learning-at-home/go-libp2p-daemon/issues).
 
 - ✅ Protobuf control API exposed over a Unix domain socket.
 - ✅ Connection lifecycle: connecting and disconnecting to/from peers.
@@ -67,7 +67,7 @@ please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
 ## Medium-term roadmap
 
 These are the medium-term priorities for us. If you feel something is missing,
-please open a [Github issue](https://github.com/libp2p/go-libp2p-daemon/issues).
+please open a [Github issue](https://github.com/learning-at-home/go-libp2p-daemon/issues).
 
 - Multi-tenancy, one application = one identity = one peer ID.
 - app <> daemon isolation; trust-less scenario; programs should not be able to

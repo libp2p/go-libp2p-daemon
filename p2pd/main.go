@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -16,8 +16,8 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 
-	p2pd "github.com/libp2p/go-libp2p-daemon"
-	config "github.com/libp2p/go-libp2p-daemon/config"
+	p2pd "github.com/learning-at-home/go-libp2p-daemon"
+	config "github.com/learning-at-home/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	network "github.com/libp2p/go-libp2p/core/network"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
@@ -126,7 +126,7 @@ func main() {
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
-		body, err := ioutil.ReadAll(stdin)
+		body, err := io.ReadAll(stdin)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -134,7 +134,7 @@ func main() {
 			log.Fatal(err)
 		}
 	} else if *configFilename != "" {
-		body, err := ioutil.ReadFile(*configFilename)
+		body, err := os.ReadFile(*configFilename)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -411,7 +411,7 @@ func main() {
 
 	if !c.Quiet {
 		fmt.Printf("Control socket: %s\n", c.ListenAddr.String())
-		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
+		fmt.Printf("Peer ID: %s\n", d.ID().String())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
 			fmt.Printf("%s\n", addr.String())

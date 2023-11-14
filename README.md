@@ -3,7 +3,7 @@
 [![](https://img.shields.io/badge/made%20by-Protocol%20Labs-blue.svg?style=flat-square)](http://protocol.ai)
 [![](https://img.shields.io/badge/project-libp2p-yellow.svg?style=flat-square)](https://libp2p.io/)
 [![](https://img.shields.io/badge/freenode-%23libp2p-yellow.svg?style=flat-square)](http://webchat.freenode.net/?channels=%libp2p)
-[![GoDoc](https://godoc.org/github.com/libp2p/go-libp2p-daemon?status.svg)](https://godoc.org/github.com/libp2p/go-libp2p-daemon)
+[![GoDoc](https://godoc.org/github.com/learning-at-home/go-libp2p-daemon?status.svg)](https://godoc.org/github.com/learning-at-home/go-libp2p-daemon)
 [![Discourse posts](https://img.shields.io/discourse/https/discuss.libp2p.io/posts.svg)](https://discuss.libp2p.io)
 
 > A standalone deployment of a libp2p host, running in its own OS process and installing a set of
@@ -14,7 +14,7 @@
 
 ## Maintainance
 
-The [learning-at-home](https://github.com/learning-at-home) team maintains this fork because the upstream repository ([libp2p/go-libp2p-daemon](https://github.com/libp2p/go-libp2p-daemon)) is not maintained by its original developers anymore.
+The [learning-at-home](https://github.com/learning-at-home) team maintains this fork because the upstream repository ([libp2p/go-libp2p-daemon](https://github.com/learning-at-home/go-libp2p-daemon)) is not maintained by its original developers anymore.
 
 This fork is used for all networking in [Hivemind](https://github.com/learning-at-home/hivemind) and [Petals](https://github.com/bigscience-workshop/petals) projects. This allows us to have protocol-agnostic networking with NAT traversal & libp2p relay features.
 
@@ -24,7 +24,7 @@ This repo uses [Go modules](https://github.com/golang/go/wiki/Modules). Note tha
 
 ```sh
 $ # outside your GOPATH
-$ git clone https://github.com/libp2p/go-libp2p-daemon
+$ git clone https://github.com/learning-at-home/go-libp2p-daemon
 $ cd go-libp2p-daemon
 $ git checkout <release tag, e.g. v0.0.1>
 $ go get ./...
@@ -32,11 +32,11 @@ $ go install ./...
 $ p2pd
 ```
 
-See [available releases](https://github.com/libp2p/go-libp2p-daemon/releases).
+See [available releases](https://github.com/learning-at-home/go-libp2p-daemon/releases).
 
 ## Usage
 
-Check out the [GoDocs](https://godoc.org/github.com/libp2p/go-libp2p-daemon).
+Check out the [GoDocs](https://godoc.org/github.com/learning-at-home/go-libp2p-daemon).
 
 ## Language Bindings
 
@@ -54,7 +54,7 @@ If you wish to implement bindings in a new language, refer to the [spec](specs/R
 
 ## Contribute
 
-Feel free to join in. All welcome. Open an [issue](https://github.com/libp2p/go-libp2p-daemon/issues)!
+Feel free to join in. All welcome. Open an [issue](https://github.com/learning-at-home/go-libp2p-daemon/issues)!
 
 This repository falls under the IPFS [Code of Conduct](https://github.com/ipfs/community/blob/master/code-of-conduct.md).
 

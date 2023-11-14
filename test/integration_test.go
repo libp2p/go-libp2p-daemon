@@ -8,8 +8,8 @@ import (
 
 	"github.com/stretchr/testify/require"
 
-	p2pd "github.com/libp2p/go-libp2p-daemon"
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
+	p2pd "github.com/learning-at-home/go-libp2p-daemon"
+	"github.com/learning-at-home/go-libp2p-daemon/p2pclient"
 	"github.com/libp2p/go-libp2p/core/peer"
 	ma "github.com/multiformats/go-multiaddr"
 )

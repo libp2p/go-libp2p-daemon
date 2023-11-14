@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	p2pd "github.com/libp2p/go-libp2p-daemon"
+	p2pd "github.com/learning-at-home/go-libp2p-daemon"
 
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/peer"
@@ -39,7 +39,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("Peer ID: %s\n", id.Pretty())
+	fmt.Printf("Peer ID: %s\n", id.String())
 
 	err = p2pd.WriteIdentity(priv, *file)
 	if err != nil {

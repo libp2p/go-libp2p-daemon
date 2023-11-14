@@ -3,7 +3,7 @@ package p2pd
 import (
 	"context"
 
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 
 	"github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/peer"

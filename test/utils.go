@@ -4,7 +4,6 @@ import (
 	"context"
 	"crypto/rand"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -18,16 +17,16 @@ import (
 	"github.com/stretchr/testify/require"
 
 	cid "github.com/ipfs/go-cid"
-	p2pd "github.com/libp2p/go-libp2p-daemon"
-	"github.com/libp2p/go-libp2p-daemon/p2pclient"
-	pb "github.com/libp2p/go-libp2p-daemon/pb"
+	p2pd "github.com/learning-at-home/go-libp2p-daemon"
+	"github.com/learning-at-home/go-libp2p-daemon/p2pclient"
+	pb "github.com/learning-at-home/go-libp2p-daemon/pb"
 	ma "github.com/multiformats/go-multiaddr"
 	mh "github.com/multiformats/go-multihash"
 )
 
 func createTempDir(t *testing.T) (string, string, func()) {
 	root := os.TempDir()
-	dir, err := ioutil.TempDir(root, "p2pd")
+	dir, err := os.MkdirTemp(root, "p2pd")
 	if err != nil {
 		t.Fatalf("creating temp dir: %s", err)
 	}
@@ -168,7 +167,7 @@ func wrapDhtResponse(dht *pb.DHTResponse) *pb.Response {
 }
 
 func peerInfoResponse(t *testing.T, id peer.ID) *pb.DHTResponse {
-	addr, err := ma.NewMultiaddr(fmt.Sprintf("/p2p-circuit/p2p/%s", id.Pretty()))
+	addr, err := ma.NewMultiaddr(fmt.Sprintf("/p2p-circuit/p2p/%s", id.String()))
 	if err != nil {
 		t.Fatal(err)
 	}
