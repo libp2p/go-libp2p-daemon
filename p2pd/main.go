@@ -20,6 +20,8 @@ import (
 	config "github.com/learning-at-home/go-libp2p-daemon/config"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	network "github.com/libp2p/go-libp2p/core/network"
+
+	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
@@ -117,12 +119,16 @@ func main() {
 			" The zero value (default) disables this feature")
 	persistentConnMaxMsgSize := flag.Int("persistentConnMaxMsgSize", 4*1024*1024,
 		"Max size for persistent connection messages (bytes). Default: 4 MiB")
+	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
 
 	flag.Parse()
 
 	var c config.Config
 	defaultCtx := context.Background() // context used for all streams opened by this daemon
-	opts := []libp2p.Option{libp2p.UserAgent("p2pd/0.1")}
+	opts := []libp2p.Option{
+		libp2p.UserAgent("p2pd/0.1"),
+		libp2p.DefaultTransports,
+	}
 
 	if *configStdin {
 		stdin := bufio.NewReader(os.Stdin)
@@ -257,6 +263,10 @@ func main() {
 		c.Bootstrap.Enabled = true
 	}
 
+	if *muxer == "yamux" {
+		opts = append(opts, libp2p.Muxer("/yamux/1.0.0", yamux.DefaultTransport))
+	}
+
 	if *quiet {
 		c.Quiet = true
 	}
@@ -347,7 +357,11 @@ func main() {
 	}
 
 	if c.NoListen {
-		opts = append(opts, libp2p.NoListenAddrs)
+		opts = append(opts,
+			libp2p.NoListenAddrs,
+			// NoListenAddrs disables the relay transport
+			libp2p.EnableRelay(),
+		)
 	}
 
 	var securityOpts []libp2p.Option
@@ -393,6 +407,13 @@ func main() {
 		}
 
 		err = d.EnablePubsub(c.PubSub.Router, c.PubSub.Sign, c.PubSub.SignStrict)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if c.Relay.Enabled {
+		err = d.EnableRelayV2()
 		if err != nil {
 			log.Fatal(err)
 		}

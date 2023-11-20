@@ -254,6 +254,7 @@ func (d *Daemon) doStreamOpen(req *pb.Request) (*pb.Response, network.Stream) {
 	}
 
 	log.Debugf("opening stream", "to", pid)
+	ctx = network.WithUseTransient(ctx, "allow testing over relayed connections")
 	s, err := d.host.NewStream(ctx, pid, protos...)
 	if err != nil {
 		log.Debugw("error opening stream", "to", pid, "error", err)

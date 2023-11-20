@@ -53,11 +53,12 @@ func TestPubsubMessages(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(2 * time.Second) // wait a second for the subscription to take effect
-
 	go func() {
-		if err := sender.Publish("test", []byte("foobar")); err != nil {
-			t.Error(err)
+		for ctx.Err() == nil {
+			if err := sender.Publish("test", []byte("foobar")); err != nil {
+				t.Error(err)
+			}
+			time.Sleep(100 * time.Millisecond)
 		}
 	}()
 
