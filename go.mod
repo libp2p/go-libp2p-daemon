@@ -2,7 +2,6 @@ module github.com/libp2p/go-libp2p-daemon
 
 go 1.21
 
-
 require (
 	github.com/gogo/protobuf v1.3.2
 	github.com/google/pprof v0.0.0-20230405160723-4a4c7d95572b // indirect
