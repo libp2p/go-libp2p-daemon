@@ -17,8 +17,8 @@ import (
 
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
+	"github.com/libp2p/go-libp2p-mplex"
 	ps "github.com/libp2p/go-libp2p-pubsub"
-	"github.com/libp2p/go-libp2p/p2p/muxer/mplex"
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
@@ -391,7 +391,7 @@ func main() {
 
 	if !c.Quiet {
 		fmt.Printf("Control socket: %s\n", c.ListenAddr.String())
-		fmt.Printf("Peer ID: %s\n", d.ID().Pretty())
+		fmt.Printf("Peer ID: %s\n", d.ID().String())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
 			fmt.Printf("%s\n", addr.String())
