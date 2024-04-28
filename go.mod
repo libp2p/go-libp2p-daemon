@@ -1,6 +1,6 @@
 module github.com/libp2p/go-libp2p-daemon
 
-go 1.21
+go 1.22
 
 toolchain go1.22.0
 

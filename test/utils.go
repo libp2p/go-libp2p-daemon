@@ -163,7 +163,7 @@ func wrapDhtResponse(dht *pb.DHTResponse) *pb.Response {
 }
 
 func peerInfoResponse(t *testing.T, id peer.ID) *pb.DHTResponse {
-	addr, err := ma.NewMultiaddr(fmt.Sprintf("/p2p-circuit/p2p/%s", id.Pretty()))
+	addr, err := ma.NewMultiaddr(fmt.Sprintf("/p2p-circuit/p2p/%s", id.String()))
 	if err != nil {
 		t.Fatal(err)
 	}
