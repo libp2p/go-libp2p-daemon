@@ -164,6 +164,11 @@
       "default": false,
       "$comment": "Enables the AutoNAT service"
     },
+    "Echo": {
+      "type": "boolean",
+      "default": false,
+      "$comment": "Enables an Echo protocol"
+    },
     "HostAddresses": {
       "type": "array",
       "items": {"$ref": "#/definitions/maddr"},
