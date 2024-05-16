@@ -137,12 +137,15 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 
 func (d *Daemon) EnableEcho() error {
 	d.host.SetStreamHandler("/echo/1.0.0", func(s network.Stream) {
-		if err := doEcho(s); err != nil {
+		_, err := io.Copy(s, s)
+
+		if err != nil {
 			s.Reset()
 		} else {
 			s.Close()
 		}
 	})
+
 	return nil
 }
 
@@ -210,14 +213,4 @@ func (d *Daemon) Close() error {
 	}
 
 	return merr.ErrorOrNil()
-}
-
-func doEcho(stream network.Stream) error {
-	_, err := io.Copy(stream, stream)
-
-	if err == nil {
-		stream.Close()
-	}
-
-	return err
 }
