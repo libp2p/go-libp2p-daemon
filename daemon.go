@@ -215,7 +215,7 @@ func (d *Daemon) Close() error {
 func doEcho(stream network.Stream) error {
 	_, err := io.Copy(stream, stream)
 
-	if (err == nil) {
+	if err == nil {
 		stream.Close()
 	}
 
