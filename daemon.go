@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 
+	"io"
 	"os"
 	"sync"
 
@@ -11,6 +12,7 @@ import (
 
 	"github.com/libp2p/go-libp2p"
 	"github.com/libp2p/go-libp2p/core/host"
+	"github.com/libp2p/go-libp2p/core/network"
 	"github.com/libp2p/go-libp2p/core/peer"
 	"github.com/libp2p/go-libp2p/core/protocol"
 	"github.com/libp2p/go-libp2p/core/routing"
@@ -131,7 +133,17 @@ func (d *Daemon) EnablePubsub(router string, sign, strict bool) error {
 	default:
 		return fmt.Errorf("unknown pubsub router: %s", router)
 	}
+}
 
+func (d *Daemon) EnableEcho() error {
+	d.host.SetStreamHandler("/echo/1.0.0", func(s network.Stream) {
+		if err := doEcho(s); err != nil {
+			s.Reset()
+		} else {
+			s.Close()
+		}
+	})
+	return nil
 }
 
 func (d *Daemon) ID() peer.ID {
@@ -198,4 +210,14 @@ func (d *Daemon) Close() error {
 	}
 
 	return merr.ErrorOrNil()
+}
+
+func doEcho(stream network.Stream) error {
+	_, err := io.Copy(stream, stream)
+
+	if (err == nil) {
+		stream.Close()
+	}
+
+	return err
 }

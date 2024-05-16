@@ -103,6 +103,7 @@ func main() {
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
 	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
+	echoEnabled := flag.Bool("echo", true, "Enables echo protocol")
 
 	flag.Parse()
 
@@ -206,6 +207,10 @@ func main() {
 
 	if *autonat {
 		c.AutoNat = true
+	}
+
+	if *echoEnabled {
+		c.Echo = true
 	}
 
 	if *pubsub {
@@ -373,6 +378,13 @@ func main() {
 
 	if c.Relay.Enabled {
 		err = d.EnableRelayV2()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+	if c.Echo {
+		err = d.EnableEcho()
 		if err != nil {
 			log.Fatal(err)
 		}
