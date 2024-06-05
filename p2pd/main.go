@@ -23,9 +23,9 @@ import (
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
+	libp2pwebrtc "github.com/libp2p/go-libp2p/p2p/transport/webrtc"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
-	libp2pwebrtc "github.com/libp2p/go-libp2p/p2p/transport/webrtc"
 
 	_ "net/http/pprof"
 )
