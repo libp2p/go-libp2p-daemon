@@ -81,8 +81,9 @@ type PProf struct {
 }
 
 type Security struct {
-	Noise bool
-	TLS   bool
+	Noise     bool
+	TLS       bool
+	Plaintext bool
 }
 
 const DHTFullMode = "full"
