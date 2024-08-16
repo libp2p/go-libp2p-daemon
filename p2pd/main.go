@@ -19,11 +19,11 @@ import (
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	"github.com/libp2p/go-libp2p-mplex"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	insecure "github.com/libp2p/go-libp2p/core/sec/insecure"
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
-	insecure "github.com/libp2p/go-libp2p/core/sec/insecure"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -113,10 +113,6 @@ func main() {
 	opts := []libp2p.Option{
 		libp2p.UserAgent("p2pd/go-libp2p@0.36.1"),
 		libp2p.DefaultTransports,
-
-		// needed until webrtc-direct is no longer experimental - this will be in
-		// go-libp2p@0.36.x at the time of writing
-		libp2p.Transport(libp2pwebrtc.New),
 	}
 
 	if *configStdin {
