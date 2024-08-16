@@ -19,11 +19,11 @@ import (
 	config "github.com/libp2p/go-libp2p-daemon/config"
 	"github.com/libp2p/go-libp2p-mplex"
 	ps "github.com/libp2p/go-libp2p-pubsub"
+	insecure "github.com/libp2p/go-libp2p/core/sec/insecure"
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
 	connmgr "github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	noise "github.com/libp2p/go-libp2p/p2p/security/noise"
 	tls "github.com/libp2p/go-libp2p/p2p/security/tls"
-	libp2pwebrtc "github.com/libp2p/go-libp2p/p2p/transport/webrtc"
 	multiaddr "github.com/multiformats/go-multiaddr"
 	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 
@@ -101,6 +101,7 @@ func main() {
 		"has no effect unless the pprof option is enabled")
 	useNoise := flag.Bool("noise", true, "Enables Noise channel security protocol")
 	useTls := flag.Bool("tls", true, "Enables TLS1.3 channel security protocol")
+	usePlaintext := flag.Bool("plaintext", true, "Enables Plaintext channel security protocol")
 	forceReachabilityPublic := flag.Bool("forceReachabilityPublic", false, "Set up ForceReachability as public for autonat")
 	forceReachabilityPrivate := flag.Bool("forceReachabilityPrivate", false, "Set up ForceReachability as private for autonat")
 	muxer := flag.String("muxer", "yamux", "muxer to use for connections")
@@ -110,12 +111,8 @@ func main() {
 
 	var c config.Config
 	opts := []libp2p.Option{
-		libp2p.UserAgent("p2pd/0.1"),
+		libp2p.UserAgent("p2pd/go-libp2p@0.36.1"),
 		libp2p.DefaultTransports,
-
-		// needed until webrtc-direct is no longer experimental - this will be in
-		// go-libp2p@0.36.x at the time of writing
-		libp2p.Transport(libp2pwebrtc.New),
 	}
 
 	if *configStdin {
@@ -283,6 +280,9 @@ func main() {
 	if useNoise != nil {
 		c.Security.Noise = *useNoise
 	}
+	if usePlaintext != nil {
+		c.Security.Plaintext = *usePlaintext
+	}
 
 	if err := c.Validate(); err != nil {
 		log.Fatal(err)
@@ -346,6 +346,9 @@ func main() {
 	}
 	if c.Security.TLS {
 		securityOpts = append(securityOpts, libp2p.Security(tls.ID, tls.New))
+	}
+	if c.Security.Plaintext {
+		securityOpts = append(securityOpts, libp2p.Security(insecure.ID, insecure.NewWithIdentity))
 	}
 
 	if len(securityOpts) == 0 {
