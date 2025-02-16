@@ -1,8 +1,6 @@
 module github.com/libp2p/go-libp2p-daemon
 
-go 1.22
-
-toolchain go1.22.0
+go 1.23
 
 require (
 	github.com/gogo/protobuf v1.3.2

@@ -17,7 +17,7 @@ import (
 
 	p2pd "github.com/libp2p/go-libp2p-daemon"
 	config "github.com/libp2p/go-libp2p-daemon/config"
-	"github.com/libp2p/go-libp2p-mplex"
+	mplex "github.com/libp2p/go-libp2p-mplex"
 	ps "github.com/libp2p/go-libp2p-pubsub"
 	insecure "github.com/libp2p/go-libp2p/core/sec/insecure"
 	"github.com/libp2p/go-libp2p/p2p/muxer/yamux"
