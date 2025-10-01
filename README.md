@@ -1,12 +1,10 @@
 > [!WARNING]
-> ## 🚧 This project is not actively maintained and is unsupported! 🚧
+> ## 🚧 This repository is no longer maintained 🚧
 >
-> It has reached viable PoC stage but is not being actively worked on or maintained. If you want to play around with libp2p, go ahead and try this project out. However:
+> This project may still be used in legacy tests but is **not safe for use in production** due to security issues and lack of active maintenance.
 >
-> * There is little documentation and no support.
-> * The libp2p version used in this project will not be actively updated.
->
-> In other words: **DO NOT USE IN PRODUCTION**
+> For modern libp2p examples, including how to build your own daemons and services, see:
+> https://github.com/libp2p/go-libp2p/tree/master/examples
 
 # libp2p Daemon
 
