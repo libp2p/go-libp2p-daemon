@@ -111,7 +111,7 @@ func main() {
 
 	var c config.Config
 	opts := []libp2p.Option{
-		libp2p.UserAgent("p2pd/go-libp2p@0.36.1"),
+		libp2p.UserAgent(p2pd.UserAgent()),
 		libp2p.DefaultTransports,
 	}
 
