@@ -410,7 +410,7 @@ func main() {
 	}
 
 	if !c.Quiet {
-		fmt.Printf("Control socket: %s\n", c.ListenAddr.String())
+		fmt.Printf("Control socket: %s\n", d.Listener().Multiaddr().String())
 		fmt.Printf("Peer ID: %s\n", d.ID().String())
 		fmt.Printf("Peer Addrs:\n")
 		for _, addr := range d.Addrs() {
